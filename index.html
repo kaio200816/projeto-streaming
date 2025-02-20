@@ -84,6 +84,12 @@
                     iframe.contentDocument.addEventListener('click', e => {
                         if (e.target.closest('a')) e.preventDefault();
                     }, true);
+
+                    // Bloqueio de redirecionamento
+                    iframe.contentWindow.addEventListener("beforeunload", (event) => {
+                        event.preventDefault();
+                        event.returnValue = ''; // impede redirecionamento
+                    });
                 } catch (e) {}
             };
 
