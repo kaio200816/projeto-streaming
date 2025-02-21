@@ -3,112 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Streaming de Filmes</title>
+    <title>Streaming - Seleção de Filmes</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            font-family: 'Arial', sans-serif;
             background-color: #121212;
             color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
-            transition: background-color 0.5s ease;
-        }
-        .container {
             text-align: center;
-            width: 90%;
-            max-width: 1000px;
-            background-color: rgba(0, 0, 0, 0.75);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease;
+            margin: 0;
+            padding: 20px;
         }
-        .movies {
+        .grid-container {
             display: flex;
-            gap: 20px;
             justify-content: center;
-            margin-bottom: 20px;
+            gap: 20px;
         }
         .movie {
             position: relative;
+            width: 200px;
             cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease-in-out;
         }
         .movie:hover {
             transform: scale(1.1);
-            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.5);
         }
         .movie img {
-            width: 200px;
-            border-radius: 10px;
-        }
-        .video-container {
-            position: relative;
             width: 100%;
-            height: 500px;
-            display: none;
             border-radius: 10px;
-            overflow: hidden;
+            transition: filter 0.3s ease-in-out;
         }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 10px;
+        .movie:hover img {
+            filter: brightness(70%);
+        }
+        .movie .overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
             opacity: 0;
-            transition: opacity 1s ease-in-out;
+            transition: opacity 0.3s ease-in-out;
         }
-        .footer {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #bbb;
+        .movie:hover .overlay {
+            opacity: 1;
+        }
+        .movie-title {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        audio {
+            display: none;
         }
     </style>
     <script>
-        function loadMovie(movie) {
-            let container = document.getElementById("videoContainer");
-            let iframe = document.getElementById("moviePlayer");
-            let posters = document.querySelectorAll(".movie");
-            
-            posters.forEach(p => p.style.opacity = "0.5");
-            document.getElementById(movie).style.opacity = "1";
-            
-            let movieLinks = {
-                "mib3": "https://redecanais.ps/player3/server.php?server=RCFServer1&subfolder=ondemand&vid=MIBHMDPRT03",
-                "gemini": "//%72%65%64%65%63%61%6E%61%69%73%2E%70%73/player3/server.php?server=RCFServer3&subfolder=ondemand&vid=PRJTGMNI"
-            };
-            
-            container.style.display = "block";
-            iframe.src = movieLinks[movie];
-            iframe.style.opacity = "0";
-            
-            setTimeout(() => {
-                iframe.style.opacity = "1";
-            }, 1000);
+        function playSound() {
+            document.getElementById("hoverSound").play();
+        }
+        function selectMovie(url) {
+            document.getElementById("moviePlayer").src = url;
+            document.getElementById("movieContainer").style.display = "block";
         }
     </script>
 </head>
 <body>
-    <div class="container">
-        <h1>Selecione um Filme</h1>
-        <div class="movies">
-            <div class="movie" id="mib3" onclick="loadMovie('mib3')">
-                <img src="https://via.placeholder.com/200x300?text=Homens+de+Preto+3" alt="Homens de Preto 3">
-            </div>
-            <div class="movie" id="gemini" onclick="loadMovie('gemini')">
-                <img src="https://via.placeholder.com/200x300?text=Projeto+Gemini" alt="Projeto Gemini">
-            </div>
+    <h1>Selecione um Filme</h1>
+    <div class="grid-container">
+        <div class="movie" onclick="selectMovie('//redecanais.ps/player3/server.php?server=RCFServer1&subfolder=ondemand&vid=MIBHMDPRT03')" onmouseover="playSound()">
+            <img src="https://via.placeholder.com/200x300?text=Player+1" alt="Homens de Preto 3">
+            <div class="overlay">Player 1</div>
+            <div class="movie-title">Homens de Preto 3</div>
         </div>
-        <div class="video-container" id="videoContainer">
-            <iframe id="moviePlayer" allow="encrypted-media; fullscreen" allowfullscreen></iframe>
+        <div class="movie" onclick="selectMovie('//redecanais.ps/player3/server.php?server=RCFServer3&subfolder=ondemand&vid=PRJTGMNI')" onmouseover="playSound()">
+            <img src="https://via.placeholder.com/200x300?text=Player+2" alt="Projeto Gemini">
+            <div class="overlay">Player 2</div>
+            <div class="movie-title">Projeto Gemini</div>
         </div>
-        <div class="footer">© 2025 Streaming de Filmes - by Kaio200816</div>
+    </div>
+    <audio id="hoverSound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+    <div id="movieContainer" style="display: none; margin-top: 20px;">
+        <iframe id="moviePlayer" width="640" height="400" frameborder="0" allowfullscreen></iframe>
     </div>
 </body>
 </html>
