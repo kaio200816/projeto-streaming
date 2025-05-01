@@ -29,10 +29,6 @@
     .btn:hover {
       background-color: #b00610;
     }
-    iframe {
-      margin-top: 30px;
-      border: none;
-    }
   </style>
 </head>
 <body>
@@ -40,19 +36,15 @@
   <h1>🎬 Filmes para Assistir</h1>
 
   <div class="catalogo">
-    <button class="btn" onclick="carregarFilme('ELDNCEUDNC4')">Se Ela Dança, Eu Danço 4</button>
-    <button class="btn" onclick="carregarFilme('ELDNCEUDNC5')">Se Ela Dança, Eu Danço 5</button>
-    <button class="btn" onclick="carregarFilme('ELDNCEUDNC6')">Se Ela Dança, Eu Danço 6</button>
-  </div>
-
-  <div id="player">
-    <iframe id="iframePlayer" src="" width="640" height="400" scrolling="no" allow="encrypted-media" allowfullscreen></iframe>
+    <button class="btn" onclick="abrirFilme('ELDNCEUDNC4')">Se Ela Dança, Eu Danço 4</button>
+    <button class="btn" onclick="abrirFilme('ELDNCEUDNC5')">Se Ela Dança, Eu Danço 5</button>
+    <button class="btn" onclick="abrirFilme('ELDNCEUDNC6')">Se Ela Dança, Eu Danço 6</button>
   </div>
 
   <script>
-    function carregarFilme(codigo) {
-      const src = "//%6C%75%76%61%69%6E%67%6C%65%73%2E%63%6F%6D/player3/server.php?server=RCFServer3&subfolder=ondemand&vid=" + codigo;
-      document.getElementById("iframePlayer").src = src;
+    function abrirFilme(codigo) {
+      const url = "https://luvaingles.com/player3/server.php?server=RCFServer3&subfolder=ondemand&vid=" + codigo;
+      window.open(url, '_blank');
     }
   </script>
 
