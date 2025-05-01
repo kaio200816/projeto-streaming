@@ -1,52 +1,87 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Filmes para Assistir</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #141414;
-      color: #fff;
-      text-align: center;
-    }
-    h1 {
-      margin-top: 20px;
-    }
-    .catalogo {
-      margin-top: 30px;
-    }
-    .btn {
-      padding: 10px 20px;
-      margin: 10px;
-      border: none;
-      background-color: #e50914;
-      color: #fff;
-      cursor: pointer;
-      font-size: 16px;
-      border-radius: 4px;
-    }
-    .btn:hover {
-      background-color: #b00610;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reprodutor de Vídeo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .video-wrapper {
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+        .video-title {
+            font-size: 24px;
+            margin: 20px 0 10px;
+            color: #333;
+        }
+        .video-description {
+            color: #666;
+            line-height: 1.5;
+        }
+    </style>
+    <!-- VideoJS CSS -->
+    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
 </head>
 <body>
+    <div class="container">
+        <h1 class="video-title">Se Ela Dança, Eu Danço 4 (2012)</h1>
+        <p class="video-description">Assista ao filme completo em nosso reprodutor.</p>
+        
+        <div class="video-wrapper">
+            <div id="player" class="col-70 sidebar-space flex-grow-1">
+                <div class="video-container">
+                    <div currenttime="1000" oncontextmenu="return false;" controlslist="nodownload" 
+                         data-title="㋡ Se Ela Dança, Eu Danço 4 [ 2012 ] _ @vini7xg" 
+                         data-matomo-title="255639" data-video-duration="5919" 
+                         data-sprites-url="https://img14.tokyvideo.com/videos/255/255639/sprites/sprite_[index].jpg" 
+                         data-stats-video-id="255639" 
+                         poster="https://img14.tokyvideo.com/videos/255/255639/previews/previews_0012_custom_1684320619.9647.jpg" 
+                         class="video-js vjs-big-play-centered tokyvideo_player-dimensions vjs-controls-enabled vjs-workinghover vjs-v7 vjs-has-started vjs-paused vjs-user-inactive" 
+                         preload="none" webkit-playsinline="" playsinline="true" id="tokyvideo_player" tabindex="-1" 
+                         role="region" lang="pt" aria-label="Video Player" style="outline: none;">
+                        <video id="tokyvideo_player_html5_api" playsinline="playsinline" webkit-playsinline="" 
+                               preload="none" class="vjs-tech" data-stats-video-id="255639" 
+                               data-sprites-url="https://img14.tokyvideo.com/videos/255/255639/sprites/sprite_[index].jpg" 
+                               data-video-duration="5919" data-matomo-title="255639" 
+                               data-title="㋡ Se Ela Dança, Eu Danço 4 [ 2012 ] _ @vini7xg" 
+                               controlslist="nodownload" oncontextmenu="return false;" currenttime="1000" 
+                               tabindex="-1" role="application" 
+                               poster="https://img14.tokyvideo.com/videos/255/255639/previews/previews_0012_custom_1684320619.9647.jpg" 
+                               style="">
+                            <source src="https://cdnst14.tokyvideo.com/videos/255/255639/mp4/a19e37943d75c1f92c6cfab9eeeee2e6ed8b8bbd07d31d8126aec01baf5f8f6a.mp4?secure=0alfuLboXczH4GqER2_Cyg%3D%3D%2C1746156411" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <h1>🎬 Filmes para Assistir</h1>
-
-  <div class="catalogo">
-    <button class="btn" onclick="abrirFilme('ELDNCEUDNC4')">Se Ela Dança, Eu Danço 4</button>
-    <button class="btn" onclick="abrirFilme('ELDNCEUDNC5')">Se Ela Dança, Eu Danço 5</button>
-    <button class="btn" onclick="abrirFilme('ELDNCEUDNC6')">Se Ela Dança, Eu Danço 6</button>
-  </div>
-
-  <script>
-    function abrirFilme(codigo) {
-      const url = "https://luvaingles.com/player3/server.php?server=RCFServer3&subfolder=ondemand&vid=" + codigo;
-      window.open(url, '_blank');
-    }
-  </script>
-
+    <!-- VideoJS Script -->
+    <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+    <script>
+        // Inicializar o player
+        document.addEventListener('DOMContentLoaded', function() {
+            var player = videojs('tokyvideo_player');
+            
+            // Configurações adicionais podem ser adicionadas aqui
+            player.ready(function() {
+                console.log('Player está pronto');
+            });
+        });
+    </script>
 </body>
 </html>
