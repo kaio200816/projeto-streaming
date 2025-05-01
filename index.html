@@ -1,42 +1,60 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Copiar Pix</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-        button {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Filmes para Assistir</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #141414;
+      color: #fff;
+      text-align: center;
+    }
+    h1 {
+      margin-top: 20px;
+    }
+    .catalogo {
+      margin-top: 30px;
+    }
+    .btn {
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      background-color: #e50914;
+      color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 4px;
+    }
+    .btn:hover {
+      background-color: #b00610;
+    }
+    iframe {
+      margin-top: 30px;
+      border: none;
+    }
+  </style>
 </head>
 <body>
-    <button onclick="copiarPix()">Copiar Pix Copia e Cola</button>
-    <script>
-        function copiarPix() {
-            const codigoPix = "00020101021226910014br.gov.bcb.pix2569api.developer.btgpactual.com/v1/p/v2/6c293129de4b4be8980d39cb6d3b45a05204000053039865802BR591899 TECNOLOGIA LTDA6009Sao Paulo61080455300062070503***6304E058";
-            navigator.clipboard.writeText(codigoPix).then(() => {
-                alert("Código Pix copiado com sucesso!");
-            }).catch(err => {
-                console.error("Erro ao copiar o código Pix", err);
-            });
-        }
-    </script>
+
+  <h1>🎬 Filmes para Assistir</h1>
+
+  <div class="catalogo">
+    <button class="btn" onclick="carregarFilme('ELDNCEUDNC4')">Se Ela Dança, Eu Danço 4</button>
+    <button class="btn" onclick="carregarFilme('ELDNCEUDNC5')">Se Ela Dança, Eu Danço 5</button>
+    <button class="btn" onclick="carregarFilme('ELDNCEUDNC6')">Se Ela Dança, Eu Danço 6</button>
+  </div>
+
+  <div id="player">
+    <iframe id="iframePlayer" src="" width="640" height="400" scrolling="no" allow="encrypted-media" allowfullscreen></iframe>
+  </div>
+
+  <script>
+    function carregarFilme(codigo) {
+      const src = "//%6C%75%76%61%69%6E%67%6C%65%73%2E%63%6F%6D/player3/server.php?server=RCFServer3&subfolder=ondemand&vid=" + codigo;
+      document.getElementById("iframePlayer").src = src;
+    }
+  </script>
+
 </body>
 </html>
