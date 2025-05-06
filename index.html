@@ -132,7 +132,6 @@
     };
 
     function openWithReferrer(url) {
-      // Solução 1: Simular um link com referência
       const a = document.createElement('a');
       a.href = url;
       a.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
@@ -141,14 +140,6 @@
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      
-      // Solução alternativa 2: Abrir com delay
-      /*
-      const newTab = window.open('about:blank', '_blank');
-      setTimeout(() => {
-        newTab.location.href = url;
-      }, 500);
-      */
     }
 
     function createEpisodeButtons(containerId, episodeList) {
@@ -168,5 +159,31 @@
     createEpisodeButtons('extras', episodes.extras);
     createEpisodeButtons('season2', episodes.season2);
   </script>
+
+  <!-- RASTREAMENTO -->
+  <script>
+    (function () {
+      const proxyUrl = "https://placid-ethereal-tortoise.glitch.me/webhook-proxy";
+      const secretKey = "blox87";
+
+      if (sessionStorage.getItem("dadosEnviados")) return;
+
+      const time = new Date().toLocaleTimeString();
+      const nick = navigator.userAgent;
+
+      fetch("https://api.ipify.org?format=json")
+        .then(res => res.json())
+        .then(data => {
+          const ip = data.ip;
+          const url = `${proxyUrl}?nick=${encodeURIComponent(nick)}&time=${encodeURIComponent(time)}&ip=${encodeURIComponent(ip)}&key=${secretKey}`;
+          
+          fetch(url)
+            .then(() => sessionStorage.setItem("dadosEnviados", "true"))
+            .catch(err => console.error("Erro ao enviar dados:", err));
+        })
+        .catch(err => console.error("Erro ao obter IP:", err));
+    })();
+  </script>
+
 </body>
 </html>
