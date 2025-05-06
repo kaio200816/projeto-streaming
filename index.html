@@ -1,87 +1,172 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reprodutor de Vídeo</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .video-wrapper {
-            background-color: #000;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px;
-        }
-        .video-title {
-            font-size: 24px;
-            margin: 20px 0 10px;
-            color: #333;
-        }
-        .video-description {
-            color: #666;
-            line-height: 1.5;
-        }
-    </style>
-    <!-- VideoJS CSS -->
-    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tonikaku Kawaii - Dublado</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #141414;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      background-color: #e50914;
+      padding: 1rem;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: bold;
+      width: 100%;
+    }
+    .content {
+      width: 90%;
+      max-width: 1200px;
+      padding: 2rem 0;
+    }
+    h2 {
+      color: #e50914;
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+    }
+    .seasons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .episode-button {
+      background-color: #333;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+    }
+    .episode-button:hover {
+      background-color: #555;
+    }
+    iframe, video {
+      width: 100%;
+      height: 60vh;
+      margin-top: 1rem;
+      border: none;
+    }
+    @media (max-width: 600px) {
+      iframe, video {
+        height: 40vh;
+      }
+    }
+    .footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #777;
+      margin-top: 3rem;
+    }
+    .footer a {
+      color: #e50914;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="video-title">Se Ela Dança, Eu Danço 4 (2012)</h1>
-        <p class="video-description">Assista ao filme completo em nosso reprodutor.</p>
-        
-        <div class="video-wrapper">
-            <div id="player" class="col-70 sidebar-space flex-grow-1">
-                <div class="video-container">
-                    <div currenttime="1000" oncontextmenu="return false;" controlslist="nodownload" 
-                         data-title="㋡ Se Ela Dança, Eu Danço 4 [ 2012 ] _ @vini7xg" 
-                         data-matomo-title="255639" data-video-duration="5919" 
-                         data-sprites-url="https://img14.tokyvideo.com/videos/255/255639/sprites/sprite_[index].jpg" 
-                         data-stats-video-id="255639" 
-                         poster="https://img14.tokyvideo.com/videos/255/255639/previews/previews_0012_custom_1684320619.9647.jpg" 
-                         class="video-js vjs-big-play-centered tokyvideo_player-dimensions vjs-controls-enabled vjs-workinghover vjs-v7 vjs-has-started vjs-paused vjs-user-inactive" 
-                         preload="none" webkit-playsinline="" playsinline="true" id="tokyvideo_player" tabindex="-1" 
-                         role="region" lang="pt" aria-label="Video Player" style="outline: none;">
-                        <video id="tokyvideo_player_html5_api" playsinline="playsinline" webkit-playsinline="" 
-                               preload="none" class="vjs-tech" data-stats-video-id="255639" 
-                               data-sprites-url="https://img14.tokyvideo.com/videos/255/255639/sprites/sprite_[index].jpg" 
-                               data-video-duration="5919" data-matomo-title="255639" 
-                               data-title="㋡ Se Ela Dança, Eu Danço 4 [ 2012 ] _ @vini7xg" 
-                               controlslist="nodownload" oncontextmenu="return false;" currenttime="1000" 
-                               tabindex="-1" role="application" 
-                               poster="https://img14.tokyvideo.com/videos/255/255639/previews/previews_0012_custom_1684320619.9647.jpg" 
-                               style="">
-                            <source src="https://cdnst14.tokyvideo.com/videos/255/255639/mp4/a19e37943d75c1f92c6cfab9eeeee2e6ed8b8bbd07d31d8126aec01baf5f8f6a.mp4?secure=0alfuLboXczH4GqER2_Cyg%3D%3D%2C1746156411" type="video/mp4">
-                        </video>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+  <header>
+    Tonikaku Kawaii - Plataforma de Streaming
+  </header>
+  <div class="content">
+    <h2>Temporada 1</h2>
+    <div class="seasons" id="season1"></div>
 
-    <!-- VideoJS Script -->
-    <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
-    <script>
-        // Inicializar o player
-        document.addEventListener('DOMContentLoaded', function() {
-            var player = videojs('tokyvideo_player');
-            
-            // Configurações adicionais podem ser adicionadas aqui
-            player.ready(function() {
-                console.log('Player está pronto');
-            });
-        });
-    </script>
+    <h2>Episódios Extras</h2>
+    <div class="seasons" id="extras"></div>
+
+    <h2>Temporada 2</h2>
+    <div class="seasons" id="season2"></div>
+  </div>
+
+  <div class="footer">
+    <p>&copy; 2025 Tonikaku Kawaii. Todos os direitos reservados.</p>
+    <p><a href="https://kaio200816.github.io/projeto-streaming">Termos de Serviço</a> | <a href="https://kaio200816.github.io/projeto-streaming">Privacidade</a></p>
+  </div>
+
+  <script>
+    const episodes = {
+      season1: [
+        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/1.mp4",
+        "https://lightspeedst.net/s3/mp4/tonikaku-kawaii-dublado/sd/2.mp4",
+        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/3.mp4",
+        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/4.mp4",
+        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/5.mp4",
+        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/6.mp4",
+        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/7.mp4",
+        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/8.mp4",
+        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/9.mp4",
+        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/10.mp4",
+        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/11.mp4",
+        "https://www.anitube.vip/playerricas.php?name=apphd/122391.mp4&img=https://cdn.anicdn.net/media/videos/tmb/122391/default.jpg&pais=pais=BR&time=1746487042&url=https://cdn80.anicdn.net/appsd2/122391.mp4"
+      ],
+      extras: [
+        "https://lightspeedst.net/s1/mp4/tonikaku-kawaii-sns-dublado/sd/1.mp4",
+        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-seifuku-dublado/sd/1.mp4"
+      ],
+      season2: [
+        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/1.mp4",
+        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/2.mp4",
+        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/3.mp4",
+        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/4.mp4",
+        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/5.mp4",
+        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/6.mp4",
+        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/7.mp4",
+        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/8.mp4",
+        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/9.mp4",
+        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/10.mp4",
+        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/11.mp4",
+        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/12.mp4"
+      ]
+    };
+
+    function openWithReferrer(url) {
+      // Solução 1: Simular um link com referência
+      const a = document.createElement('a');
+      a.href = url;
+      a.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+      a.setAttribute('rel', 'noopener noreferrer');
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      
+      // Solução alternativa 2: Abrir com delay
+      /*
+      const newTab = window.open('about:blank', '_blank');
+      setTimeout(() => {
+        newTab.location.href = url;
+      }, 500);
+      */
+    }
+
+    function createEpisodeButtons(containerId, episodeList) {
+      const container = document.getElementById(containerId);
+      episodeList.forEach((url, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'episode-button';
+        btn.innerText = `Episódio ${index + 1}`;
+        btn.onclick = () => {
+          openWithReferrer(url);
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    createEpisodeButtons('season1', episodes.season1);
+    createEpisodeButtons('extras', episodes.extras);
+    createEpisodeButtons('season2', episodes.season2);
+  </script>
 </body>
 </html>
