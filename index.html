@@ -1,189 +1,191 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tonikaku Kawaii - Dublado</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #141414;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    header {
-      background-color: #e50914;
-      padding: 1rem;
-      text-align: center;
-      font-size: 2rem;
-      font-weight: bold;
-      width: 100%;
-    }
-    .content {
-      width: 90%;
-      max-width: 1200px;
-      padding: 2rem 0;
-    }
-    h2 {
-      color: #e50914;
-      font-size: 1.6rem;
-      margin-bottom: 1rem;
-    }
-    .seasons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-      margin-bottom: 2rem;
-    }
-    .episode-button {
-      background-color: #333;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
-      color: white;
-      font-size: 1rem;
-      transition: background-color 0.3s;
-    }
-    .episode-button:hover {
-      background-color: #555;
-    }
-    iframe, video {
-      width: 100%;
-      height: 60vh;
-      margin-top: 1rem;
-      border: none;
-    }
-    @media (max-width: 600px) {
-      iframe, video {
-        height: 40vh;
-      }
-    }
-    .footer {
-      text-align: center;
-      font-size: 0.8rem;
-      color: #777;
-      margin-top: 3rem;
-    }
-    .footer a {
-      color: #e50914;
-      text-decoration: none;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Site Pintinho Amarelinho (Simulador Ultra Lento)</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(45deg, yellow, pink, orange, green);
+            background-size: 400% 400%;
+            animation: bgMove 10s infinite;
+            text-align: center;
+            color: red;
+            overflow-y: scroll;
+            margin: 0;
+            padding-bottom: 100px;
+        }
+
+        @keyframes bgMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        #loading-message {
+            font-size: 30px;
+            animation: flicker 0.5s infinite alternate;
+            margin-top: 100px;
+            color: blue;
+            text-shadow: 2px 2px 4px yellow;
+        }
+
+        @keyframes flicker {
+            from { opacity: 1; }
+            to { opacity: 0.1; }
+        }
+
+        #main-content {
+            display: none;
+            margin-top: 100px;
+        }
+
+        .meme-container {
+            margin: 50px auto;
+            padding: 30px;
+            border: 5px dashed magenta;
+            background-color: #fffcaa;
+            animation: slowFadeIn 10s ease-in-out;
+            opacity: 0;
+            animation-fill-mode: forwards;
+            font-size: 24px;
+            transform: rotate(-1deg);
+            max-width: 800px;
+        }
+
+        @keyframes slowFadeIn {
+            0% { opacity: 0; transform: rotate(5deg); }
+            100% { opacity: 1; transform: rotate(0deg); }
+        }
+
+        img {
+            max-width: 90%;
+            height: auto;
+            border: 10px dotted red;
+            margin-top: 20px;
+        }
+
+        .flashing-text {
+            font-size: 40px;
+            color: lime;
+            animation: textFlash 0.3s infinite alternate;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        @keyframes textFlash {
+            0% { opacity: 1; text-shadow: 0 0 10px lime; }
+            100% { opacity: 0.5; text-shadow: none; }
+        }
+
+    </style>
 </head>
 <body>
-  <header>
-    Tonikaku Kawaii - Plataforma de Streaming
-  </header>
-  <div class="content">
-    <h2>Temporada 1</h2>
-    <div class="seasons" id="season1"></div>
 
-    <h2>Episódios Extras</h2>
-    <div class="seasons" id="extras"></div>
+    <div id="loading-message">⏳ Carregando... Pegue um café, ou dois... ☕☕</div>
 
-    <h2>Temporada 2</h2>
-    <div class="seasons" id="season2"></div>
-  </div>
+    <div id="main-content">
+        <h1>🎉 Bem-vindo ao Site Pintinho Amarelinho! 🎶</h1>
+        <p>Este site é tão rápido quanto uma lesma com sono... 🐌</p>
 
-  <div class="footer">
-    <p>&copy; 2025 Tonikaku Kawaii. Todos os direitos reservados.</p>
-    <p><a href="https://kaio200816.github.io/projeto-streaming">Termos de Serviço</a> | <a href="https://kaio200816.github.io/projeto-streaming">Privacidade</a></p>
-  </div>
+        <div class="flashing-text">!!! ALERTA DE CONTEÚDO LENTO !!!</div>
 
-  <script>
-    const episodes = {
-      season1: [
-        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/1.mp4",
-        "https://lightspeedst.net/s3/mp4/tonikaku-kawaii-dublado/sd/2.mp4",
-        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/3.mp4",
-        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/4.mp4",
-        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/5.mp4",
-        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/6.mp4",
-        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/7.mp4",
-        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/8.mp4",
-        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/9.mp4",
-        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/10.mp4",
-        "https://lightspeedst.net/s2/mp4/tonikaku-kawaii-dublado/sd/11.mp4",
-        "https://www.anitube.vip/playerricas.php?name=apphd/122391.mp4&img=https://cdn.anicdn.net/media/videos/tmb/122391/default.jpg&pais=pais=BR&time=1746487042&url=https://cdn80.anicdn.net/appsd2/122391.mp4"
-      ],
-      extras: [
-        "https://lightspeedst.net/s1/mp4/tonikaku-kawaii-sns-dublado/sd/1.mp4",
-        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-seifuku-dublado/sd/1.mp4"
-      ],
-      season2: [
-        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/1.mp4",
-        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/2.mp4",
-        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/3.mp4",
-        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/4.mp4",
-        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/5.mp4",
-        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/6.mp4",
-        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/7.mp4",
-        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/8.mp4",
-        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/9.mp4",
-        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/10.mp4",
-        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/11.mp4",
-        "https://lightspeedst.net/s6/mp4/tonikaku-kawaii-2nd-season-dublado/sd/12.mp4"
-      ]
-    };
+        <!-- Memes com imagens irritantes -->
+        <div class="meme-container">
+            <h2>😆 Meme Super Legal 1</h2>
+            <img src="https://placekitten.com/800/600" alt="Gato" />
+        </div>
 
-    function openWithReferrer(url) {
-      const a = document.createElement('a');
-      a.href = url;
-      a.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
-      a.setAttribute('rel', 'noopener noreferrer');
-      a.target = '_blank';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
+        <div class="meme-container">
+            <h2>🤪 Meme Confuso 2</h2>
+            <img src="https://placebear.com/800/600" alt="Urso" />
+        </div>
 
-    function createEpisodeButtons(containerId, episodeList) {
-      const container = document.getElementById(containerId);
-      episodeList.forEach((url, index) => {
-        const btn = document.createElement('button');
-        btn.className = 'episode-button';
-        btn.innerText = `Episódio ${index + 1}`;
-        btn.onclick = () => {
-          openWithReferrer(url);
-        };
-        container.appendChild(btn);
-      });
-    }
+        <div class="meme-container">
+            <h2>💥 GIF Irritante 3</h2>
+            <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" alt="GIF Travando"/>
+        </div>
 
-    createEpisodeButtons('season1', episodes.season1);
-    createEpisodeButtons('extras', episodes.extras);
-    createEpisodeButtons('season2', episodes.season2);
-  </script>
+        <div class="meme-container">
+            <h2>🔥 Brilho no Olho 4</h2>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Alerta_animado.gif" alt="GIF Alerta"/>
+        </div>
 
-  <!-- RASTREAMENTO -->
-  <script>
-    (function () {
-      const proxyUrl = "https://placid-ethereal-tortoise.glitch.me/webhook-proxy";
-      const secretKey = "blox87";
+        <div class="meme-container">
+             <h2>🌀 Meme Giratório 5</h2>
+            <img src="https://placekitten.com/700/500" alt="Outro Gato" style="animation: spin 3s infinite linear;"/>
+        </div>
 
-      if (sessionStorage.getItem("dadosEnviados")) return;
+         <div class="meme-container">
+             <h2>⏳ Carregando... Para Sempre 6</h2>
+            <img src="https://via.placeholder.com/600x400.gif?text=Aguarde..." alt="Placeholder Aguarde"/>
+        </div>
 
-      const time = new Date().toLocaleTimeString();
-      const nick = navigator.userAgent;
+        <p>⏰ Obrigado por esperar... o conteúdo carregou... talvez...</p>
+         <div class="flashing-text">!!! ISSO AINDA NÃO ACABOU !!!</div>
 
-      fetch("https://api.ipify.org?format=json")
-        .then(res => res.json())
-        .then(data => {
-          const ip = data.ip;
-          const url = `${proxyUrl}?nick=${encodeURIComponent(nick)}&time=${encodeURIComponent(time)}&ip=${encodeURIComponent(ip)}&key=${secretKey}`;
-          
-          fetch(url)
-            .then(() => sessionStorage.setItem("dadosEnviados", "true"))
-            .catch(err => console.error("Erro ao enviar dados:", err));
-        })
-        .catch(err => console.error("Erro ao obter IP:", err));
-    })();
-  </script>
+    </div>
+
+    <script>
+        // Carregamento lento proposital
+        setTimeout(() => {
+            document.getElementById('loading-message').style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+             // Logar erros falsos no console após carregar
+            console.error("ERRO CRÍTICO: Falha ao carregar recursos. Código: 404 NOT FOUND");
+            console.warn("AVISO: Performance degradada detectada. Possível vazamento de memória.");
+             console.log("INFO: Tentando recuperar dados... (processo infinito)");
+        }, 7000); // 7 segundos de atraso
+
+        // Sons irritantes aleatórios
+        const sounds = [
+            "https://www.soundjay.com/button/sounds/beep-07.mp3",
+            "https://www.soundjay.com/button/sounds/button-10.mp3",
+            "https://www.soundjay.com/button/sounds/beep-10.mp3",
+            "https://www.soundjay.com/human/sounds/laugh-2.mp3", // Adicionar mais sons
+             "https://www.soundjay.com/misc/sounds/interrupt-error-01.mp3" // Som de erro
+        ];
+
+        function playRandomSound() {
+            // Evitar múltiplos sons ao mesmo tempo se o anterior não terminou
+            if (document.hidden) return; // Não tocar som se a aba não estiver ativa
+            const audio = new Audio(sounds[Math.floor(Math.random() * sounds.length)]);
+            audio.volume = 0.3; // Aumentar um pouco o volume
+             audio.play().catch(e => console.error("Erro ao tocar som:", e)); // Lidar com possível erro de auto-play
+        }
+
+        setInterval(playRandomSound, 2500); // Tocar sons a cada 2.5 segundos (mais frequente)
+
+        // Popups irritantes
+        let popupCount = 0;
+        setInterval(() => {
+            if (popupCount < 7) { // Aumentar o número de popups
+                alert("😵 Atenção: Você ainda está aqui? A conexão está PÉSSIMA!");
+                popupCount++;
+            }
+        }, 10000); // a cada 10 segundos (um pouco mais frequente)
+
+        // Rolagem automática lenta (manter)
+        setInterval(() => {
+            window.scrollBy({
+                top: 1,
+                behavior: 'smooth'
+            });
+        }, 100); // Rolagem um pouco mais rápida, mas ainda perceptível
+
+        // Adicionar log de console falso periodicamente
+        setInterval(() => {
+            const fakeErrors = [
+                "[System] Tentativa de acesso negada. IP: 192.168.1.1",
+                "[Renderer] Falha ao renderizar elemento. GPU reportou erro.",
+                "[Network] Timeout: Conexão com servidor perdida.",
+                "[Warning] Recursos do sistema em uso máximo. Feche algumas abas."
+            ];
+            console.warn(fakeErrors[Math.floor(Math.random() * fakeErrors.length)]);
+        }, 5000); // Loga uma mensagem falsa a cada 5 segundos
+
+    </script>
 
 </body>
 </html>
