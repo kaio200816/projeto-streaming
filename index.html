@@ -1,191 +1,75 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Site Pintinho Amarelinho (Simulador Ultra Lento)</title>
-    <style>
-        body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            background: linear-gradient(45deg, yellow, pink, orange, green);
-            background-size: 400% 400%;
-            animation: bgMove 10s infinite;
-            text-align: center;
-            color: red;
-            overflow-y: scroll;
-            margin: 0;
-            padding-bottom: 100px;
-        }
+  <meta charset="UTF-8">
+  <title>Copiar Texto com Clique</title>
+  <style>
+    body {
+      background: #f0f8ff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
 
-        @keyframes bgMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+    h1 {
+      color: #333;
+    }
 
-        #loading-message {
-            font-size: 30px;
-            animation: flicker 0.5s infinite alternate;
-            margin-top: 100px;
-            color: blue;
-            text-shadow: 2px 2px 4px yellow;
-        }
+    .copy-box {
+      background: #fff;
+      border: 2px dashed #888;
+      padding: 20px;
+      margin: 20px auto;
+      width: fit-content;
+      max-width: 90%;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s;
+    }
 
-        @keyframes flicker {
-            from { opacity: 1; }
-            to { opacity: 0.1; }
-        }
+    .copy-box:hover {
+      background: #e0ffe0;
+      color: green;
+    }
 
-        #main-content {
-            display: none;
-            margin-top: 100px;
-        }
-
-        .meme-container {
-            margin: 50px auto;
-            padding: 30px;
-            border: 5px dashed magenta;
-            background-color: #fffcaa;
-            animation: slowFadeIn 10s ease-in-out;
-            opacity: 0;
-            animation-fill-mode: forwards;
-            font-size: 24px;
-            transform: rotate(-1deg);
-            max-width: 800px;
-        }
-
-        @keyframes slowFadeIn {
-            0% { opacity: 0; transform: rotate(5deg); }
-            100% { opacity: 1; transform: rotate(0deg); }
-        }
-
-        img {
-            max-width: 90%;
-            height: auto;
-            border: 10px dotted red;
-            margin-top: 20px;
-        }
-
-        .flashing-text {
-            font-size: 40px;
-            color: lime;
-            animation: textFlash 0.3s infinite alternate;
-            margin-top: 30px;
-            margin-bottom: 30px;
-            font-weight: bold;
-        }
-
-        @keyframes textFlash {
-            0% { opacity: 1; text-shadow: 0 0 10px lime; }
-            100% { opacity: 0.5; text-shadow: none; }
-        }
-
-    </style>
+    #copied-message {
+      color: green;
+      margin-top: 20px;
+      font-weight: bold;
+      display: none;
+    }
+  </style>
 </head>
 <body>
 
-    <div id="loading-message">⏳ Carregando... Pegue um café, ou dois... ☕☕</div>
+  <h1>🔁 Clique para copiar</h1>
 
-    <div id="main-content">
-        <h1>🎉 Bem-vindo ao Site Pintinho Amarelinho! 🎶</h1>
-        <p>Este site é tão rápido quanto uma lesma com sono... 🐌</p>
+  <div class="copy-box" onclick="copyText(this)">
+    loadstring(game:HttpGet("https://get.nathub.xyz/loader"))()
+  </div>
 
-        <div class="flashing-text">!!! ALERTA DE CONTEÚDO LENTO !!!</div>
+  <div class="copy-box" onclick="copyText(this)">
+    DlUZChbFSfNmtyPstjthAYUlhqMpjjxy
+  </div>
 
-        <!-- Memes com imagens irritantes -->
-        <div class="meme-container">
-            <h2>😆 Meme Super Legal 1</h2>
-            <img src="https://placekitten.com/800/600" alt="Gato" />
-        </div>
+  <div class="copy-box" onclick="copyText(this)">
+    https://cdngloopup.cc/delta_android/
+  </div>
 
-        <div class="meme-container">
-            <h2>🤪 Meme Confuso 2</h2>
-            <img src="https://placebear.com/800/600" alt="Urso" />
-        </div>
+  <div id="copied-message">✅ Copiado para a área de transferência!</div>
 
-        <div class="meme-container">
-            <h2>💥 GIF Irritante 3</h2>
-            <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" alt="GIF Travando"/>
-        </div>
-
-        <div class="meme-container">
-            <h2>🔥 Brilho no Olho 4</h2>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Alerta_animado.gif" alt="GIF Alerta"/>
-        </div>
-
-        <div class="meme-container">
-             <h2>🌀 Meme Giratório 5</h2>
-            <img src="https://placekitten.com/700/500" alt="Outro Gato" style="animation: spin 3s infinite linear;"/>
-        </div>
-
-         <div class="meme-container">
-             <h2>⏳ Carregando... Para Sempre 6</h2>
-            <img src="https://via.placeholder.com/600x400.gif?text=Aguarde..." alt="Placeholder Aguarde"/>
-        </div>
-
-        <p>⏰ Obrigado por esperar... o conteúdo carregou... talvez...</p>
-         <div class="flashing-text">!!! ISSO AINDA NÃO ACABOU !!!</div>
-
-    </div>
-
-    <script>
-        // Carregamento lento proposital
-        setTimeout(() => {
-            document.getElementById('loading-message').style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-             // Logar erros falsos no console após carregar
-            console.error("ERRO CRÍTICO: Falha ao carregar recursos. Código: 404 NOT FOUND");
-            console.warn("AVISO: Performance degradada detectada. Possível vazamento de memória.");
-             console.log("INFO: Tentando recuperar dados... (processo infinito)");
-        }, 7000); // 7 segundos de atraso
-
-        // Sons irritantes aleatórios
-        const sounds = [
-            "https://www.soundjay.com/button/sounds/beep-07.mp3",
-            "https://www.soundjay.com/button/sounds/button-10.mp3",
-            "https://www.soundjay.com/button/sounds/beep-10.mp3",
-            "https://www.soundjay.com/human/sounds/laugh-2.mp3", // Adicionar mais sons
-             "https://www.soundjay.com/misc/sounds/interrupt-error-01.mp3" // Som de erro
-        ];
-
-        function playRandomSound() {
-            // Evitar múltiplos sons ao mesmo tempo se o anterior não terminou
-            if (document.hidden) return; // Não tocar som se a aba não estiver ativa
-            const audio = new Audio(sounds[Math.floor(Math.random() * sounds.length)]);
-            audio.volume = 0.3; // Aumentar um pouco o volume
-             audio.play().catch(e => console.error("Erro ao tocar som:", e)); // Lidar com possível erro de auto-play
-        }
-
-        setInterval(playRandomSound, 2500); // Tocar sons a cada 2.5 segundos (mais frequente)
-
-        // Popups irritantes
-        let popupCount = 0;
-        setInterval(() => {
-            if (popupCount < 7) { // Aumentar o número de popups
-                alert("😵 Atenção: Você ainda está aqui? A conexão está PÉSSIMA!");
-                popupCount++;
-            }
-        }, 10000); // a cada 10 segundos (um pouco mais frequente)
-
-        // Rolagem automática lenta (manter)
-        setInterval(() => {
-            window.scrollBy({
-                top: 1,
-                behavior: 'smooth'
-            });
-        }, 100); // Rolagem um pouco mais rápida, mas ainda perceptível
-
-        // Adicionar log de console falso periodicamente
-        setInterval(() => {
-            const fakeErrors = [
-                "[System] Tentativa de acesso negada. IP: 192.168.1.1",
-                "[Renderer] Falha ao renderizar elemento. GPU reportou erro.",
-                "[Network] Timeout: Conexão com servidor perdida.",
-                "[Warning] Recursos do sistema em uso máximo. Feche algumas abas."
-            ];
-            console.warn(fakeErrors[Math.floor(Math.random() * fakeErrors.length)]);
-        }, 5000); // Loga uma mensagem falsa a cada 5 segundos
-
-    </script>
+  <script>
+    function copyText(element) {
+      const text = element.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const msg = document.getElementById("copied-message");
+        msg.style.display = "block";
+        setTimeout(() => msg.style.display = "none", 2000);
+      }).catch(err => {
+        alert("Erro ao copiar: " + err);
+      });
+    }
+  </script>
 
 </body>
 </html>
