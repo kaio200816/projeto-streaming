@@ -25,6 +25,7 @@
       font-size: 16px;
       cursor: pointer;
       transition: background 0.3s, color 0.3s;
+      white-space: pre-wrap;
     }
 
     .copy-box:hover {
@@ -44,22 +45,17 @@
 
   <h1>🔁 Clique para copiar</h1>
 
-  <div class="copy-box" onclick="copyText(this)">
-    loadstring(game:HttpGet("https://get.nathub.xyz/loader"))()
-  </div>
+  <div class="copy-box" onclick="copyText(this)">loadstring(game:HttpGet("https://get.nathub.xyz/loader"))()</div>
 
-  <div class="copy-box" onclick="copyText(this)"> PRVcDEfZHasyBbzbYxSrhzjaTiHhiiwz
-  </div>
+  <div class="copy-box" onclick="copyText(this)">PRVcDEfZHasyBbzbYxSrhzjaTiHhiiwz</div>
 
-  <div class="copy-box" onclick="copyText(this)">
-    https://cdngloopup.cc/delta_android/
-  </div>
+  <div class="copy-box" onclick="copyText(this)">https://cdngloopup.cc/delta_android/</div>
 
   <div id="copied-message">✅ Copiado para a área de transferência!</div>
 
   <script>
     function copyText(element) {
-      const text = element.textContent;
+      const text = element.innerText.trim();
       navigator.clipboard.writeText(text).then(() => {
         const msg = document.getElementById("copied-message");
         msg.style.display = "block";
