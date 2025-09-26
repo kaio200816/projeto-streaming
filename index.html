@@ -165,45 +165,34 @@ function protectElements() {
     };
 }
 
-// Proteção contra console
+// Proteção contra console (versão mais suave)
 function protectConsole() {
-    // Bloqueia console.log, console.warn, etc.
-    const noop = () => {};
-    Object.defineProperty(window, 'console', {
-        value: {
-            log: noop,
-            warn: noop,
-            error: noop,
-            info: noop,
-            debug: noop,
-            trace: noop,
-            dir: noop,
-            group: noop,
-            groupEnd: noop,
-            time: noop,
-            timeEnd: noop,
-            count: noop,
-            clear: noop,
-            table: noop,
-            assert: noop
-        },
-        writable: false,
-        configurable: false
-    });
-}
-
-// Proteção contra debugger
-function protectDebugger() {
-    // Detecta uso de debugger
-    setInterval(() => {
-        const start = performance.now();
-        debugger;
-        const end = performance.now();
-        
-        if (end - start > 100) {
+    // Apenas intercepta tentativas de debug, mas não quebra o console completamente
+    const originalLog = console.log;
+    console.log = function(...args) {
+        // Detecta tentativas de debug
+        if (args.some(arg => typeof arg === 'string' && 
+            (arg.includes('debug') || arg.includes('devtools') || arg.includes('inspect')))) {
             handleDevToolsDetection();
         }
-    }, 1000);
+        return originalLog.apply(this, args);
+    };
+}
+
+// Proteção contra debugger (versão mais suave)
+function protectDebugger() {
+    // Detecta uso de debugger apenas ocasionalmente
+    setInterval(() => {
+        if (devToolsOpen) {
+            const start = performance.now();
+            debugger;
+            const end = performance.now();
+            
+            if (end - start > 100) {
+                handleDevToolsDetection();
+            }
+        }
+    }, 3000); // Verifica a cada 3 segundos em vez de 1
 }
 
 // Proteção contra atalhos de teclado
@@ -294,20 +283,16 @@ function protectCodeIntegrity() {
     };
 }
 
-// Proteção contra modificação de propriedades
+// Proteção contra modificação de propriedades (versão mais suave)
 function protectProperties() {
-    // Torna variáveis críticas não configuráveis
-    Object.defineProperty(window, 'hoverCount', {
-        get: () => hoverCount,
-        set: (value) => {
-            if (devToolsOpen) {
-                handleDevToolsDetection();
-            } else {
-                hoverCount = value;
-            }
-        },
-        configurable: false
-    });
+    // Apenas monitora tentativas de modificação via window
+    const originalDefineProperty = Object.defineProperty;
+    Object.defineProperty = function(obj, prop, descriptor) {
+        if (obj === window && (prop === 'hoverCount' || prop === 'gameStarted')) {
+            handleDevToolsDetection();
+        }
+        return originalDefineProperty.call(this, obj, prop, descriptor);
+    };
 }
 
 // Proteção contra iframe injection
@@ -339,69 +324,32 @@ function protectExtensions() {
     });
 }
 
-// Proteção contra modificação de CSS
+// Proteção contra modificação de CSS (versão mais suave)
 function protectCSS() {
+    // Apenas adiciona proteção básica de seleção
     const style = document.createElement('style');
     style.textContent = `
-        * { 
-            -webkit-user-select: none !important;
-            -moz-user-select: none !important;
-            -ms-user-select: none !important;
-            user-select: none !important;
-        }
         body { 
-            -webkit-touch-callout: none !important;
-            -webkit-user-select: none !important;
-            -khtml-user-select: none !important;
-            -moz-user-select: none !important;
-            -ms-user-select: none !important;
-            user-select: none !important;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
     `;
     document.head.appendChild(style);
 }
 
-// Inicialização das proteções
+// Inicialização das proteções (versão simplificada)
 function initAntiDevTools() {
-    protectConsole();
-    protectElements();
     protectKeyboard();
     protectContextMenu();
     protectSelection();
-    obfuscateVariables();
-    protectCodeIntegrity();
-    protectProperties();
-    protectIframe();
-    protectSourceMaps();
-    protectExtensions();
     protectCSS();
     
-    // Monitoramento contínuo
-    setInterval(detectDevTools, 500);
-    setInterval(detectSuspiciousResize, 1000);
-    setInterval(protectDebugger, 1000);
-    
-    // Monitora mudanças no DOM
-    const observer = new MutationObserver(() => {
-        if (devToolsOpen) {
-            handleDevToolsDetection();
-        }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-    
-    // Proteção adicional contra fechamento de DevTools
-    let devToolsClosed = false;
-    setInterval(() => {
-        if (devToolsOpen && !devToolsClosed) {
-            devToolsClosed = true;
-            setTimeout(() => {
-                if (!devToolsOpen) {
-                    // DevTools foi fechado, mas ainda monitora
-                    devToolsClosed = false;
-                }
-            }, 1000);
-        }
-    }, 100);
+    // Monitoramento contínuo (menos agressivo)
+    setInterval(detectDevTools, 1000);
+    setInterval(detectSuspiciousResize, 2000);
+    setInterval(protectDebugger, 5000);
 }
 
 // Sistema de detecção de tempo (anti-burla)
@@ -425,94 +373,79 @@ function initTimeProtection() {
 
 // Proteção contra manipulação de performance
 function protectPerformance() {
-    const originalNow = performance.now;
-    let lastNow = originalNow();
+    // Apenas monitora, não substitui completamente
+    let lastNow = performance.now();
     
-    performance.now = function() {
-        const current = originalNow();
+    setInterval(() => {
+        const current = performance.now();
         const diff = current - lastNow;
         
-        // Detecta manipulação do performance.now
-        if (diff < 0 || diff > 10000) {
+        // Detecta manipulação do performance.now apenas se muito suspeito
+        if (diff < -1000 || diff > 50000) {
             handleDevToolsDetection();
         }
         
         lastNow = current;
-        return current;
-    };
+    }, 2000);
 }
 
-// Proteção contra modificação de Date
+// Proteção contra modificação de Date (versão mais suave)
 function protectDate() {
-    const originalDate = Date;
-    let lastDate = new originalDate();
+    // Apenas monitora mudanças suspeitas, não substitui Date
+    let lastDate = new Date();
     
-    Date = function(...args) {
-        const current = new originalDate(...args);
+    setInterval(() => {
+        const current = new Date();
         const diff = current - lastDate;
         
-        // Detecta manipulação de data
-        if (Math.abs(diff) > 5000) {
+        // Detecta manipulação de data apenas se muito suspeito
+        if (Math.abs(diff) > 10000) {
             handleDevToolsDetection();
         }
         
         lastDate = current;
-        return current;
-    };
-    
-    // Copia métodos estáticos
-    Object.setPrototypeOf(Date, originalDate);
-    Object.defineProperty(Date, 'now', {
-        value: originalDate.now,
-        writable: false,
-        configurable: false
-    });
+    }, 2000);
 }
 
-// Proteção contra modificação de Math.random
+// Proteção contra modificação de Math.random (versão mais suave)
 function protectRandom() {
-    const originalRandom = Math.random;
+    // Apenas monitora uso excessivo, não substitui Math.random
     let callCount = 0;
+    const originalRandom = Math.random;
     
+    setInterval(() => {
+        callCount = 0; // Reset contador a cada intervalo
+    }, 5000);
+    
+    // Intercepta apenas chamadas suspeitas
+    const originalRandomCall = Math.random;
     Math.random = function() {
         callCount++;
         
-        // Detecta uso excessivo de random (possível manipulação)
-        if (callCount > 1000) {
+        // Detecta uso excessivo de random apenas se muito suspeito
+        if (callCount > 5000) {
             handleDevToolsDetection();
         }
         
-        return originalRandom();
+        return originalRandomCall();
     };
 }
 
-// Proteção contra modificação de localStorage/sessionStorage
+// Proteção contra modificação de localStorage/sessionStorage (versão mais suave)
 function protectStorage() {
+    // Apenas monitora tentativas de debug via storage
     const originalSetItem = Storage.prototype.setItem;
-    const originalGetItem = Storage.prototype.getItem;
     
     Storage.prototype.setItem = function(key, value) {
-        if (key.includes('devtools') || key.includes('debug')) {
+        if (typeof key === 'string' && (key.includes('devtools') || key.includes('debug'))) {
             handleDevToolsDetection();
         }
         return originalSetItem.call(this, key, value);
     };
-    
-    Storage.prototype.getItem = function(key) {
-        if (key.includes('devtools') || key.includes('debug')) {
-            handleDevToolsDetection();
-        }
-        return originalGetItem.call(this, key);
-    };
 }
 
-// Inicia as proteções imediatamente
+// Inicia as proteções imediatamente (versão simplificada)
 initAntiDevTools();
-initTimeProtection();
-protectPerformance();
-protectDate();
-protectRandom();
-protectStorage();
 
 // ===========================================
 // CÓDIGO DO JOGO (PROTEGIDO)
