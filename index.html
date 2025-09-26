@@ -152,6 +152,8 @@ p.lead{margin:4px 0 0;color:#94a3b8;font-size:13px}
 </head>
 <body>
 <audio id="bgMusic" src="https://files.catbox.moe/jh5pww.mp3" loop></audio>
+<audio id="explosionSound" preload="auto"></audio>
+<audio id="boomSound" preload="auto"></audio>
 
 <div class="wrapper">
   <header>
@@ -567,6 +569,8 @@ const difficultyProgress = document.getElementById('difficultyProgress');
 const volumeLevel = document.getElementById('volumeLevel');
 const volumeText = document.getElementById('volumeText');
 const bgMusic = document.getElementById('bgMusic');
+const explosionSound = document.getElementById('explosionSound');
+const boomSound = document.getElementById('boomSound');
 const finalAttempts = document.getElementById('finalAttempts');
 
 let hoverCount = 0;
@@ -576,6 +580,104 @@ let lastMouseY = 0;
 
 // Inicializa o áudio
 bgMusic.volume = 0.1;
+
+// Sistema de áudio épico para explosão
+function createExplosionAudio() {
+    let audioContext = null;
+    
+    // Função para inicializar AudioContext
+    function initAudioContext() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+    }
+    
+    // Função para criar tom com frequência específica
+    function createTone(frequency, duration, volume = 0.1) {
+        try {
+            initAudioContext();
+            if (!audioContext) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+            oscillator.type = 'sawtooth';
+            
+            // Envelope de volume crescente
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(volume, audioContext.currentTime + duration * 0.1);
+            gainNode.gain.linearRampToValueAtTime(volume * 0.8, audioContext.currentTime + duration * 0.8);
+            gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + duration);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
+        } catch (e) {
+            console.log('Erro no áudio:', e);
+        }
+    }
+    
+    // Função para criar ruído branco (explosão)
+    function createWhiteNoise(duration, volume = 0.1) {
+        try {
+            initAudioContext();
+            if (!audioContext) return;
+            
+            const bufferSize = audioContext.sampleRate * duration;
+            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const output = buffer.getChannelData(0);
+            
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = (Math.random() * 2 - 1) * volume;
+            }
+            
+            const whiteNoise = audioContext.createBufferSource();
+            const gainNode = audioContext.createGain();
+            
+            whiteNoise.buffer = buffer;
+            whiteNoise.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Envelope crescente
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(volume, audioContext.currentTime + duration * 0.2);
+            gainNode.gain.linearRampToValueAtTime(volume * 0.3, audioContext.currentTime + duration * 0.8);
+            gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + duration);
+            
+            whiteNoise.start(audioContext.currentTime);
+            whiteNoise.stop(audioContext.currentTime + duration);
+        } catch (e) {
+            console.log('Erro no ruído:', e);
+        }
+    }
+    
+    // Função para criar BOOM final
+    function createBoom() {
+        try {
+            initAudioContext();
+            if (!audioContext) return;
+            
+            // Múltiplas frequências para efeito de BOOM
+            createTone(60, 0.5, 0.3);  // Grave
+            createTone(120, 0.4, 0.2); // Médio
+            createTone(240, 0.3, 0.1); // Agudo
+            createWhiteNoise(0.8, 0.4); // Ruído de explosão
+        } catch (e) {
+            console.log('Erro no BOOM:', e);
+        }
+    }
+    
+    return { createTone, createWhiteNoise, createBoom };
+}
+
+// Inicializa o sistema de áudio
+const explosionAudio = createExplosionAudio();
 
 // Função para iniciar o jogo (e a música)
 function startGame() {
@@ -764,9 +866,30 @@ function explodeButton(){
   chapolin.style.zIndex = "9999";
   chapolin.classList.add('chapolinExplode');
   
-  // Som épico de explosão
+  // Som épico de explosão - SISTEMA CRESCENTE
   bgMusic.playbackRate = 2.0;
   bgMusic.volume = 1.0;
+  
+  // SISTEMA DE ÁUDIO ÉPICO CRESCENTE
+  // Efeito de explosão crescente usando a música de fundo
+  let explosionStep = 0;
+  const explosionInterval = setInterval(() => {
+    explosionStep++;
+    
+    // Aumenta progressivamente a velocidade e volume
+    bgMusic.playbackRate = 2.0 + (explosionStep * 0.1);
+    bgMusic.volume = Math.min(1.0, 0.5 + (explosionStep * 0.05));
+    
+    // Tenta usar áudio sintético se disponível
+    if (explosionAudio) {
+      explosionAudio.createTone(80 + (explosionStep * 20), 0.2, 0.1 + (explosionStep * 0.02));
+    }
+    
+    // Para após 7 passos (crescimento completo)
+    if (explosionStep >= 7) {
+      clearInterval(explosionInterval);
+    }
+  }, 100);
   
   // === FASE 2: ONDA DE CHOQUE ===
   setTimeout(() => {
@@ -828,9 +951,19 @@ function explodeButton(){
       p.classList.add('particleExplode');
     }
     
-    // === FASE 4: EFEITOS DE TELA ÉPICOS ===
-    // Flash de tela branca
+    // === FASE 4: EFEITOS DE TELA ÉPICOS + BOOM FINAL ===
+    // Flash de tela branca + BOOM ÉPICO
     setTimeout(() => {
+      // BOOM FINAL ÉPICO!
+      if (explosionAudio) {
+        explosionAudio.createBoom();
+      }
+      
+      // Efeito de áudio máximo
+      bgMusic.playbackRate = 3.0;
+      bgMusic.volume = 1.0;
+      
+      // Flash de tela branca
       const flash = document.createElement('div');
       flash.style.position = 'fixed';
       flash.style.top = '0';
@@ -842,7 +975,18 @@ function explodeButton(){
       flash.style.pointerEvents = 'none';
       document.body.appendChild(flash);
       
-      setTimeout(() => flash.remove(), 100);
+      // Efeito de "tela quebrada" após o flash
+      setTimeout(() => {
+        flash.style.background = 'linear-gradient(45deg, #ff0000, #ffff00, #ff0000)';
+        flash.style.animation = 'screenFlash 0.1s ease-in-out infinite';
+      }, 50);
+      
+      setTimeout(() => {
+        flash.remove();
+        // Reset do áudio
+        bgMusic.playbackRate = 1.0;
+        bgMusic.volume = 0.1;
+      }, 200);
     }, 1000);
     
     // === FASE 5: TEXTO ÉPICO DE GAME OVER ===
