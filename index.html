@@ -308,11 +308,12 @@ p.lead{margin:4px 0 0;color:#94a3b8;font-size:13px}
     <h1>🎮 Jogo Fácil (Mas Nem Tanto!)</h1>
     <p class="lead">Pegue o botão verde antes que o Chapolin ou o tempo acabem!</p>
     
-    <div class="hud">
-      <div class="pill">🎯 Tentativas: <span id="attempts">0</span>/30</div>
-      <div class="pill">⚡ Dificuldade: <span id="difficulty">Fácil</span></div>
-      <div class="pill">🏆 Stage: <span id="stage">1</span></div>
-    </div>
+  <div class="hud">
+    <div class="pill">🎯 Tentativas: <span id="attempts">0</span>/30</div>
+    <div class="pill">⚡ Dificuldade: <span id="difficulty">Fácil</span></div>
+    <div class="pill">🏆 Stage: <span id="stage">1</span></div>
+    <div class="pill" id="cheatIndicator" style="display: none;">💎 CHEAT ATIVO</div>
+  </div>
     
     <div class="difficulty-meter">
       <div id="difficultyProgress" class="difficulty-progress"></div>
@@ -744,6 +745,21 @@ let trollMessages = [
 ];
 let currentTrollMessage = 0;
 
+// Sistema de Cheats (GTA Style)
+let cheatBuffer = '';
+let activeCheats = {
+  easy: false,
+  hard: false,
+  admin: false,
+  godmode: false
+};
+let cheatMessages = {
+  easy: "CHEAT ATIVADO: EASY MODE! 🎮",
+  hard: "CHEAT ATIVADO: HARD MODE! 😈",
+  admin: "CHEAT ATIVADO: ADMIN MODE! 👑",
+  godmode: "CHEAT ATIVADO: GOD MODE! 🛡️"
+};
+
 // Inicializa o áudio
 bgMusic.volume = 0.1;
 
@@ -950,6 +966,119 @@ function playErrorSound() {
     explosionAudio.createTone(150, 0.1, 0.1);
     explosionAudio.createTone(100, 0.1, 0.1);
     explosionAudio.createTone(50, 0.1, 0.1);
+  }
+}
+
+// SISTEMA DE CHEATS GTA STYLE! 🎮
+function initCheatSystem() {
+  document.addEventListener('keydown', (e) => {
+    // Adiciona a tecla ao buffer
+    cheatBuffer += e.key.toLowerCase();
+    
+    // Mantém apenas as últimas 10 teclas
+    if (cheatBuffer.length > 10) {
+      cheatBuffer = cheatBuffer.slice(-10);
+    }
+    
+    // Verifica cheats
+    checkCheats();
+  });
+}
+
+function checkCheats() {
+  const cheats = ['easy', 'hard', 'admin', 'godmode'];
+  
+  cheats.forEach(cheat => {
+    if (cheatBuffer.endsWith(cheat)) {
+      activateCheat(cheat);
+    }
+  });
+}
+
+function activateCheat(cheat) {
+  // Desativa outros cheats
+  Object.keys(activeCheats).forEach(key => {
+    activeCheats[key] = false;
+  });
+  
+  // Ativa o cheat
+  activeCheats[cheat] = true;
+  
+  // Mostra mensagem
+  showCheatMessage(cheat);
+  
+  // Som de cheat
+  playCheatSound();
+  
+  // Mostra indicador visual
+  const cheatIndicator = document.getElementById('cheatIndicator');
+  cheatIndicator.style.display = 'block';
+  cheatIndicator.style.background = '#ff0000';
+  cheatIndicator.style.color = '#ffffff';
+  cheatIndicator.textContent = `💎 ${cheat.toUpperCase()} ATIVO`;
+  
+  // Limpa buffer
+  cheatBuffer = '';
+  
+  // Aplica efeitos do cheat
+  applyCheatEffects(cheat);
+}
+
+function showCheatMessage(cheat) {
+  const message = document.createElement('div');
+  message.style.cssText = `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(45deg, #ff0000, #ffff00);
+    color: #000;
+    padding: 20px 40px;
+    border-radius: 15px;
+    font-size: 2rem;
+    font-weight: bold;
+    z-index: 10000;
+    animation: textReveal 0.5s ease-out forwards;
+    box-shadow: 0 0 30px rgba(255,255,0,0.8);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  `;
+  message.textContent = cheatMessages[cheat];
+  document.body.appendChild(message);
+  
+  setTimeout(() => {
+    message.remove();
+  }, 3000);
+}
+
+function playCheatSound() {
+  if (explosionAudio) {
+    explosionAudio.createTone(200, 0.2, 0.2);
+    explosionAudio.createTone(300, 0.2, 0.2);
+    explosionAudio.createTone(400, 0.2, 0.2);
+  }
+}
+
+function applyCheatEffects(cheat) {
+  switch(cheat) {
+    case 'easy':
+      // Botão fica maior e mais lento
+      btn1.style.transform = 'scale(1.5)';
+      btn1.style.transition = 'all 1s ease';
+      break;
+    case 'hard':
+      // Botão fica menor e mais rápido
+      btn1.style.transform = 'scale(0.7)';
+      btn1.style.transition = 'all 0.1s ease';
+      break;
+    case 'admin':
+      // Botão fica no centro e não foge
+      centerButton();
+      btn1.style.transition = 'none';
+      break;
+    case 'godmode':
+      // Efeito visual épico
+      document.body.style.background = 'linear-gradient(45deg, #ff0000, #ffff00, #00ff00)';
+      break;
   }
 }
 
@@ -1526,7 +1655,7 @@ gameContainer.addEventListener('mousemove', (e) => {
     lastMouseY = e.clientY;
 });
 
-// Hover no botão (versão troll épica)
+// Hover no botão (versão troll épica com cheats)
 btn1.addEventListener('mouseenter', ()=>{
   startGame(); // Inicia o jogo no primeiro hover
   hoverCount++;
@@ -1537,39 +1666,39 @@ btn1.addEventListener('mouseenter', ()=>{
   updateDifficulty();
   updateVolume();
 
-  // EFEITOS TROLL BASEADOS NA DIFICULDADE
-  if (hoverCount >= 3) {
+  // EFEITOS TROLL BASEADOS NA DIFICULDADE (respeitando cheats)
+  if (hoverCount >= 3 && !activeCheats.easy) {
     // Risada do Chapolin quando o botão foge
     playChapolinLaugh();
   }
   
-  if (hoverCount >= 5) {
+  if (hoverCount >= 5 && !activeCheats.easy) {
     // Efeito de lag na tela
     addLagEffect();
   }
   
-  if (hoverCount >= 8) {
+  if (hoverCount >= 8 && !activeCheats.easy) {
     // Cria botões falsos
     createFakeButtons();
   }
   
-  if (hoverCount >= 12) {
+  if (hoverCount >= 12 && !activeCheats.easy) {
     // Efeito de glitch
     addGlitchEffect();
   }
   
-  if (hoverCount >= 15) {
+  if (hoverCount >= 15 && !activeCheats.easy) {
     // Flicker na tela
     addScreenFlicker();
   }
   
-  if (hoverCount >= 20) {
+  if (hoverCount >= 20 && !activeCheats.easy) {
     // Mensagem troll
     showTrollMessage();
   }
   
   // EFEITO ESPECIAL NO 29 (quase lá!)
-  if (hoverCount === 29) {
+  if (hoverCount === 29 && !activeCheats.easy) {
     // Cria múltiplos botões falsos
     createFakeButtons();
     createFakeButtons(); // Duplo!
@@ -1602,15 +1731,42 @@ btn1.addEventListener('mouseenter', ()=>{
     }, 2000);
   }
 
-  if(hoverCount >=5 && hoverCount <30){
+  if(hoverCount >=5 && hoverCount <30 && !activeCheats.easy){
     chapolinTap();
   }
 
   if(hoverCount >=30){
     explodeButton();
   } else {
-    // Aumenta a velocidade de fuga conforme a dificuldade
-    const escapeSpeed = Math.min(50 + (hoverCount * 5), 200); // Mais rápido!
+    // SISTEMA DE FUGA BASEADO NOS CHEATS
+    if (activeCheats.admin) {
+      // Admin mode: botão não foge
+      return;
+    }
+    
+    if (activeCheats.godmode) {
+      // God mode: botão foge muito devagar
+      setTimeout(() => {
+        const pos = getRandomPosition();
+        btn1.style.left = pos.x + "px";
+        btn1.style.top = pos.y + "px";
+      }, 2000);
+      return;
+    }
+    
+    // Cálculo de velocidade baseado nos cheats
+    let escapeSpeed = Math.min(50 + (hoverCount * 5), 200);
+    let transitionSpeed = Math.max(0.1, 0.5 - hoverCount * 0.015);
+    
+    if (activeCheats.easy) {
+      escapeSpeed *= 3; // 3x mais lento
+      transitionSpeed *= 2; // 2x mais lento
+    }
+    
+    if (activeCheats.hard) {
+      escapeSpeed *= 0.5; // 2x mais rápido
+      transitionSpeed *= 0.5; // 2x mais rápido
+    }
     
     setTimeout(() => {
       // 30% de chance de movimento aleatório, 70% de fuga inteligente
@@ -1621,8 +1777,6 @@ btn1.addEventListener('mouseenter', ()=>{
         pos = getPositionAwayFromCursor(); // Foge do cursor
       }
       
-      // Velocidade de transição baseada na dificuldade
-      const transitionSpeed = Math.max(0.1, 0.5 - hoverCount * 0.015);
       btn1.style.transition = `all ${transitionSpeed}s ease`;
       btn1.style.left = pos.x + "px";
       btn1.style.top = pos.y + "px";
@@ -1630,22 +1784,49 @@ btn1.addEventListener('mouseenter', ()=>{
   }
 });
 
-// Clique no botão (versão troll épica)
+// Clique no botão (versão troll épica com cheats)
 btn1.addEventListener('click', ()=>{
   if(hoverCount < 30){
-    // Efeito de clique troll
-    playErrorSound();
-    addGlitchEffect();
+    // Efeito de clique troll (apenas se não estiver em easy mode)
+    if (!activeCheats.easy) {
+      playErrorSound();
+      addGlitchEffect();
+    }
     
-    // Mensagem troll de vitória falsa
+    // SISTEMA DE VITÓRIA BASEADO NOS CHEATS
+    if (activeCheats.admin) {
+      // Admin mode: vitória instantânea
+      showVictorySequence();
+      return;
+    }
+    
+    if (activeCheats.godmode) {
+      // God mode: vitória após 5 tentativas
+      if (hoverCount >= 5) {
+        showVictorySequence();
+        return;
+      }
+    }
+    
+    if (activeCheats.easy) {
+      // Easy mode: vitória após 10 tentativas
+      if (hoverCount >= 10) {
+        showVictorySequence();
+        return;
+      }
+    }
+    
+    // Modo normal: vitória após 25 tentativas
     if (hoverCount < 25) {
-      showTrollMessage();
-      // Botão foge mesmo após clique
-      setTimeout(() => {
-        const pos = getPositionAwayFromCursor();
-        btn1.style.left = pos.x + "px";
-        btn1.style.top = pos.y + "px";
-      }, 100);
+      if (!activeCheats.easy) {
+        showTrollMessage();
+        // Botão foge mesmo após clique
+        setTimeout(() => {
+          const pos = getPositionAwayFromCursor();
+          btn1.style.left = pos.x + "px";
+          btn1.style.top = pos.y + "px";
+        }, 100);
+      }
     } else {
       // VITÓRIA REAL ÉPICA COM MARTELO!
       showVictorySequence();
@@ -1658,6 +1839,9 @@ document.getElementById('playAgain').onclick = ()=>location.reload();
 
 // Inicia a música ao clicar em qualquer lugar da página (para desbloquear autoplay)
 document.addEventListener('click', startGame);
+
+// Inicializa o sistema de cheats
+initCheatSystem();
 
 // Tenta iniciar a música automaticamente após um pequeno delay
 setTimeout(() => {
