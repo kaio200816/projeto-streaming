@@ -679,13 +679,33 @@ function createExplosionAudio() {
 // Inicializa o sistema de áudio
 const explosionAudio = createExplosionAudio();
 
+// Função para garantir que a música continue tocando
+function ensureMusicPlaying() {
+    if (gameStarted && bgMusic.paused) {
+        bgMusic.play().catch(e => {
+            console.log('Erro ao retomar música:', e);
+        });
+    }
+}
+
+// Verifica periodicamente se a música está tocando
+setInterval(ensureMusicPlaying, 1000);
+
 // Função para iniciar o jogo (e a música)
 function startGame() {
     if (!gameStarted) {
         gameStarted = true;
+        // Tenta tocar a música
         bgMusic.play().catch(e => {
             console.log('Autoplay bloqueado, clique para iniciar');
         });
+        
+        // Garante que a música está tocando
+        if (bgMusic.paused) {
+            bgMusic.play().catch(e => {
+                console.log('Erro ao tocar música:', e);
+            });
+        }
     }
 }
 
@@ -986,6 +1006,10 @@ function explodeButton(){
         // Reset do áudio
         bgMusic.playbackRate = 1.0;
         bgMusic.volume = 0.1;
+        // Garante que a música continue tocando
+        if (bgMusic.paused) {
+          bgMusic.play().catch(e => console.log('Erro ao retomar música após explosão:', e));
+        }
       }, 200);
     }, 1000);
     
@@ -1097,6 +1121,32 @@ document.getElementById('playAgain').onclick = ()=>location.reload();
 
 // Inicia a música ao clicar em qualquer lugar da página (para desbloquear autoplay)
 document.addEventListener('click', startGame);
+
+// Tenta iniciar a música automaticamente após um pequeno delay
+setTimeout(() => {
+    if (!gameStarted) {
+        startGame();
+    }
+}, 500);
+
+// Adiciona evento para quando a música para
+bgMusic.addEventListener('ended', () => {
+    if (gameStarted) {
+        bgMusic.currentTime = 0;
+        bgMusic.play().catch(e => console.log('Erro ao reiniciar música:', e));
+    }
+});
+
+// Adiciona evento para quando a música é pausada
+bgMusic.addEventListener('pause', () => {
+    if (gameStarted) {
+        setTimeout(() => {
+            if (bgMusic.paused) {
+                bgMusic.play().catch(e => console.log('Erro ao retomar música pausada:', e));
+            }
+        }, 100);
+    }
+});
 </script>
 </body>
 </html>
