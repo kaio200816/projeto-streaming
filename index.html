@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Jogo Troll EXTREMO 5.0 - Dificuldade Aumentada</title>
+<title>Jogo Fácil EXTREMO</title>
 <style>
 :root{--bg:#0f1724;--card:#0b1220;--accent:#10b981;}
 html,body{height:100%;margin:0;font-family:Inter,sans-serif;color:#e6eef8;background:#050d1a;display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -27,7 +27,7 @@ p.lead{margin:4px 0 0;color:#94a3b8;font-size:13px}
 .volume-bar{width:60px;height:4px;background:#374151;border-radius:2px;overflow:hidden;}
 .volume-level{height:100%;background:#10b981;width:0%;transition:width 0.3s ease;}
 .win-screen{text-align:center;padding:40px;}
-.win-screen h2{font-size:32px;margin-bottom:20px;background:linear-gradient(45deg, #10b981, #3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.win-screen h2{font-size:32px;margin-bottom:20px;background:linear-gradient(45deg, #10b981, #3b82f6);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 #playAgain{padding:15px 30px;font-size:18px;margin-top:20px;}
 
 @keyframes pulse {
@@ -86,6 +86,438 @@ p.lead{margin:4px 0 0;color:#94a3b8;font-size:13px}
 </div>
 
 <script>
+// ===========================================
+// SISTEMA ANTI-DEVTOOL - PROTEÇÃO MÁXIMA
+// ===========================================
+
+// Variáveis de controle anti-devtool
+let devToolsOpen = false;
+let devToolsAttempts = 0;
+let isDebugging = false;
+let lastWindowSize = { width: window.innerWidth, height: window.innerHeight };
+
+// Função para detectar DevTools aberto
+function detectDevTools() {
+    const threshold = 160;
+    const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+    const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+    
+    if (widthThreshold || heightThreshold) {
+        if (!devToolsOpen) {
+            devToolsOpen = true;
+            devToolsAttempts++;
+            handleDevToolsDetection();
+        }
+    } else {
+        devToolsOpen = false;
+    }
+}
+
+// Função para lidar com detecção do DevTools
+function handleDevToolsDetection() {
+    // Aumenta a dificuldade drasticamente
+    hoverCount += 10;
+    attemptsEl.textContent = hoverCount;
+    
+    // Efeito visual de punição
+    document.body.style.background = '#ff0000';
+    document.body.style.animation = 'shake 0.1s ease-in-out infinite';
+    
+    // Mostra aviso
+    alert(`🚫 DEVTOOLS DETECTADO! 🚫\nTentativa ${devToolsAttempts}/3\nO jogo ficou mais difícil!`);
+    
+    // Reset visual após 2 segundos
+    setTimeout(() => {
+        document.body.style.background = '#050d1a';
+        document.body.style.animation = 'none';
+    }, 2000);
+    
+    // Game over após 3 tentativas
+    if (devToolsAttempts >= 3) {
+        alert('💀 GAME OVER! 💀\nMuitas tentativas de burlar o sistema!');
+        location.href = 'about:blank';
+    }
+}
+
+// Detecção de redimensionamento suspeito
+function detectSuspiciousResize() {
+    const currentWidth = window.innerWidth;
+    const currentHeight = window.innerHeight;
+    
+    // Detecta mudanças bruscas de tamanho (possível DevTools)
+    if (Math.abs(currentWidth - lastWindowSize.width) > 200 || 
+        Math.abs(currentHeight - lastWindowSize.height) > 200) {
+        handleDevToolsDetection();
+    }
+    
+    lastWindowSize = { width: currentWidth, height: currentHeight };
+}
+
+// Proteção contra inspeção de elementos
+function protectElements() {
+    // Remove event listeners se alguém tentar inspecionar
+    const originalAddEventListener = Element.prototype.addEventListener;
+    Element.prototype.addEventListener = function(type, listener, options) {
+        if (type === 'contextmenu' || type === 'keydown') {
+            return;
+        }
+        return originalAddEventListener.call(this, type, listener, options);
+    };
+}
+
+// Proteção contra console
+function protectConsole() {
+    // Bloqueia console.log, console.warn, etc.
+    const noop = () => {};
+    Object.defineProperty(window, 'console', {
+        value: {
+            log: noop,
+            warn: noop,
+            error: noop,
+            info: noop,
+            debug: noop,
+            trace: noop,
+            dir: noop,
+            group: noop,
+            groupEnd: noop,
+            time: noop,
+            timeEnd: noop,
+            count: noop,
+            clear: noop,
+            table: noop,
+            assert: noop
+        },
+        writable: false,
+        configurable: false
+    });
+}
+
+// Proteção contra debugger
+function protectDebugger() {
+    // Detecta uso de debugger
+    setInterval(() => {
+        const start = performance.now();
+        debugger;
+        const end = performance.now();
+        
+        if (end - start > 100) {
+            handleDevToolsDetection();
+        }
+    }, 1000);
+}
+
+// Proteção contra atalhos de teclado
+function protectKeyboard() {
+    document.addEventListener('keydown', (e) => {
+        // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S
+        if (e.key === 'F12' || 
+            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+            (e.ctrlKey && (e.key === 'u' || e.key === 's'))) {
+            e.preventDefault();
+            handleDevToolsDetection();
+            return false;
+        }
+    });
+}
+
+// Proteção contra clique direito
+function protectContextMenu() {
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        handleDevToolsDetection();
+        return false;
+    });
+}
+
+// Proteção contra seleção de texto
+function protectSelection() {
+    document.addEventListener('selectstart', (e) => {
+        e.preventDefault();
+        return false;
+    });
+}
+
+// Ofuscação de variáveis importantes
+function obfuscateVariables() {
+    // Renomeia variáveis críticas
+    window['_0x1a2b'] = hoverCount;
+    window['_0x3c4d'] = gameStarted;
+    window['_0x5e6f'] = devToolsOpen;
+}
+
+// Inicialização das proteções
+function initAntiDevTools() {
+    protectConsole();
+    protectElements();
+    protectKeyboard();
+    protectContextMenu();
+    protectSelection();
+    obfuscateVariables();
+    
+    // Monitoramento contínuo
+    setInterval(detectDevTools, 500);
+    setInterval(detectSuspiciousResize, 1000);
+    setInterval(protectDebugger, 1000);
+    
+    // Monitora mudanças no DOM
+    const observer = new MutationObserver(() => {
+        if (devToolsOpen) {
+            handleDevToolsDetection();
+        }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+}
+
+// Proteção adicional contra manipulação de código
+function protectCodeIntegrity() {
+    // Protege funções críticas
+    const originalEval = window.eval;
+    window.eval = function(code) {
+        handleDevToolsDetection();
+        return originalEval.call(this, code);
+    };
+    
+    // Protege Function constructor
+    const originalFunction = window.Function;
+    window.Function = function(...args) {
+        handleDevToolsDetection();
+        return originalFunction.apply(this, args);
+    };
+    
+    // Protege setTimeout/setInterval
+    const originalSetTimeout = window.setTimeout;
+    window.setTimeout = function(fn, delay) {
+        if (typeof fn === 'string') {
+            handleDevToolsDetection();
+        }
+        return originalSetTimeout.call(this, fn, delay);
+    };
+}
+
+// Proteção contra modificação de propriedades
+function protectProperties() {
+    // Torna variáveis críticas não configuráveis
+    Object.defineProperty(window, 'hoverCount', {
+        get: () => hoverCount,
+        set: (value) => {
+            if (devToolsOpen) {
+                handleDevToolsDetection();
+            } else {
+                hoverCount = value;
+            }
+        },
+        configurable: false
+    });
+}
+
+// Proteção contra iframe injection
+function protectIframe() {
+    if (window !== window.top) {
+        handleDevToolsDetection();
+    }
+}
+
+// Proteção contra source maps
+function protectSourceMaps() {
+    // Remove source maps se existirem
+    const scripts = document.querySelectorAll('script');
+    scripts.forEach(script => {
+        if (script.src && script.src.includes('sourcemap')) {
+            script.remove();
+        }
+    });
+}
+
+// Proteção contra extensões do navegador
+function protectExtensions() {
+    // Detecta extensões suspeitas
+    const suspiciousProps = ['chrome', 'browser', 'extension'];
+    suspiciousProps.forEach(prop => {
+        if (window[prop]) {
+            handleDevToolsDetection();
+        }
+    });
+}
+
+// Proteção contra modificação de CSS
+function protectCSS() {
+    const style = document.createElement('style');
+    style.textContent = `
+        * { 
+            -webkit-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+        }
+        body { 
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            -khtml-user-select: none !important;
+            -moz-user-select: none !important;
+            -ms-user-select: none !important;
+            user-select: none !important;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Inicialização das proteções
+function initAntiDevTools() {
+    protectConsole();
+    protectElements();
+    protectKeyboard();
+    protectContextMenu();
+    protectSelection();
+    obfuscateVariables();
+    protectCodeIntegrity();
+    protectProperties();
+    protectIframe();
+    protectSourceMaps();
+    protectExtensions();
+    protectCSS();
+    
+    // Monitoramento contínuo
+    setInterval(detectDevTools, 500);
+    setInterval(detectSuspiciousResize, 1000);
+    setInterval(protectDebugger, 1000);
+    
+    // Monitora mudanças no DOM
+    const observer = new MutationObserver(() => {
+        if (devToolsOpen) {
+            handleDevToolsDetection();
+        }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    
+    // Proteção adicional contra fechamento de DevTools
+    let devToolsClosed = false;
+    setInterval(() => {
+        if (devToolsOpen && !devToolsClosed) {
+            devToolsClosed = true;
+            setTimeout(() => {
+                if (!devToolsOpen) {
+                    // DevTools foi fechado, mas ainda monitora
+                    devToolsClosed = false;
+                }
+            }, 1000);
+        }
+    }, 100);
+}
+
+// Sistema de detecção de tempo (anti-burla)
+function initTimeProtection() {
+    let startTime = Date.now();
+    let lastCheck = startTime;
+    
+    setInterval(() => {
+        const currentTime = Date.now();
+        const expectedTime = lastCheck + 1000; // Espera 1 segundo entre checks
+        const timeDiff = Math.abs(currentTime - expectedTime);
+        
+        // Se a diferença for muito grande, pode ser manipulação de tempo
+        if (timeDiff > 2000) {
+            handleDevToolsDetection();
+        }
+        
+        lastCheck = currentTime;
+    }, 1000);
+}
+
+// Proteção contra manipulação de performance
+function protectPerformance() {
+    const originalNow = performance.now;
+    let lastNow = originalNow();
+    
+    performance.now = function() {
+        const current = originalNow();
+        const diff = current - lastNow;
+        
+        // Detecta manipulação do performance.now
+        if (diff < 0 || diff > 10000) {
+            handleDevToolsDetection();
+        }
+        
+        lastNow = current;
+        return current;
+    };
+}
+
+// Proteção contra modificação de Date
+function protectDate() {
+    const originalDate = Date;
+    let lastDate = new originalDate();
+    
+    Date = function(...args) {
+        const current = new originalDate(...args);
+        const diff = current - lastDate;
+        
+        // Detecta manipulação de data
+        if (Math.abs(diff) > 5000) {
+            handleDevToolsDetection();
+        }
+        
+        lastDate = current;
+        return current;
+    };
+    
+    // Copia métodos estáticos
+    Object.setPrototypeOf(Date, originalDate);
+    Object.defineProperty(Date, 'now', {
+        value: originalDate.now,
+        writable: false,
+        configurable: false
+    });
+}
+
+// Proteção contra modificação de Math.random
+function protectRandom() {
+    const originalRandom = Math.random;
+    let callCount = 0;
+    
+    Math.random = function() {
+        callCount++;
+        
+        // Detecta uso excessivo de random (possível manipulação)
+        if (callCount > 1000) {
+            handleDevToolsDetection();
+        }
+        
+        return originalRandom();
+    };
+}
+
+// Proteção contra modificação de localStorage/sessionStorage
+function protectStorage() {
+    const originalSetItem = Storage.prototype.setItem;
+    const originalGetItem = Storage.prototype.getItem;
+    
+    Storage.prototype.setItem = function(key, value) {
+        if (key.includes('devtools') || key.includes('debug')) {
+            handleDevToolsDetection();
+        }
+        return originalSetItem.call(this, key, value);
+    };
+    
+    Storage.prototype.getItem = function(key) {
+        if (key.includes('devtools') || key.includes('debug')) {
+            handleDevToolsDetection();
+        }
+        return originalGetItem.call(this, key);
+    };
+}
+
+// Inicia as proteções imediatamente
+initAntiDevTools();
+initTimeProtection();
+protectPerformance();
+protectDate();
+protectRandom();
+protectStorage();
+
+// ===========================================
+// CÓDIGO DO JOGO (PROTEGIDO)
+// ===========================================
+
 const gameContainer = document.querySelector('.game');
 const btn1 = document.getElementById('btn1');
 const chapolin = document.getElementById('chapolin');
