@@ -140,6 +140,39 @@ p.lead{margin:4px 0 0;color:#94a3b8;font-size:13px}
   }
 }
 
+@keyframes chapolinTextShake {
+  0%, 100% { 
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  10% { 
+    transform: translate(-5px, -3px) rotate(-1deg) scale(1.05);
+  }
+  20% { 
+    transform: translate(5px, 3px) rotate(1deg) scale(1.05);
+  }
+  30% { 
+    transform: translate(-3px, 2px) rotate(-0.5deg) scale(1.03);
+  }
+  40% { 
+    transform: translate(3px, -2px) rotate(0.5deg) scale(1.03);
+  }
+  50% { 
+    transform: translate(-2px, 1px) rotate(-0.2deg) scale(1.02);
+  }
+  60% { 
+    transform: translate(2px, -1px) rotate(0.2deg) scale(1.02);
+  }
+  70% { 
+    transform: translate(-1px, 0px) rotate(-0.1deg) scale(1.01);
+  }
+  80% { 
+    transform: translate(1px, 0px) rotate(0.1deg) scale(1.01);
+  }
+  90% { 
+    transform: translate(0px, 0px) rotate(0deg) scale(1);
+  }
+}
+
 .shake { animation: shake 0.1s ease-in-out infinite; }
 .megaShake { animation: megaShake 0.5s ease-in-out infinite; }
 .chapolinSpin { animation: chapolinSpin 0.3s ease-in-out infinite; }
@@ -148,6 +181,7 @@ p.lead{margin:4px 0 0;color:#94a3b8;font-size:13px}
 .particleExplode { animation: particleExplode 2s ease-out forwards; }
 .shockwave { animation: shockwave 1s ease-out forwards; }
 .textReveal { animation: textReveal 1s ease-out forwards; }
+.chapolinTextShake { animation: chapolinTextShake 0.3s ease-in-out infinite; }
 </style>
 </head>
 <body>
@@ -1013,45 +1047,98 @@ function explodeButton(){
       }, 200);
     }, 1000);
     
-    // === FASE 5: TEXTO ÉPICO DE GAME OVER ===
+    // === FASE 5: TEXTO ÉPICO DE GAME OVER - SEMPRE NO MEIO ===
     setTimeout(() => {
+      // Remove qualquer texto anterior
+      const existingText = document.getElementById('gameOverOverlay');
+      if (existingText) {
+        existingText.remove();
+      }
+      
       const gameOverText = document.createElement('div');
+      gameOverText.id = 'gameOverOverlay';
       gameOverText.innerHTML = `
         <div style="
           position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          font-size: 4rem;
-          font-weight: bold;
-          color: #ff0000;
-          text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000, 0 0 60px #ff0000;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: rgba(0, 0, 0, 0.9);
+          display: flex;
+          align-items: center;
+          justify-content: center;
           z-index: 10001;
-          text-align: center;
           font-family: 'Arial Black', sans-serif;
         ">
-          💥 CHAPOLIN DESTRUIU TUDO! 💥<br>
-          <span style="font-size: 2rem; color: #ffff00;">GAME OVER ÉPICO!</span>
+          <div style="
+            text-align: center;
+            animation: textReveal 1s ease-out forwards;
+          ">
+            <div style="
+              font-size: 6rem;
+              font-weight: bold;
+              color: #ff0000;
+              text-shadow: 0 0 30px #ff0000, 0 0 60px #ff0000, 0 0 90px #ff0000;
+              margin-bottom: 20px;
+              animation: chapolinTextShake 0.3s ease-in-out infinite;
+            ">
+              💥💥💥 CHAPOLIN 💥💥💥
+            </div>
+            <div style="
+              font-size: 4rem;
+              font-weight: bold;
+              color: #ffff00;
+              text-shadow: 0 0 20px #ffff00, 0 0 40px #ffff00;
+              margin-bottom: 30px;
+              animation: textReveal 1.5s ease-out forwards;
+            ">
+              DESTRUIU TUDO!
+            </div>
+            <div style="
+              font-size: 3rem;
+              font-weight: bold;
+              color: #ff8800;
+              text-shadow: 0 0 15px #ff8800, 0 0 30px #ff8800;
+              margin-bottom: 40px;
+              animation: textReveal 2s ease-out forwards;
+            ">
+              🎆 EXPLOSÃO ÉPICA! 🎆
+            </div>
+            <div style="
+              font-size: 2rem;
+              color: #ffffff;
+              text-shadow: 0 0 10px #ffffff;
+              margin-bottom: 50px;
+              animation: textReveal 2.5s ease-out forwards;
+            ">
+              GAME OVER TOTAL!
+            </div>
+            <div style="
+              font-size: 1.5rem;
+              color: #cccccc;
+              animation: textReveal 3s ease-out forwards;
+            ">
+              Clique para recarregar e tentar novamente...
+            </div>
+          </div>
         </div>
       `;
-      gameOverText.classList.add('textReveal');
       document.body.appendChild(gameOverText);
       
-      // Remove texto após 3 segundos
+      // Adiciona evento de clique para recarregar
+      gameOverText.addEventListener('click', () => {
+        location.reload();
+      });
+      
+      // Remove partículas e reseta visual
       setTimeout(() => {
-        gameOverText.remove();
-        // Remove todas as partículas
         particles.forEach(p => p.remove());
-        // Reset visual
         document.body.classList.remove('megaShake', 'screenFlash');
         chapolin.style.display = 'none';
         chapolin.classList.remove('chapolinExplode');
         btn1.style.display = 'none';
-        
-        // Alert final épico
-        alert("🎬 EXPLOSÃO CONCLUÍDA! 🎬\n\nChapolin explodiu TUDO!\n\nRecarregando para nova tentativa...");
-        location.reload();
-      }, 3000);
+      }, 2000);
       
     }, 1500);
     
