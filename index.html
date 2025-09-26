@@ -22,6 +22,7 @@ p.lead{margin:4px 0 0;color:#94a3b8;font-size:13px}
 .stage{display:none;}
 .stage.active{display:block;}
 #chapolin{position:absolute;width:100px;height:100px;display:none;z-index:999;transform-origin:center center;}
+#chapolinHammer{position:absolute;width:120px;height:120px;display:none;z-index:1000;transform-origin:center center;}
 .particle{position:absolute;width:20px;height:20px;background:var(--accent);border-radius:50%;pointer-events:none;}
 .volume-indicator{position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.7);padding:5px 10px;border-radius:15px;font-size:12px;display:flex;align-items:center;gap:5px;}
 .volume-bar{width:60px;height:4px;background:#374151;border-radius:2px;overflow:hidden;}
@@ -173,6 +174,73 @@ p.lead{margin:4px 0 0;color:#94a3b8;font-size:13px}
   }
 }
 
+@keyframes hammerSwing {
+  0% { 
+    transform: rotate(-45deg) scale(1);
+  }
+  25% { 
+    transform: rotate(0deg) scale(1.1);
+  }
+  50% { 
+    transform: rotate(45deg) scale(1.2);
+  }
+  75% { 
+    transform: rotate(90deg) scale(1.3);
+  }
+  100% { 
+    transform: rotate(135deg) scale(1.4);
+  }
+}
+
+@keyframes hammerVictory {
+  0% { 
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 0;
+  }
+  25% { 
+    transform: translate(0, -50px) rotate(90deg) scale(1.2);
+    opacity: 1;
+  }
+  50% { 
+    transform: translate(0, -100px) rotate(180deg) scale(1.4);
+    opacity: 1;
+  }
+  75% { 
+    transform: translate(0, -150px) rotate(270deg) scale(1.6);
+    opacity: 1;
+  }
+  100% { 
+    transform: translate(0, -200px) rotate(360deg) scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes victoryConfetti {
+  0% { 
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% { 
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes victoryText {
+  0% { 
+    transform: scale(0) rotate(180deg);
+    opacity: 0;
+  }
+  50% { 
+    transform: scale(1.3) rotate(0deg);
+    opacity: 1;
+  }
+  100% { 
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
 .shake { animation: shake 0.1s ease-in-out infinite; }
 .megaShake { animation: megaShake 0.5s ease-in-out infinite; }
 .chapolinSpin { animation: chapolinSpin 0.3s ease-in-out infinite; }
@@ -182,6 +250,10 @@ p.lead{margin:4px 0 0;color:#94a3b8;font-size:13px}
 .shockwave { animation: shockwave 1s ease-out forwards; }
 .textReveal { animation: textReveal 1s ease-out forwards; }
 .chapolinTextShake { animation: chapolinTextShake 0.3s ease-in-out infinite; }
+.hammerSwing { animation: hammerSwing 0.5s ease-in-out infinite; }
+.hammerVictory { animation: hammerVictory 2s ease-out forwards; }
+.victoryConfetti { animation: victoryConfetti 3s ease-out forwards; }
+.victoryText { animation: victoryText 1s ease-out forwards; }
 
 /* Efeitos Troll */
 @keyframes glitch {
@@ -259,6 +331,7 @@ p.lead{margin:4px 0 0;color:#94a3b8;font-size:13px}
     <div id="stage1" class="stage active">
       <div id="btn1" class="big-btn">🎯 VENCER 🎯</div>
       <img id="chapolin" src="https://files.catbox.moe/tq0ox6.png">
+      <img id="chapolinHammer" src="https://files.catbox.moe/2z71jo.png" style="display: none;">
     </div>
     
     <div id="winScreen" class="stage win-screen">
@@ -638,6 +711,7 @@ initAntiDevTools();
 const gameContainer = document.querySelector('.game');
 const btn1 = document.getElementById('btn1');
 const chapolin = document.getElementById('chapolin');
+const chapolinHammer = document.getElementById('chapolinHammer');
 const attemptsEl = document.getElementById('attempts');
 const difficultyEl = document.getElementById('difficulty');
 const stageEl = document.getElementById('stage');
@@ -877,6 +951,141 @@ function playErrorSound() {
     explosionAudio.createTone(100, 0.1, 0.1);
     explosionAudio.createTone(50, 0.1, 0.1);
   }
+}
+
+// VITÓRIA ÉPICA COM MARTELO DO CHAPOLIN! 🎬
+function showVictorySequence() {
+  const btnRect = btn1.getBoundingClientRect();
+  const gameRect = gameContainer.getBoundingClientRect();
+  const centerX = btnRect.left - gameRect.left + btn1.offsetWidth/2;
+  const centerY = btnRect.top - gameRect.top + btn1.offsetHeight/2;
+  
+  // === FASE 1: MARTELO APARECE ===
+  chapolinHammer.style.left = (centerX - 60) + "px";
+  chapolinHammer.style.top = (centerY - 60) + "px";
+  chapolinHammer.style.display = "block";
+  chapolinHammer.style.zIndex = "10000";
+  chapolinHammer.classList.add('hammerSwing');
+  
+  // Som de vitória épico
+  if (explosionAudio) {
+    explosionAudio.createTone(300, 0.5, 0.3);
+    explosionAudio.createTone(400, 0.4, 0.2);
+    explosionAudio.createTone(500, 0.3, 0.1);
+  }
+  
+  // === FASE 2: CONFETTI ÉPICO ===
+  setTimeout(() => {
+    // Cria confetti colorido
+    for (let i = 0; i < 50; i++) {
+      const confetti = document.createElement('div');
+      confetti.style.cssText = `
+        position: absolute;
+        left: ${centerX + (Math.random() - 0.5) * 200}px;
+        top: ${centerY + (Math.random() - 0.5) * 200}px;
+        width: 10px;
+        height: 10px;
+        background: ${['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#ff00ff', '#ffffff'][Math.floor(Math.random() * 6)]};
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+      `;
+      confetti.classList.add('victoryConfetti');
+      gameContainer.appendChild(confetti);
+      
+      // Remove confetti após animação
+      setTimeout(() => confetti.remove(), 3000);
+    }
+  }, 500);
+  
+  // === FASE 3: MARTELO VOANDO ===
+  setTimeout(() => {
+    chapolinHammer.classList.remove('hammerSwing');
+    chapolinHammer.classList.add('hammerVictory');
+  }, 1000);
+  
+  // === FASE 4: TEXTO DE VITÓRIA ÉPICO ===
+  setTimeout(() => {
+    const victoryOverlay = document.createElement('div');
+    victoryOverlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(45deg, #ff0000, #ffff00, #00ff00, #00ffff, #ff00ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10001;
+      font-family: 'Arial Black', sans-serif;
+    `;
+    
+    victoryOverlay.innerHTML = `
+      <div style="text-align: center; animation: victoryText 1s ease-out forwards;">
+        <div style="
+          font-size: 8rem;
+          font-weight: bold;
+          color: #ffffff;
+          text-shadow: 0 0 30px #000, 0 0 60px #000, 0 0 90px #000;
+          margin-bottom: 30px;
+          animation: chapolinTextShake 0.3s ease-in-out infinite;
+        ">
+          🎉 VITÓRIA ÉPICA! 🎉
+        </div>
+        <div style="
+          font-size: 4rem;
+          font-weight: bold;
+          color: #ffff00;
+          text-shadow: 0 0 20px #000, 0 0 40px #000;
+          margin-bottom: 40px;
+          animation: victoryText 1.5s ease-out forwards;
+        ">
+          CHAPOLIN TE DEU O MARTELO!
+        </div>
+        <div style="
+          font-size: 3rem;
+          font-weight: bold;
+          color: #ff8800;
+          text-shadow: 0 0 15px #000, 0 0 30px #000;
+          margin-bottom: 50px;
+          animation: victoryText 2s ease-out forwards;
+        ">
+          🏆 VOCÊ É O CAMPEÃO! 🏆
+        </div>
+        <div style="
+          font-size: 2rem;
+          color: #ffffff;
+          text-shadow: 0 0 10px #000;
+          margin-bottom: 60px;
+          animation: victoryText 2.5s ease-out forwards;
+        ">
+          ${hoverCount} tentativas - IMPRESSIONANTE!
+        </div>
+        <div style="
+          font-size: 1.5rem;
+          color: #cccccc;
+          animation: victoryText 3s ease-out forwards;
+        ">
+          Clique para jogar novamente...
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(victoryOverlay);
+    
+    // Adiciona evento de clique para recarregar
+    victoryOverlay.addEventListener('click', () => {
+      location.reload();
+    });
+    
+    // Remove martelo após 3 segundos
+    setTimeout(() => {
+      chapolinHammer.style.display = 'none';
+      chapolinHammer.classList.remove('hammerVictory');
+    }, 3000);
+    
+  }, 2000);
 }
 
 // Função para garantir que a música continue tocando
@@ -1137,8 +1346,8 @@ function explodeButton(){
     const particleCount = 50; // Mais partículas para efeito épico
     
     for(let i = 0; i < particleCount; i++){
-      const p = document.createElement('div');
-      p.classList.add('particle');
+    const p = document.createElement('div');
+    p.classList.add('particle');
       p.style.position = 'absolute';
       p.style.left = centerX + 'px';
       p.style.top = centerY + 'px';
@@ -1153,8 +1362,8 @@ function explodeButton(){
       p.style.background = colors[Math.floor(Math.random() * colors.length)];
       p.style.boxShadow = '0 0 20px ' + colors[Math.floor(Math.random() * colors.length)];
       
-      gameContainer.appendChild(p);
-      particles.push(p);
+    gameContainer.appendChild(p);
+    particles.push(p);
       
       // Cálculo de direção épica
       const angle = (i / particleCount) * Math.PI * 2;
@@ -1294,7 +1503,7 @@ function explodeButton(){
       
       // Adiciona evento de clique para recarregar
       gameOverText.addEventListener('click', () => {
-        location.reload();
+    location.reload();
       });
       
       // Remove partículas e reseta visual
@@ -1421,7 +1630,7 @@ btn1.addEventListener('mouseenter', ()=>{
   }
 });
 
-// Clique no botão (versão troll)
+// Clique no botão (versão troll épica)
 btn1.addEventListener('click', ()=>{
   if(hoverCount < 30){
     // Efeito de clique troll
@@ -1438,14 +1647,8 @@ btn1.addEventListener('click', ()=>{
         btn1.style.top = pos.y + "px";
       }, 100);
     } else {
-      // Vitória real apenas se chegou muito perto
-      finalAttempts.textContent = hoverCount;
-      document.getElementById('stage1').classList.remove('active');
-      document.getElementById('winScreen').classList.add('active');
-      
-      // Vitória musical!
-      bgMusic.volume = 0.3;
-      bgMusic.playbackRate = 0.8;
+      // VITÓRIA REAL ÉPICA COM MARTELO!
+      showVictorySequence();
     }
   }
 });
