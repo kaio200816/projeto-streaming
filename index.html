@@ -182,12 +182,54 @@ p.lead{margin:4px 0 0;color:#94a3b8;font-size:13px}
 .shockwave { animation: shockwave 1s ease-out forwards; }
 .textReveal { animation: textReveal 1s ease-out forwards; }
 .chapolinTextShake { animation: chapolinTextShake 0.3s ease-in-out infinite; }
+
+/* Efeitos Troll */
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+@keyframes lag {
+  0%, 100% { filter: brightness(1) contrast(1); }
+  25% { filter: brightness(1.2) contrast(1.1); }
+  50% { filter: brightness(0.8) contrast(0.9); }
+  75% { filter: brightness(1.1) contrast(1.05); }
+}
+
+@keyframes cursorBreak {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(-3px, -2px) rotate(-5deg); }
+  50% { transform: translate(3px, 2px) rotate(5deg); }
+  75% { transform: translate(-2px, 3px) rotate(-3deg); }
+}
+
+@keyframes fakeButton {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.95); }
+}
+
+@keyframes screenFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.glitch { animation: glitch 0.1s ease-in-out infinite; }
+.lag { animation: lag 0.2s ease-in-out infinite; }
+.cursorBreak { animation: cursorBreak 0.1s ease-in-out infinite; }
+.fakeButton { animation: fakeButton 0.5s ease-in-out infinite; }
+.screenFlicker { animation: screenFlicker 0.1s ease-in-out infinite; }
 </style>
 </head>
 <body>
 <audio id="bgMusic" src="https://files.catbox.moe/jh5pww.mp3" loop></audio>
 <audio id="explosionSound" preload="auto"></audio>
 <audio id="boomSound" preload="auto"></audio>
+<audio id="chapolinLaugh" preload="auto"></audio>
+<audio id="errorSound" preload="auto"></audio>
 
 <div class="wrapper">
   <header>
@@ -612,6 +654,22 @@ let gameStarted = false;
 let lastMouseX = 0;
 let lastMouseY = 0;
 
+// Variáveis para efeitos troll
+let fakeButtons = [];
+let trollMessages = [
+  "Quase lá! 😈",
+  "Você está indo bem! (mentira)",
+  "Só mais uma tentativa! (ou não)",
+  "Dica: Use o F12! (pegadinha)",
+  "Parabéns! Você ganhou! (não)",
+  "Nível 2 desbloqueado! (falso)",
+  "Prêmio: $1000! (mentira)",
+  "Loading... (infinito)",
+  "Quase conseguiu! (não)",
+  "Muito bom! (não é)"
+];
+let currentTrollMessage = 0;
+
 // Inicializa o áudio
 bgMusic.volume = 0.1;
 
@@ -712,6 +770,114 @@ function createExplosionAudio() {
 
 // Inicializa o sistema de áudio
 const explosionAudio = createExplosionAudio();
+
+// Funções para efeitos troll
+function showTrollMessage() {
+  const message = trollMessages[currentTrollMessage % trollMessages.length];
+  currentTrollMessage++;
+  
+  // Cria popup troll
+  const trollPopup = document.createElement('div');
+  trollPopup.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #ff0000;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    z-index: 9999;
+    animation: textReveal 0.5s ease-out forwards;
+    box-shadow: 0 0 20px rgba(255,0,0,0.5);
+  `;
+  trollPopup.textContent = message;
+  document.body.appendChild(trollPopup);
+  
+  // Remove após 3 segundos
+  setTimeout(() => {
+    trollPopup.remove();
+  }, 3000);
+}
+
+function createFakeButtons() {
+  // Remove botões falsos anteriores
+  fakeButtons.forEach(btn => btn.remove());
+  fakeButtons = [];
+  
+  // Cria 3-5 botões falsos
+  const fakeCount = 3 + Math.floor(Math.random() * 3);
+  for (let i = 0; i < fakeCount; i++) {
+    const fakeBtn = document.createElement('div');
+    fakeBtn.className = 'big-btn fakeButton';
+    fakeBtn.textContent = '🎯 FALSO 🎯';
+    fakeBtn.style.cssText = `
+      position: absolute;
+      left: ${Math.random() * (gameContainer.clientWidth - 200)}px;
+      top: ${Math.random() * (gameContainer.clientHeight - 100)}px;
+      background: #ff0000;
+      color: white;
+      z-index: 5;
+      pointer-events: auto;
+    `;
+    
+    // Adiciona evento de clique troll
+    fakeBtn.addEventListener('click', () => {
+      showTrollMessage();
+      fakeBtn.style.background = '#ff6666';
+      fakeBtn.textContent = 'HAHA! 😈';
+      setTimeout(() => fakeBtn.remove(), 1000);
+    });
+    
+    gameContainer.appendChild(fakeBtn);
+    fakeButtons.push(fakeBtn);
+  }
+  
+  // Remove botões falsos após 5 segundos
+  setTimeout(() => {
+    fakeButtons.forEach(btn => btn.remove());
+    fakeButtons = [];
+  }, 5000);
+}
+
+function addGlitchEffect() {
+  document.body.classList.add('glitch');
+  setTimeout(() => {
+    document.body.classList.remove('glitch');
+  }, 1000);
+}
+
+function addLagEffect() {
+  document.body.classList.add('lag');
+  setTimeout(() => {
+    document.body.classList.remove('lag');
+  }, 2000);
+}
+
+function addScreenFlicker() {
+  document.body.classList.add('screenFlicker');
+  setTimeout(() => {
+    document.body.classList.remove('screenFlicker');
+  }, 500);
+}
+
+function playChapolinLaugh() {
+  // Simula risada do Chapolin com áudio sintético
+  if (explosionAudio) {
+    explosionAudio.createTone(200, 0.3, 0.2);
+    explosionAudio.createTone(300, 0.2, 0.15);
+    explosionAudio.createTone(400, 0.3, 0.2);
+  }
+}
+
+function playErrorSound() {
+  // Som de erro do Windows
+  if (explosionAudio) {
+    explosionAudio.createTone(150, 0.1, 0.1);
+    explosionAudio.createTone(100, 0.1, 0.1);
+    explosionAudio.createTone(50, 0.1, 0.1);
+  }
+}
 
 // Função para garantir que a música continue tocando
 function ensureMusicPlaying() {
@@ -1151,7 +1317,7 @@ gameContainer.addEventListener('mousemove', (e) => {
     lastMouseY = e.clientY;
 });
 
-// Hover no botão
+// Hover no botão (versão troll épica)
 btn1.addEventListener('mouseenter', ()=>{
   startGame(); // Inicia o jogo no primeiro hover
   hoverCount++;
@@ -1161,6 +1327,71 @@ btn1.addEventListener('mouseenter', ()=>{
   updateButtonSize();
   updateDifficulty();
   updateVolume();
+
+  // EFEITOS TROLL BASEADOS NA DIFICULDADE
+  if (hoverCount >= 3) {
+    // Risada do Chapolin quando o botão foge
+    playChapolinLaugh();
+  }
+  
+  if (hoverCount >= 5) {
+    // Efeito de lag na tela
+    addLagEffect();
+  }
+  
+  if (hoverCount >= 8) {
+    // Cria botões falsos
+    createFakeButtons();
+  }
+  
+  if (hoverCount >= 12) {
+    // Efeito de glitch
+    addGlitchEffect();
+  }
+  
+  if (hoverCount >= 15) {
+    // Flicker na tela
+    addScreenFlicker();
+  }
+  
+  if (hoverCount >= 20) {
+    // Mensagem troll
+    showTrollMessage();
+  }
+  
+  // EFEITO ESPECIAL NO 29 (quase lá!)
+  if (hoverCount === 29) {
+    // Cria múltiplos botões falsos
+    createFakeButtons();
+    createFakeButtons(); // Duplo!
+    
+    // Efeito de tela piscando
+    addScreenFlicker();
+    
+    // Mensagem especial
+    const specialMessage = document.createElement('div');
+    specialMessage.style.cssText = `
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #ffff00;
+      color: #000;
+      padding: 20px 40px;
+      border-radius: 20px;
+      font-size: 2rem;
+      font-weight: bold;
+      z-index: 10000;
+      animation: textReveal 0.5s ease-out forwards;
+      box-shadow: 0 0 30px rgba(255,255,0,0.8);
+    `;
+    specialMessage.textContent = "29/30! QUASE LÁ! 😈";
+    document.body.appendChild(specialMessage);
+    
+    setTimeout(() => {
+      specialMessage.remove();
+    }, 2000);
+  }
 
   if(hoverCount >=5 && hoverCount <30){
     chapolinTap();
@@ -1190,16 +1421,32 @@ btn1.addEventListener('mouseenter', ()=>{
   }
 });
 
-// Clique no botão
+// Clique no botão (versão troll)
 btn1.addEventListener('click', ()=>{
   if(hoverCount < 30){
-    finalAttempts.textContent = hoverCount;
-    document.getElementById('stage1').classList.remove('active');
-    document.getElementById('winScreen').classList.add('active');
+    // Efeito de clique troll
+    playErrorSound();
+    addGlitchEffect();
     
-    // Vitória musical!
-    bgMusic.volume = 0.3;
-    bgMusic.playbackRate = 0.8;
+    // Mensagem troll de vitória falsa
+    if (hoverCount < 25) {
+      showTrollMessage();
+      // Botão foge mesmo após clique
+      setTimeout(() => {
+        const pos = getPositionAwayFromCursor();
+        btn1.style.left = pos.x + "px";
+        btn1.style.top = pos.y + "px";
+      }, 100);
+    } else {
+      // Vitória real apenas se chegou muito perto
+      finalAttempts.textContent = hoverCount;
+      document.getElementById('stage1').classList.remove('active');
+      document.getElementById('winScreen').classList.add('active');
+      
+      // Vitória musical!
+      bgMusic.volume = 0.3;
+      bgMusic.playbackRate = 0.8;
+    }
   }
 });
 
