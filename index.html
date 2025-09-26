@@ -303,17 +303,25 @@ p.lead{margin:4px 0 0;color:#94a3b8;font-size:13px}
 <audio id="chapolinLaugh" preload="auto"></audio>
 <audio id="errorSound" preload="auto"></audio>
 
+<!-- Áudios do Chapolin -->
+<audio id="chapolinVictory" src="https://files.catbox.moe/nxqph8.mp3" preload="auto"></audio>
+<audio id="chapolinCheat" src="https://files.catbox.moe/39npl3.mp3" preload="auto"></audio>
+<audio id="chapolinDefeat1" src="https://files.catbox.moe/dd1pv7.mp3" preload="auto"></audio>
+<audio id="chapolinDefeat2" src="https://files.catbox.moe/t0y8fs.mp3" preload="auto"></audio>
+<audio id="chapolinDefeat3" src="https://files.catbox.moe/xvp157.mp3" preload="auto"></audio>
+<audio id="chapolinDefeat4" src="https://files.catbox.moe/3ij0xb.mp3" preload="auto"></audio>
+
 <div class="wrapper">
   <header>
     <h1>🎮 Jogo Fácil (Mas Nem Tanto!)</h1>
     <p class="lead">Pegue o botão verde antes que o Chapolin ou o tempo acabem!</p>
     
-  <div class="hud">
-    <div class="pill">🎯 Tentativas: <span id="attempts">0</span>/30</div>
-    <div class="pill">⚡ Dificuldade: <span id="difficulty">Fácil</span></div>
-    <div class="pill">🏆 Stage: <span id="stage">1</span></div>
+    <div class="hud">
+      <div class="pill">🎯 Tentativas: <span id="attempts">0</span>/30</div>
+      <div class="pill">⚡ Dificuldade: <span id="difficulty">Fácil</span></div>
+      <div class="pill">🏆 Stage: <span id="stage">1</span></div>
     <div class="pill" id="cheatIndicator" style="display: none;">💎 CHEAT ATIVO</div>
-  </div>
+    </div>
     
     <div class="difficulty-meter">
       <div id="difficultyProgress" class="difficulty-progress"></div>
@@ -724,6 +732,14 @@ const explosionSound = document.getElementById('explosionSound');
 const boomSound = document.getElementById('boomSound');
 const finalAttempts = document.getElementById('finalAttempts');
 
+// Áudios do Chapolin
+const chapolinVictory = document.getElementById('chapolinVictory');
+const chapolinCheat = document.getElementById('chapolinCheat');
+const chapolinDefeat1 = document.getElementById('chapolinDefeat1');
+const chapolinDefeat2 = document.getElementById('chapolinDefeat2');
+const chapolinDefeat3 = document.getElementById('chapolinDefeat3');
+const chapolinDefeat4 = document.getElementById('chapolinDefeat4');
+
 let hoverCount = 0;
 let gameStarted = false;
 let lastMouseX = 0;
@@ -762,6 +778,69 @@ let cheatMessages = {
 
 // Inicializa o áudio
 bgMusic.volume = 0.1;
+
+// Sistema de controle de volume inteligente
+let originalVolume = 0.1;
+let isPlayingChapolinAudio = false;
+
+function lowerBackgroundMusic() {
+  if (!isPlayingChapolinAudio) {
+    originalVolume = bgMusic.volume;
+    bgMusic.volume = 0.05; // Abaixa para 5%
+    isPlayingChapolinAudio = true;
+  }
+}
+
+function restoreBackgroundMusic() {
+  if (isPlayingChapolinAudio) {
+    bgMusic.volume = originalVolume;
+    isPlayingChapolinAudio = false;
+  }
+}
+
+function playChapolinAudio(audioElement, callback = null) {
+  // Remove event listeners anteriores para evitar múltiplas chamadas
+  audioElement.removeEventListener('ended', restoreBackgroundMusic);
+  
+  lowerBackgroundMusic();
+  
+  audioElement.volume = 0.8;
+  audioElement.currentTime = 0;
+  
+  const playPromise = audioElement.play();
+  
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      // Áudio começou a tocar
+      console.log('Áudio do Chapolin tocando');
+    }).catch(error => {
+      console.log('Erro ao tocar áudio do Chapolin:', error);
+      restoreBackgroundMusic();
+    });
+  }
+  
+  // Restaura volume quando o áudio terminar
+  audioElement.addEventListener('ended', () => {
+    restoreBackgroundMusic();
+    if (callback) callback();
+  });
+}
+
+// Funções específicas para cada tipo de áudio
+function playVictoryAudio() {
+  playChapolinAudio(chapolinVictory);
+}
+
+function playCheatAudio() {
+  playChapolinAudio(chapolinCheat);
+}
+
+function playDefeatAudio() {
+  // Escolhe um áudio aleatório de derrota
+  const defeatAudios = [chapolinDefeat1, chapolinDefeat2, chapolinDefeat3, chapolinDefeat4];
+  const randomAudio = defeatAudios[Math.floor(Math.random() * defeatAudios.length)];
+  playChapolinAudio(randomAudio);
+}
 
 // Sistema de áudio épico para explosão
 function createExplosionAudio() {
@@ -1051,6 +1130,10 @@ function showCheatMessage(cheat) {
 }
 
 function playCheatSound() {
+  // Toca áudio do Chapolin para cheat
+  playCheatAudio();
+  
+  // Também toca som sintético
   if (explosionAudio) {
     explosionAudio.createTone(200, 0.2, 0.2);
     explosionAudio.createTone(300, 0.2, 0.2);
@@ -1096,7 +1179,10 @@ function showVictorySequence() {
   chapolinHammer.style.zIndex = "10000";
   chapolinHammer.classList.add('hammerSwing');
   
-  // Som de vitória épico
+  // Som de vitória épico do Chapolin
+  playVictoryAudio();
+  
+  // Também toca som sintético
   if (explosionAudio) {
     explosionAudio.createTone(300, 0.5, 0.3);
     explosionAudio.createTone(400, 0.4, 0.2);
@@ -1427,6 +1513,9 @@ function explodeButton(){
   // Som épico de explosão - SISTEMA CRESCENTE
   bgMusic.playbackRate = 2.0;
   bgMusic.volume = 1.0;
+  
+  // Toca áudio de derrota do Chapolin
+  playDefeatAudio();
   
   // SISTEMA DE ÁUDIO ÉPICO CRESCENTE
   // Efeito de explosão crescente usando a música de fundo
