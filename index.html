@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Jogo Troll EXTREMO 5.0</title>
+<title>Jogo Troll EXTREMO 5.0 - Dificuldade Aumentada</title>
 <style>
 :root{--bg:#0f1724;--card:#0b1220;--accent:#10b981;}
 html,body{height:100%;margin:0;font-family:Inter,sans-serif;color:#e6eef8;background:#050d1a;display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -49,7 +49,7 @@ p.lead{margin:4px 0 0;color:#94a3b8;font-size:13px}
 
 <div class="wrapper">
   <header>
-    <h1>🎮 Jogo Troll EXTREMO 5.0</h1>
+    <h1>🎮 Jogo Fácil (Mas Nem Tanto!)</h1>
     <p class="lead">Pegue o botão verde antes que o Chapolin ou o tempo acabem!</p>
     
     <div class="hud">
@@ -100,6 +100,8 @@ const finalAttempts = document.getElementById('finalAttempts');
 
 let hoverCount = 0;
 let gameStarted = false;
+let lastMouseX = 0;
+let lastMouseY = 0;
 
 // Inicializa o áudio
 bgMusic.volume = 0.1;
@@ -118,12 +120,12 @@ function startGame() {
 function updateVolume() {
     let volume = 0.1;
     
-    if (hoverCount >= 5) volume = 0.2;
-    if (hoverCount >= 10) volume = 0.4;
-    if (hoverCount >= 15) volume = 0.6;
-    if (hoverCount >= 20) volume = 0.8;
-    if (hoverCount >= 25) volume = 1.0;
-    if (hoverCount >= 28) volume = 1.2; // Volume estourado!
+    if (hoverCount >= 5) volume = 0.4;
+    if (hoverCount >= 10) volume = 0.6;
+    if (hoverCount >= 15) volume = 1.0;
+    if (hoverCount >= 20) volume = 1.2;
+    if (hoverCount >= 25) volume = 1.5;
+    if (hoverCount >= 28) volume = 2.0; // Volume estourado!
     
     // Aplica o volume com um efeito suave
     bgMusic.volume = Math.min(volume, 1.0); // Limita a 1.0 para navegadores seguros
@@ -148,10 +150,10 @@ function updateDifficulty() {
     if (hoverCount < 5) {
         difficultyEl.textContent = "Fácil";
         difficultyEl.style.color = "#10b981";
-    } else if (hoverCount < 15) {
+    } else if (hoverCount < 10) {
         difficultyEl.textContent = "Médio";
         difficultyEl.style.color = "#f59e0b";
-    } else if (hoverCount < 25) {
+    } else if (hoverCount < 20) {
         difficultyEl.textContent = "Difícil";
         difficultyEl.style.color = "#fb923c";
         btn1.classList.add('danger');
@@ -171,15 +173,47 @@ function centerButton() {
 window.addEventListener('load', centerButton);
 window.addEventListener('resize', centerButton);
 
-// Limita posição dentro do container do jogo
+// Limita posição dentro do container do jogo com margem de segurança
 function getRandomPosition(){
-    const maxX = gameContainer.clientWidth - btn1.offsetWidth;
-    const maxY = gameContainer.clientHeight - btn1.offsetHeight;
-    let x = Math.random() * maxX;
-    let y = Math.random() * maxY;
-    x = Math.max(0, Math.min(x, maxX));
-    y = Math.max(0, Math.min(y, maxY));
+    const margin = 30; // Margem de segurança para não ficar muito perto das bordas
+    const maxX = gameContainer.clientWidth - btn1.offsetWidth - margin*2;
+    const maxY = gameContainer.clientHeight - btn1.offsetHeight - margin*2;
+    let x = Math.random() * maxX + margin;
+    let y = Math.random() * maxY + margin;
+    x = Math.max(margin, Math.min(x, maxX + margin));
+    y = Math.max(margin, Math.min(y, maxY + margin));
     return {x,y};
+}
+
+// Posiciona o botão longe do cursor
+function getPositionAwayFromCursor(){
+    const margin = 50;
+    const maxX = gameContainer.clientWidth - btn1.offsetWidth - margin*2;
+    const maxY = gameContainer.clientHeight - btn1.offsetHeight - margin*2;
+    
+    // Calcula a direção oposta ao cursor
+    const btnRect = btn1.getBoundingClientRect();
+    const gameRect = gameContainer.getBoundingClientRect();
+    const btnCenterX = btnRect.left + btnRect.width/2;
+    const btnCenterY = btnRect.top + btnRect.height/2;
+    
+    const deltaX = lastMouseX - btnCenterX;
+    const deltaY = lastMouseY - btnCenterY;
+    
+    // Normaliza a direção
+    const distance = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
+    const dirX = deltaX / distance;
+    const dirY = deltaY / distance;
+    
+    // Move na direção oposta
+    let newX = btnRect.left - gameRect.left - dirX * 150;
+    let newY = btnRect.top - gameRect.top - dirY * 150;
+    
+    // Garante que está dentro dos limites
+    newX = Math.max(margin, Math.min(newX, maxX + margin));
+    newY = Math.max(margin, Math.min(newY, maxY + margin));
+    
+    return {x: newX, y: newY};
 }
 
 function updateButtonColor(){
@@ -196,6 +230,16 @@ function updateButtonColor(){
       btn1.style.background='red';
       btn1.style.color='white';
   }
+}
+
+// Reduz o tamanho do botão conforme a dificuldade aumenta
+function updateButtonSize() {
+    const baseSize = 18; // Tamanho base da fonte
+    const paddingReduction = Math.min(hoverCount * 0.7, 10); // Redução progressiva
+    const fontSize = Math.max(baseSize - hoverCount * 0.3, 12); // Fonte menor
+    
+    btn1.style.padding = `${18 - paddingReduction}px ${34 - paddingReduction * 1.5}px`;
+    btn1.style.fontSize = `${fontSize}px`;
 }
 
 // Chapolin dá tapa no botão
@@ -252,6 +296,12 @@ function explodeButton(){
   },1800);
 }
 
+// Rastreia a posição do mouse
+gameContainer.addEventListener('mousemove', (e) => {
+    lastMouseX = e.clientX;
+    lastMouseY = e.clientY;
+});
+
 // Hover no botão
 btn1.addEventListener('mouseenter', ()=>{
   startGame(); // Inicia o jogo no primeiro hover
@@ -259,10 +309,11 @@ btn1.addEventListener('mouseenter', ()=>{
   attemptsEl.textContent = hoverCount;
   
   updateButtonColor();
+  updateButtonSize();
   updateDifficulty();
   updateVolume();
 
-  if(hoverCount >=8 && hoverCount <30){
+  if(hoverCount >=5 && hoverCount <30){
     chapolinTap();
   }
 
@@ -270,10 +321,20 @@ btn1.addEventListener('mouseenter', ()=>{
     explodeButton();
   } else {
     // Aumenta a velocidade de fuga conforme a dificuldade
-    const escapeSpeed = Math.min(100 + (hoverCount * 10), 400);
+    const escapeSpeed = Math.min(50 + (hoverCount * 5), 200); // Mais rápido!
+    
     setTimeout(() => {
-      const pos = getRandomPosition();
-      btn1.style.transition = `all ${Math.max(0.3, 0.8 - hoverCount * 0.02)}s ease`;
+      // 30% de chance de movimento aleatório, 70% de fuga inteligente
+      let pos;
+      if (Math.random() < 0.3) {
+        pos = getRandomPosition(); // Movimento aleatório
+      } else {
+        pos = getPositionAwayFromCursor(); // Foge do cursor
+      }
+      
+      // Velocidade de transição baseada na dificuldade
+      const transitionSpeed = Math.max(0.1, 0.5 - hoverCount * 0.015);
+      btn1.style.transition = `all ${transitionSpeed}s ease`;
       btn1.style.left = pos.x + "px";
       btn1.style.top = pos.y + "px";
     }, escapeSpeed);
