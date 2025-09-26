@@ -1,70 +1,303 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Copiar Texto com Clique</title>
-  <style>
-    body {
-      background: #f0f8ff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 50px;
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jogo Troll EXTREMO 5.0</title>
+<style>
+:root{--bg:#0f1724;--card:#0b1220;--accent:#10b981;}
+html,body{height:100%;margin:0;font-family:Inter,sans-serif;color:#e6eef8;background:#050d1a;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.wrapper{width:960px;max-width:95%;background:#0b1220;border-radius:12px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.6);position:relative;}
+header{margin-bottom:12px}
+h1{font-size:22px;margin:0}
+p.lead{margin:4px 0 0;color:#94a3b8;font-size:13px}
+.hud{display:flex;gap:15px;margin-top:10px;}
+.pill{background:#1e293b;padding:6px 12px;border-radius:20px;font-size:14px;font-weight:600;}
+.difficulty-meter{width:100%;height:8px;background:#1e293b;border-radius:4px;margin-top:10px;overflow:hidden;}
+.difficulty-progress{height:100%;background:linear-gradient(90deg, #10b981, #f59e0b, #ef4444);width:0%;transition:width 0.3s ease;}
+.game{position:relative;min-height:480px;overflow:hidden; width: 100%;border:2px solid #1e293b;border-radius:8px;}
+.big-btn{position:absolute;padding:18px 34px;border-radius:999px;background:green;color:#042018;font-weight:700;cursor:pointer;user-select:none;box-shadow:0 6px 18px rgba(16,185,129,0.25);transition:all 0.3s ease; display:flex;align-items:center;justify-content:center;border:3px solid transparent;font-size:16px;z-index:10;}
+.big-btn:hover{transform:scale(1.05);}
+.big-btn.danger{border-color:#ef4444;animation:pulse 0.5s infinite alternate;}
+.stage{display:none;}
+.stage.active{display:block;}
+#chapolin{position:absolute;width:100px;height:100px;display:none;z-index:999;transform-origin:center center;}
+.particle{position:absolute;width:20px;height:20px;background:var(--accent);border-radius:50%;pointer-events:none;}
+.volume-indicator{position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.7);padding:5px 10px;border-radius:15px;font-size:12px;display:flex;align-items:center;gap:5px;}
+.volume-bar{width:60px;height:4px;background:#374151;border-radius:2px;overflow:hidden;}
+.volume-level{height:100%;background:#10b981;width:0%;transition:width 0.3s ease;}
+.win-screen{text-align:center;padding:40px;}
+.win-screen h2{font-size:32px;margin-bottom:20px;background:linear-gradient(45deg, #10b981, #3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+#playAgain{padding:15px 30px;font-size:18px;margin-top:20px;}
 
-    h1 {
-      color: #333;
-    }
+@keyframes pulse {
+  from { box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
+  to { box-shadow: 0 0 20px rgba(239, 68, 68, 0.8); }
+}
 
-    .copy-box {
-      background: #fff;
-      border: 2px dashed #888;
-      padding: 20px;
-      margin: 20px auto;
-      width: fit-content;
-      max-width: 90%;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.3s, color 0.3s;
-      white-space: pre-wrap;
-    }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
 
-    .copy-box:hover {
-      background: #e0ffe0;
-      color: green;
-    }
-
-    #copied-message {
-      color: green;
-      margin-top: 20px;
-      font-weight: bold;
-      display: none;
-    }
-  </style>
+.shake { animation: shake 0.1s ease-in-out infinite; }
+</style>
 </head>
 <body>
+<audio id="bgMusic" src="https://files.catbox.moe/jh5pww.mp3" loop></audio>
 
-  <h1>🔁 Clique para copiar</h1>
+<div class="wrapper">
+  <header>
+    <h1>🎮 Jogo Troll EXTREMO 5.0</h1>
+    <p class="lead">Pegue o botão verde antes que o Chapolin ou o tempo acabem!</p>
+    
+    <div class="hud">
+      <div class="pill">🎯 Tentativas: <span id="attempts">0</span>/30</div>
+      <div class="pill">⚡ Dificuldade: <span id="difficulty">Fácil</span></div>
+      <div class="pill">🏆 Stage: <span id="stage">1</span></div>
+    </div>
+    
+    <div class="difficulty-meter">
+      <div id="difficultyProgress" class="difficulty-progress"></div>
+    </div>
+  </header>
+  
+  <div class="volume-indicator">
+    <span>🔊</span>
+    <div class="volume-bar">
+      <div id="volumeLevel" class="volume-level"></div>
+    </div>
+    <span id="volumeText">0%</span>
+  </div>
+  
+  <main class="game">
+    <div id="stage1" class="stage active">
+      <div id="btn1" class="big-btn">🎯 VENCER 🎯</div>
+      <img id="chapolin" src="https://files.catbox.moe/tq0ox6.png">
+    </div>
+    
+    <div id="winScreen" class="stage win-screen">
+      <h2>🎉 VOCÊ VENCEU! 🎉</h2>
+      <p>Você conseguiu pegar o botão verde com <span id="finalAttempts">0</span> tentativas!</p>
+      <button id="playAgain" class="big-btn">🔄 Jogar de novo</button>
+    </div>
+  </main>
+</div>
 
-  <div class="copy-box" onclick="copyText(this)">loadstring(game:HttpGet("https://get.nathub.xyz/loader"))()</div>
+<script>
+const gameContainer = document.querySelector('.game');
+const btn1 = document.getElementById('btn1');
+const chapolin = document.getElementById('chapolin');
+const attemptsEl = document.getElementById('attempts');
+const difficultyEl = document.getElementById('difficulty');
+const stageEl = document.getElementById('stage');
+const difficultyProgress = document.getElementById('difficultyProgress');
+const volumeLevel = document.getElementById('volumeLevel');
+const volumeText = document.getElementById('volumeText');
+const bgMusic = document.getElementById('bgMusic');
+const finalAttempts = document.getElementById('finalAttempts');
 
-  <div class="copy-box" onclick="copyText(this)">PRVcDEfZHasyBbzbYxSrhzjaTiHhiiwz</div>
+let hoverCount = 0;
+let gameStarted = false;
 
-  <div class="copy-box" onclick="copyText(this)">https://cdngloopup.cc/delta_android/</div>
+// Inicializa o áudio
+bgMusic.volume = 0.1;
 
-  <div id="copied-message">✅ Copiado para a área de transferência!</div>
-
-  <script>
-    function copyText(element) {
-      const text = element.innerText.trim();
-      navigator.clipboard.writeText(text).then(() => {
-        const msg = document.getElementById("copied-message");
-        msg.style.display = "block";
-        setTimeout(() => msg.style.display = "none", 2000);
-      }).catch(err => {
-        alert("Erro ao copiar: " + err);
-      });
+// Função para iniciar o jogo (e a música)
+function startGame() {
+    if (!gameStarted) {
+        gameStarted = true;
+        bgMusic.play().catch(e => {
+            console.log('Autoplay bloqueado, clique para iniciar');
+        });
     }
-  </script>
+}
 
+// Atualiza volume baseado na dificuldade
+function updateVolume() {
+    let volume = 0.1;
+    
+    if (hoverCount >= 5) volume = 0.2;
+    if (hoverCount >= 10) volume = 0.4;
+    if (hoverCount >= 15) volume = 0.6;
+    if (hoverCount >= 20) volume = 0.8;
+    if (hoverCount >= 25) volume = 1.0;
+    if (hoverCount >= 28) volume = 1.2; // Volume estourado!
+    
+    // Aplica o volume com um efeito suave
+    bgMusic.volume = Math.min(volume, 1.0); // Limita a 1.0 para navegadores seguros
+    volumeLevel.style.width = (volume * 100) + '%';
+    volumeText.textContent = Math.min(Math.round(volume * 100), 100) + '%';
+    
+    // Efeito visual quando o volume está alto
+    if (volume >= 0.8) {
+        volumeLevel.style.background = '#ef4444';
+        document.body.style.animation = volume >= 1.0 ? 'shake 0.1s ease-in-out infinite' : 'none';
+    } else {
+        volumeLevel.style.background = '#10b981';
+        document.body.style.animation = 'none';
+    }
+}
+
+// Atualiza a dificuldade visual
+function updateDifficulty() {
+    const progress = (hoverCount / 30) * 100;
+    difficultyProgress.style.width = progress + '%';
+    
+    if (hoverCount < 5) {
+        difficultyEl.textContent = "Fácil";
+        difficultyEl.style.color = "#10b981";
+    } else if (hoverCount < 15) {
+        difficultyEl.textContent = "Médio";
+        difficultyEl.style.color = "#f59e0b";
+    } else if (hoverCount < 25) {
+        difficultyEl.textContent = "Difícil";
+        difficultyEl.style.color = "#fb923c";
+        btn1.classList.add('danger');
+    } else {
+        difficultyEl.textContent = "EXTREMO!";
+        difficultyEl.style.color = "#ef4444";
+    }
+}
+
+// Define posição inicial no centro do container do jogo
+function centerButton() {
+    btn1.style.left = (gameContainer.clientWidth/2 - btn1.offsetWidth/2) + 'px';
+    btn1.style.top = (gameContainer.clientHeight/2 - btn1.offsetHeight/2) + 'px';
+}
+
+// Aguarda o carregamento para posicionar corretamente
+window.addEventListener('load', centerButton);
+window.addEventListener('resize', centerButton);
+
+// Limita posição dentro do container do jogo
+function getRandomPosition(){
+    const maxX = gameContainer.clientWidth - btn1.offsetWidth;
+    const maxY = gameContainer.clientHeight - btn1.offsetHeight;
+    let x = Math.random() * maxX;
+    let y = Math.random() * maxY;
+    x = Math.max(0, Math.min(x, maxX));
+    y = Math.max(0, Math.min(y, maxY));
+    return {x,y};
+}
+
+function updateButtonColor(){
+  if(hoverCount < 10) {
+      btn1.style.background='green';
+      btn1.style.color='#042018';
+  } else if(hoverCount < 15) {
+      btn1.style.background='yellow';
+      btn1.style.color='#422006';
+  } else if(hoverCount < 20) {
+      btn1.style.background='orange';
+      btn1.style.color='#451a03';
+  } else {
+      btn1.style.background='red';
+      btn1.style.color='white';
+  }
+}
+
+// Chapolin dá tapa no botão
+function chapolinTap(){
+  const btnRect = btn1.getBoundingClientRect();
+  const gameRect = gameContainer.getBoundingClientRect();
+  
+  chapolin.style.left = (btnRect.left - gameRect.left - 30) + "px";
+  chapolin.style.top = (btnRect.top - gameRect.top - 30) + "px";
+  chapolin.style.display = "block";
+  chapolin.style.transition = "all 0.5s ease";
+  chapolin.style.transform = "rotate(360deg)";
+
+  const pos = getRandomPosition();
+  btn1.style.left = pos.x + "px";
+  btn1.style.top = pos.y + "px";
+
+  setTimeout(()=>{
+    chapolin.style.display='none';
+    chapolin.style.transform='rotate(0deg)';
+  },600);
+}
+
+// Explosão final
+function explodeButton(){
+  const btnRect = btn1.getBoundingClientRect();
+  const gameRect = gameContainer.getBoundingClientRect();
+  const particles = [];
+  
+  // Toca som de explosão (usando o mesmo áudio com pitch alterado)
+  bgMusic.playbackRate = 1.5;
+  setTimeout(() => bgMusic.playbackRate = 1.0, 500);
+  
+  for(let i=0;i<25;i++){
+    const p = document.createElement('div');
+    p.classList.add('particle');
+    p.style.left = (btnRect.left - gameRect.left + btn1.offsetWidth/2) + "px";
+    p.style.top = (btnRect.top - gameRect.top + btn1.offsetHeight/2) + "px";
+    gameContainer.appendChild(p);
+    particles.push(p);
+    const dx = (Math.random()-0.5)*200;
+    const dy = (Math.random()-0.5)*200;
+    const rot = Math.random()*720;
+    p.animate([
+      {transform:`translate(0,0) rotate(0deg)`, opacity:1},
+      {transform:`translate(${dx}px,${dy}px) rotate(${rot}deg)`, opacity:0}
+    ], {duration:1800, easing:"ease-out"});
+  }
+  btn1.style.display='none';
+  setTimeout(()=>{
+    particles.forEach(p=>p.remove());
+    alert("💥 CHAPOLIN DESTRUIU O BOTÃO! GAME OVER! 💥");
+    location.reload();
+  },1800);
+}
+
+// Hover no botão
+btn1.addEventListener('mouseenter', ()=>{
+  startGame(); // Inicia o jogo no primeiro hover
+  hoverCount++;
+  attemptsEl.textContent = hoverCount;
+  
+  updateButtonColor();
+  updateDifficulty();
+  updateVolume();
+
+  if(hoverCount >=8 && hoverCount <30){
+    chapolinTap();
+  }
+
+  if(hoverCount >=30){
+    explodeButton();
+  } else {
+    // Aumenta a velocidade de fuga conforme a dificuldade
+    const escapeSpeed = Math.min(100 + (hoverCount * 10), 400);
+    setTimeout(() => {
+      const pos = getRandomPosition();
+      btn1.style.transition = `all ${Math.max(0.3, 0.8 - hoverCount * 0.02)}s ease`;
+      btn1.style.left = pos.x + "px";
+      btn1.style.top = pos.y + "px";
+    }, escapeSpeed);
+  }
+});
+
+// Clique no botão
+btn1.addEventListener('click', ()=>{
+  if(hoverCount < 30){
+    finalAttempts.textContent = hoverCount;
+    document.getElementById('stage1').classList.remove('active');
+    document.getElementById('winScreen').classList.add('active');
+    
+    // Vitória musical!
+    bgMusic.volume = 0.3;
+    bgMusic.playbackRate = 0.8;
+  }
+});
+
+// Play again
+document.getElementById('playAgain').onclick = ()=>location.reload();
+
+// Inicia a música ao clicar em qualquer lugar da página (para desbloquear autoplay)
+document.addEventListener('click', startGame);
+</script>
 </body>
 </html>
