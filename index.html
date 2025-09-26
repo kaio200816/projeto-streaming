@@ -41,7 +41,113 @@ p.lead{margin:4px 0 0;color:#94a3b8;font-size:13px}
   75% { transform: translateX(5px); }
 }
 
+@keyframes megaShake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(-10px, -5px) rotate(-2deg); }
+  20% { transform: translate(10px, 5px) rotate(2deg); }
+  30% { transform: translate(-8px, 3px) rotate(-1deg); }
+  40% { transform: translate(8px, -3px) rotate(1deg); }
+  50% { transform: translate(-6px, -2px) rotate(-0.5deg); }
+  60% { transform: translate(6px, 2px) rotate(0.5deg); }
+  70% { transform: translate(-4px, 1px) rotate(-0.2deg); }
+  80% { transform: translate(4px, -1px) rotate(0.2deg); }
+  90% { transform: translate(-2px, 0px) rotate(-0.1deg); }
+}
+
+@keyframes chapolinSpin {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(1.1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  75% { transform: rotate(270deg) scale(1.3); }
+  100% { transform: rotate(360deg) scale(1.4); }
+}
+
+@keyframes chapolinExplode {
+  0% { 
+    transform: rotate(0deg) scale(1); 
+    filter: brightness(1) hue-rotate(0deg);
+  }
+  25% { 
+    transform: rotate(90deg) scale(1.5); 
+    filter: brightness(1.5) hue-rotate(90deg);
+  }
+  50% { 
+    transform: rotate(180deg) scale(2); 
+    filter: brightness(2) hue-rotate(180deg);
+  }
+  75% { 
+    transform: rotate(270deg) scale(2.5); 
+    filter: brightness(2.5) hue-rotate(270deg);
+  }
+  100% { 
+    transform: rotate(360deg) scale(3); 
+    filter: brightness(3) hue-rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes screenFlash {
+  0%, 100% { background-color: transparent; }
+  10% { background-color: #ff0000; }
+  20% { background-color: #ffff00; }
+  30% { background-color: #ff0000; }
+  40% { background-color: #ffffff; }
+  50% { background-color: #ff0000; }
+  60% { background-color: #ffff00; }
+  70% { background-color: #ff0000; }
+  80% { background-color: #ffffff; }
+  90% { background-color: #ff0000; }
+}
+
+@keyframes particleExplode {
+  0% { 
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  50% { 
+    transform: translate(var(--dx), var(--dy)) scale(1.5) rotate(180deg);
+    opacity: 0.8;
+  }
+  100% { 
+    transform: translate(calc(var(--dx) * 2), calc(var(--dy) * 2)) scale(0.5) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes shockwave {
+  0% { 
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% { 
+    transform: scale(10);
+    opacity: 0;
+  }
+}
+
+@keyframes textReveal {
+  0% { 
+    transform: scale(0) rotate(180deg);
+    opacity: 0;
+  }
+  50% { 
+    transform: scale(1.2) rotate(0deg);
+    opacity: 1;
+  }
+  100% { 
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
 .shake { animation: shake 0.1s ease-in-out infinite; }
+.megaShake { animation: megaShake 0.5s ease-in-out infinite; }
+.chapolinSpin { animation: chapolinSpin 0.3s ease-in-out infinite; }
+.chapolinExplode { animation: chapolinExplode 2s ease-out forwards; }
+.screenFlash { animation: screenFlash 0.1s ease-in-out infinite; }
+.particleExplode { animation: particleExplode 2s ease-out forwards; }
+.shockwave { animation: shockwave 1s ease-out forwards; }
+.textReveal { animation: textReveal 1s ease-out forwards; }
 </style>
 </head>
 <body>
@@ -607,7 +713,7 @@ function updateButtonSize() {
     btn1.style.fontSize = `${fontSize}px`;
 }
 
-// Chapolin dá tapa no botão
+// Chapolin dá tapa no botão (versão épica)
 function chapolinTap(){
   const btnRect = btn1.getBoundingClientRect();
   const gameRect = gameContainer.getBoundingClientRect();
@@ -615,8 +721,17 @@ function chapolinTap(){
   chapolin.style.left = (btnRect.left - gameRect.left - 30) + "px";
   chapolin.style.top = (btnRect.top - gameRect.top - 30) + "px";
   chapolin.style.display = "block";
-  chapolin.style.transition = "all 0.5s ease";
-  chapolin.style.transform = "rotate(360deg)";
+  chapolin.style.transition = "all 0.3s ease";
+  chapolin.style.transform = "rotate(360deg) scale(1.2)";
+  chapolin.style.filter = "brightness(1.5) drop-shadow(0 0 10px #ff0000)";
+  chapolin.classList.add('chapolinSpin');
+
+  // Efeito de tela piscando
+  document.body.classList.add('megaShake');
+  
+  // Som de tapa épico
+  bgMusic.playbackRate = 1.8;
+  setTimeout(() => bgMusic.playbackRate = 1.0, 300);
 
   const pos = getRandomPosition();
   btn1.style.left = pos.x + "px";
@@ -624,41 +739,155 @@ function chapolinTap(){
 
   setTimeout(()=>{
     chapolin.style.display='none';
-    chapolin.style.transform='rotate(0deg)';
-  },600);
+    chapolin.style.transform='rotate(0deg) scale(1)';
+    chapolin.style.filter = 'none';
+    chapolin.classList.remove('chapolinSpin');
+    document.body.classList.remove('megaShake');
+  },800);
 }
 
-// Explosão final
+// EXPLOSÃO ÉPICA FINAL - DIGNA DE OSCAR! 💥🎬
 function explodeButton(){
   const btnRect = btn1.getBoundingClientRect();
   const gameRect = gameContainer.getBoundingClientRect();
-  const particles = [];
+  const centerX = btnRect.left - gameRect.left + btn1.offsetWidth/2;
+  const centerY = btnRect.top - gameRect.top + btn1.offsetHeight/2;
   
-  // Toca som de explosão (usando o mesmo áudio com pitch alterado)
-  bgMusic.playbackRate = 1.5;
-  setTimeout(() => bgMusic.playbackRate = 1.0, 500);
+  // === FASE 1: PREPARAÇÃO ÉPICA ===
+  document.body.classList.add('megaShake');
+  document.body.classList.add('screenFlash');
   
-  for(let i=0;i<25;i++){
-    const p = document.createElement('div');
-    p.classList.add('particle');
-    p.style.left = (btnRect.left - gameRect.left + btn1.offsetWidth/2) + "px";
-    p.style.top = (btnRect.top - gameRect.top + btn1.offsetHeight/2) + "px";
-    gameContainer.appendChild(p);
-    particles.push(p);
-    const dx = (Math.random()-0.5)*200;
-    const dy = (Math.random()-0.5)*200;
-    const rot = Math.random()*720;
-    p.animate([
-      {transform:`translate(0,0) rotate(0deg)`, opacity:1},
-      {transform:`translate(${dx}px,${dy}px) rotate(${rot}deg)`, opacity:0}
-    ], {duration:1800, easing:"ease-out"});
-  }
-  btn1.style.display='none';
-  setTimeout(()=>{
-    particles.forEach(p=>p.remove());
-    alert("💥 CHAPOLIN DESTRUIU O BOTÃO! GAME OVER! 💥");
-    location.reload();
-  },1800);
+  // Chapolin aparece e começa a girar loucamente
+  chapolin.style.left = (centerX - 50) + "px";
+  chapolin.style.top = (centerY - 50) + "px";
+  chapolin.style.display = "block";
+  chapolin.style.zIndex = "9999";
+  chapolin.classList.add('chapolinExplode');
+  
+  // Som épico de explosão
+  bgMusic.playbackRate = 2.0;
+  bgMusic.volume = 1.0;
+  
+  // === FASE 2: ONDA DE CHOQUE ===
+  setTimeout(() => {
+    // Cria onda de choque
+    const shockwave = document.createElement('div');
+    shockwave.style.position = 'absolute';
+    shockwave.style.left = centerX + 'px';
+    shockwave.style.top = centerY + 'px';
+    shockwave.style.width = '20px';
+    shockwave.style.height = '20px';
+    shockwave.style.background = 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,0,0,0.6) 50%, transparent 100%)';
+    shockwave.style.borderRadius = '50%';
+    shockwave.style.transform = 'translate(-50%, -50%)';
+    shockwave.style.zIndex = '9998';
+    shockwave.classList.add('shockwave');
+    gameContainer.appendChild(shockwave);
+    
+    // Remove onda de choque após animação
+    setTimeout(() => shockwave.remove(), 1000);
+  }, 500);
+  
+  // === FASE 3: EXPLOSÃO DE PARTÍCULAS ÉPICA ===
+  setTimeout(() => {
+    const particles = [];
+    const particleCount = 50; // Mais partículas para efeito épico
+    
+    for(let i = 0; i < particleCount; i++){
+      const p = document.createElement('div');
+      p.classList.add('particle');
+      p.style.position = 'absolute';
+      p.style.left = centerX + 'px';
+      p.style.top = centerY + 'px';
+      p.style.width = '15px';
+      p.style.height = '15px';
+      p.style.borderRadius = '50%';
+      p.style.pointerEvents = 'none';
+      p.style.zIndex = '9997';
+      
+      // Cores variadas para efeito épico
+      const colors = ['#ff0000', '#ffff00', '#ff8800', '#ff0088', '#8800ff', '#00ffff', '#ffffff'];
+      p.style.background = colors[Math.floor(Math.random() * colors.length)];
+      p.style.boxShadow = '0 0 20px ' + colors[Math.floor(Math.random() * colors.length)];
+      
+      gameContainer.appendChild(p);
+      particles.push(p);
+      
+      // Cálculo de direção épica
+      const angle = (i / particleCount) * Math.PI * 2;
+      const distance = 200 + Math.random() * 300;
+      const dx = Math.cos(angle) * distance;
+      const dy = Math.sin(angle) * distance;
+      const rot = Math.random() * 720;
+      
+      // Aplica variáveis CSS para animação
+      p.style.setProperty('--dx', dx + 'px');
+      p.style.setProperty('--dy', dy + 'px');
+      
+      // Animação épica da partícula
+      p.classList.add('particleExplode');
+    }
+    
+    // === FASE 4: EFEITOS DE TELA ÉPICOS ===
+    // Flash de tela branca
+    setTimeout(() => {
+      const flash = document.createElement('div');
+      flash.style.position = 'fixed';
+      flash.style.top = '0';
+      flash.style.left = '0';
+      flash.style.width = '100vw';
+      flash.style.height = '100vh';
+      flash.style.background = 'white';
+      flash.style.zIndex = '10000';
+      flash.style.pointerEvents = 'none';
+      document.body.appendChild(flash);
+      
+      setTimeout(() => flash.remove(), 100);
+    }, 1000);
+    
+    // === FASE 5: TEXTO ÉPICO DE GAME OVER ===
+    setTimeout(() => {
+      const gameOverText = document.createElement('div');
+      gameOverText.innerHTML = `
+        <div style="
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          font-size: 4rem;
+          font-weight: bold;
+          color: #ff0000;
+          text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000, 0 0 60px #ff0000;
+          z-index: 10001;
+          text-align: center;
+          font-family: 'Arial Black', sans-serif;
+        ">
+          💥 CHAPOLIN DESTRUIU TUDO! 💥<br>
+          <span style="font-size: 2rem; color: #ffff00;">GAME OVER ÉPICO!</span>
+        </div>
+      `;
+      gameOverText.classList.add('textReveal');
+      document.body.appendChild(gameOverText);
+      
+      // Remove texto após 3 segundos
+      setTimeout(() => {
+        gameOverText.remove();
+        // Remove todas as partículas
+        particles.forEach(p => p.remove());
+        // Reset visual
+        document.body.classList.remove('megaShake', 'screenFlash');
+        chapolin.style.display = 'none';
+        chapolin.classList.remove('chapolinExplode');
+        btn1.style.display = 'none';
+        
+        // Alert final épico
+        alert("🎬 EXPLOSÃO ÉPICA CONCLUÍDA! 🎬\n\nChapolin ganhou o Oscar de melhor explosão!\n\nRecarregando para nova tentativa...");
+        location.reload();
+      }, 3000);
+      
+    }, 1500);
+    
+  }, 800);
 }
 
 // Rastreia a posição do mouse
