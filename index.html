@@ -1488,7 +1488,7 @@ function showVictorySequence() {
   chapolinHammer.style.left = (centerX - 60) + "px";
   chapolinHammer.style.top = (centerY - 60) + "px";
   chapolinHammer.style.display = "block";
-  chapolinHammer.style.zIndex = "10000";
+  chapolinHammer.style.zIndex = "9998";
   chapolinHammer.classList.add('hammerSwing');
   
   // Som de vitória épico do Chapolin
@@ -1515,7 +1515,7 @@ function showVictorySequence() {
         background: ${['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#ff00ff', '#ffffff'][Math.floor(Math.random() * 6)]};
         border-radius: 50%;
         pointer-events: none;
-        z-index: 9999;
+        z-index: 9998;
       `;
       confetti.classList.add('victoryConfetti');
       gameContainer.appendChild(confetti);
@@ -1540,12 +1540,13 @@ function showVictorySequence() {
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: linear-gradient(45deg, #ff0000, #ffff00, #00ff00, #00ffff, #ff00ff);
+      background: linear-gradient(45deg, rgba(255,0,0,0.8), rgba(255,255,0,0.8), rgba(0,255,0,0.8), rgba(0,255,255,0.8), rgba(255,0,255,0.8));
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 10001;
+      z-index: 9999;
       font-family: 'Arial Black', sans-serif;
+      backdrop-filter: blur(5px);
     `;
     
     victoryOverlay.innerHTML = `
@@ -1881,7 +1882,7 @@ function explodeButton(){
     shockwave.style.background = 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,0,0,0.6) 50%, transparent 100%)';
     shockwave.style.borderRadius = '50%';
     shockwave.style.transform = 'translate(-50%, -50%)';
-    shockwave.style.zIndex = '9998';
+    shockwave.style.zIndex = '9997';
     shockwave.classList.add('shockwave');
     gameContainer.appendChild(shockwave);
     
@@ -1904,7 +1905,7 @@ function explodeButton(){
       p.style.height = '15px';
       p.style.borderRadius = '50%';
       p.style.pointerEvents = 'none';
-      p.style.zIndex = '9997';
+      p.style.zIndex = '9996';
       
       // Cores variadas para efeito épico
       const colors = ['#ff0000', '#ffff00', '#ff8800', '#ff0088', '#8800ff', '#00ffff', '#ffffff'];
@@ -1949,7 +1950,7 @@ function explodeButton(){
       flash.style.width = '100vw';
       flash.style.height = '100vh';
       flash.style.background = 'white';
-      flash.style.zIndex = '10000';
+      flash.style.zIndex = '9995';
       flash.style.pointerEvents = 'none';
       document.body.appendChild(flash);
       
@@ -1988,12 +1989,13 @@ function explodeButton(){
           left: 0;
           width: 100vw;
           height: 100vh;
-          background: rgba(0, 0, 0, 0.9);
+          background: rgba(0, 0, 0, 0.8);
           display: flex;
           align-items: center;
           justify-content: center;
-          z-index: 10001;
+          z-index: 9999;
           font-family: 'Arial Black', sans-serif;
+          backdrop-filter: blur(3px);
         ">
           <div style="
             text-align: center;
