@@ -311,6 +311,10 @@ p.lead{margin:4px 0 0;color:#94a3b8;font-size:13px}
 <audio id="chapolinDefeat3" src="https://files.catbox.moe/xvp157.mp3" preload="auto"></audio>
 <audio id="chapolinDefeat4" src="https://files.catbox.moe/3ij0xb.mp3" preload="auto"></audio>
 
+<!-- Áudios de fallback (sintéticos) -->
+<audio id="fallbackVictory" preload="auto"></audio>
+<audio id="fallbackDefeat" preload="auto"></audio>
+
 <div class="wrapper">
   <header>
     <h1>🎮 Jogo Fácil (Mas Nem Tanto!)</h1>
@@ -740,6 +744,211 @@ const chapolinDefeat2 = document.getElementById('chapolinDefeat2');
 const chapolinDefeat3 = document.getElementById('chapolinDefeat3');
 const chapolinDefeat4 = document.getElementById('chapolinDefeat4');
 
+// Áudios de fallback
+const fallbackVictory = document.getElementById('fallbackVictory');
+const fallbackDefeat = document.getElementById('fallbackDefeat');
+
+// Sistema de verificação de áudios
+let audioLoadStatus = {
+  chapolinVictory: false,
+  chapolinCheat: false,
+  chapolinDefeat1: false,
+  chapolinDefeat2: false,
+  chapolinDefeat3: false,
+  chapolinDefeat4: false
+};
+
+// Função para verificar se um áudio carregou
+function checkAudioLoad(audioElement, audioName) {
+  return new Promise((resolve) => {
+    if (audioElement.readyState >= 2) {
+      // Áudio já carregou
+      audioLoadStatus[audioName] = true;
+      resolve(true);
+    } else {
+      // Aguarda o carregamento
+      const onCanPlay = () => {
+        audioLoadStatus[audioName] = true;
+        audioElement.removeEventListener('canplay', onCanPlay);
+        audioElement.removeEventListener('error', onError);
+        resolve(true);
+      };
+      
+      const onError = () => {
+        console.log(`Erro ao carregar áudio: ${audioName}`);
+        audioLoadStatus[audioName] = false;
+        audioElement.removeEventListener('canplay', onCanPlay);
+        audioElement.removeEventListener('error', onError);
+        resolve(false);
+      };
+      
+      audioElement.addEventListener('canplay', onCanPlay);
+      audioElement.addEventListener('error', onError);
+      
+      // Timeout após 5 segundos
+      setTimeout(() => {
+        if (!audioLoadStatus[audioName]) {
+          console.log(`Timeout ao carregar áudio: ${audioName}`);
+          audioElement.removeEventListener('canplay', onCanPlay);
+          audioElement.removeEventListener('error', onError);
+          resolve(false);
+        }
+      }, 5000);
+    }
+  });
+}
+
+// Função para carregar todos os áudios
+async function loadAllAudios() {
+  console.log('Iniciando carregamento de áudios...');
+  
+  const audioPromises = [
+    checkAudioLoad(chapolinVictory, 'chapolinVictory'),
+    checkAudioLoad(chapolinCheat, 'chapolinCheat'),
+    checkAudioLoad(chapolinDefeat1, 'chapolinDefeat1'),
+    checkAudioLoad(chapolinDefeat2, 'chapolinDefeat2'),
+    checkAudioLoad(chapolinDefeat3, 'chapolinDefeat3'),
+    checkAudioLoad(chapolinDefeat4, 'chapolinDefeat4')
+  ];
+  
+  const results = await Promise.all(audioPromises);
+  
+  console.log('Status dos áudios:', audioLoadStatus);
+  console.log('Áudios carregados com sucesso:', results.filter(r => r).length, 'de', results.length);
+  
+  return results;
+}
+
+// Função para forçar o carregamento de um áudio específico
+function forceLoadAudio(audioElement, audioName) {
+  return new Promise((resolve) => {
+    // Tenta carregar o áudio
+    audioElement.load();
+    
+    const onCanPlay = () => {
+      audioLoadStatus[audioName] = true;
+      audioElement.removeEventListener('canplay', onCanPlay);
+      audioElement.removeEventListener('error', onError);
+      console.log(`Áudio ${audioName} carregado com sucesso!`);
+      resolve(true);
+    };
+    
+    const onError = () => {
+      console.log(`Falha ao carregar áudio: ${audioName}`);
+      audioLoadStatus[audioName] = false;
+      audioElement.removeEventListener('canplay', onCanPlay);
+      audioElement.removeEventListener('error', onError);
+      resolve(false);
+    };
+    
+    audioElement.addEventListener('canplay', onCanPlay);
+    audioElement.addEventListener('error', onError);
+    
+    // Timeout após 10 segundos
+    setTimeout(() => {
+      if (!audioLoadStatus[audioName]) {
+        console.log(`Timeout ao carregar áudio: ${audioName}`);
+        audioElement.removeEventListener('canplay', onCanPlay);
+        audioElement.removeEventListener('error', onError);
+        resolve(false);
+      }
+    }, 10000);
+  });
+}
+
+// Função para recarregar áudios que falharam
+async function retryFailedAudios() {
+  console.log('Tentando recarregar áudios que falharam...');
+  
+  const retryPromises = [];
+  
+  if (!audioLoadStatus.chapolinVictory) {
+    retryPromises.push(forceLoadAudio(chapolinVictory, 'chapolinVictory'));
+  }
+  if (!audioLoadStatus.chapolinCheat) {
+    retryPromises.push(forceLoadAudio(chapolinCheat, 'chapolinCheat'));
+  }
+  if (!audioLoadStatus.chapolinDefeat1) {
+    retryPromises.push(forceLoadAudio(chapolinDefeat1, 'chapolinDefeat1'));
+  }
+  if (!audioLoadStatus.chapolinDefeat2) {
+    retryPromises.push(forceLoadAudio(chapolinDefeat2, 'chapolinDefeat2'));
+  }
+  if (!audioLoadStatus.chapolinDefeat3) {
+    retryPromises.push(forceLoadAudio(chapolinDefeat3, 'chapolinDefeat3'));
+  }
+  if (!audioLoadStatus.chapolinDefeat4) {
+    retryPromises.push(forceLoadAudio(chapolinDefeat4, 'chapolinDefeat4'));
+  }
+  
+  if (retryPromises.length > 0) {
+    const results = await Promise.all(retryPromises);
+    const successCount = results.filter(r => r).length;
+    console.log(`Recarregamento: ${successCount} de ${retryPromises.length} áudios carregados`);
+  } else {
+    console.log('Todos os áudios já estão carregados!');
+  }
+}
+
+// Função para mostrar status dos áudios
+function showAudioStatus() {
+  console.log('=== STATUS DOS ÁUDIOS ===');
+  console.log('Victory:', audioLoadStatus.chapolinVictory ? '✅' : '❌');
+  console.log('Cheat:', audioLoadStatus.chapolinCheat ? '✅' : '❌');
+  console.log('Defeat1:', audioLoadStatus.chapolinDefeat1 ? '✅' : '❌');
+  console.log('Defeat2:', audioLoadStatus.chapolinDefeat2 ? '✅' : '❌');
+  console.log('Defeat3:', audioLoadStatus.chapolinDefeat3 ? '✅' : '❌');
+  console.log('Defeat4:', audioLoadStatus.chapolinDefeat4 ? '✅' : '❌');
+  
+  const totalLoaded = Object.values(audioLoadStatus).filter(status => status).length;
+  console.log(`Total carregados: ${totalLoaded}/6`);
+}
+
+// Função para testar todos os áudios
+function testAllAudios() {
+  console.log('Testando todos os áudios...');
+  
+  if (audioLoadStatus.chapolinVictory) {
+    console.log('Testando áudio de vitória...');
+    playChapolinAudio(chapolinVictory);
+  }
+  
+  setTimeout(() => {
+    if (audioLoadStatus.chapolinCheat) {
+      console.log('Testando áudio de cheat...');
+      playChapolinAudio(chapolinCheat);
+    }
+  }, 2000);
+  
+  setTimeout(() => {
+    console.log('Testando áudios de derrota...');
+    playDefeatAudio();
+  }, 4000);
+}
+
+// Adiciona funções de debug ao window para facilitar testes
+window.debugAudio = {
+  showStatus: showAudioStatus,
+  testAll: testAllAudios,
+  retry: retryFailedAudios,
+  forceLoad: forceLoadAudio
+};
+
+// Carrega todos os áudios quando a página carrega
+window.addEventListener('load', () => {
+  loadAllAudios().then(() => {
+    console.log('Carregamento de áudios concluído!');
+    showAudioStatus();
+    
+    // Tenta recarregar áudios que falharam após 2 segundos
+    setTimeout(() => {
+      retryFailedAudios().then(() => {
+        showAudioStatus();
+      });
+    }, 2000);
+  });
+});
+
 let hoverCount = 0;
 let gameStarted = false;
 let lastMouseX = 0;
@@ -807,23 +1016,74 @@ function playChapolinAudio(audioElement, callback = null) {
   audioElement.volume = 0.8;
   audioElement.currentTime = 0;
   
-  const playPromise = audioElement.play();
+  // Verifica se o áudio está pronto para tocar
+  if (audioElement.readyState < 2) {
+    console.log('Áudio não está pronto, aguardando carregamento...');
+    
+    const onCanPlay = () => {
+      audioElement.removeEventListener('canplay', onCanPlay);
+      audioElement.removeEventListener('error', onError);
+      playAudio();
+    };
+    
+    const onError = () => {
+      console.log('Erro ao carregar áudio, usando fallback sintético');
+      audioElement.removeEventListener('canplay', onCanPlay);
+      audioElement.removeEventListener('error', onError);
+      playSyntheticAudio();
+    };
+    
+    audioElement.addEventListener('canplay', onCanPlay);
+    audioElement.addEventListener('error', onError);
+    
+    // Timeout de 3 segundos
+    setTimeout(() => {
+      if (audioElement.readyState < 2) {
+        audioElement.removeEventListener('canplay', onCanPlay);
+        audioElement.removeEventListener('error', onError);
+        console.log('Timeout no carregamento, usando fallback sintético');
+        playSyntheticAudio();
+      }
+    }, 3000);
+    
+    return;
+  }
   
-  if (playPromise !== undefined) {
-    playPromise.then(() => {
-      // Áudio começou a tocar
-      console.log('Áudio do Chapolin tocando');
-    }).catch(error => {
-      console.log('Erro ao tocar áudio do Chapolin:', error);
+  playAudio();
+  
+  function playAudio() {
+    const playPromise = audioElement.play();
+    
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        console.log('Áudio do Chapolin tocando');
+      }).catch(error => {
+        console.log('Erro ao tocar áudio do Chapolin:', error);
+        playSyntheticAudio();
+      });
+    }
+    
+    // Restaura volume quando o áudio terminar
+    audioElement.addEventListener('ended', () => {
       restoreBackgroundMusic();
+      if (callback) callback();
     });
   }
   
-  // Restaura volume quando o áudio terminar
-  audioElement.addEventListener('ended', () => {
-    restoreBackgroundMusic();
-    if (callback) callback();
-  });
+  function playSyntheticAudio() {
+    // Toca áudio sintético como fallback
+    if (explosionAudio) {
+      explosionAudio.createTone(200, 0.5, 0.3);
+      explosionAudio.createTone(300, 0.4, 0.2);
+      explosionAudio.createTone(400, 0.3, 0.1);
+    }
+    
+    // Restaura volume após 1 segundo
+    setTimeout(() => {
+      restoreBackgroundMusic();
+      if (callback) callback();
+    }, 1000);
+  }
 }
 
 // Funções específicas para cada tipo de áudio
@@ -836,10 +1096,26 @@ function playCheatAudio() {
 }
 
 function playDefeatAudio() {
-  // Escolhe um áudio aleatório de derrota
-  const defeatAudios = [chapolinDefeat1, chapolinDefeat2, chapolinDefeat3, chapolinDefeat4];
-  const randomAudio = defeatAudios[Math.floor(Math.random() * defeatAudios.length)];
-  playChapolinAudio(randomAudio);
+  // Verifica quais áudios de derrota estão disponíveis
+  const availableDefeatAudios = [];
+  
+  if (audioLoadStatus.chapolinDefeat1) availableDefeatAudios.push(chapolinDefeat1);
+  if (audioLoadStatus.chapolinDefeat2) availableDefeatAudios.push(chapolinDefeat2);
+  if (audioLoadStatus.chapolinDefeat3) availableDefeatAudios.push(chapolinDefeat3);
+  if (audioLoadStatus.chapolinDefeat4) availableDefeatAudios.push(chapolinDefeat4);
+  
+  if (availableDefeatAudios.length > 0) {
+    // Escolhe um áudio aleatório dos disponíveis
+    const randomAudio = availableDefeatAudios[Math.floor(Math.random() * availableDefeatAudios.length)];
+    console.log('Tocando áudio de derrota disponível');
+    playChapolinAudio(randomAudio);
+  } else {
+    // Se nenhum áudio de derrota carregou, tenta tocar qualquer um (pode funcionar)
+    const defeatAudios = [chapolinDefeat1, chapolinDefeat2, chapolinDefeat3, chapolinDefeat4];
+    const randomAudio = defeatAudios[Math.floor(Math.random() * defeatAudios.length)];
+    console.log('Tentando tocar áudio de derrota (pode não ter carregado)');
+    playChapolinAudio(randomAudio);
+  }
 }
 
 // Sistema de áudio épico para explosão
