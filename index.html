@@ -954,6 +954,30 @@ let gameStarted = false;
 let lastMouseX = 0;
 let lastMouseY = 0;
 
+// Sistema de proteção contra múltiplas execuções
+let isGameOver = false;
+let isVictory = false;
+let isExecutingGameOver = false;
+let isExecutingVictory = false;
+
+// Função para desabilitar o botão após o jogo acabar
+function disableButton() {
+  btn1.style.pointerEvents = 'none';
+  btn1.style.opacity = '0.5';
+  btn1.style.cursor = 'not-allowed';
+  btn1.style.transform = 'scale(0.8)';
+  btn1.textContent = '🎮 JOGO ACABOU 🎮';
+}
+
+// Função para reabilitar o botão (para novo jogo)
+function enableButton() {
+  btn1.style.pointerEvents = 'auto';
+  btn1.style.opacity = '1';
+  btn1.style.cursor = 'pointer';
+  btn1.style.transform = 'scale(1)';
+  btn1.textContent = '🎯 VENCER 🎯';
+}
+
 // Variáveis para efeitos troll
 let fakeButtons = [];
 let trollMessages = [
@@ -1443,6 +1467,18 @@ function applyCheatEffects(cheat) {
 
 // VITÓRIA ÉPICA COM MARTELO DO CHAPOLIN! 🎬
 function showVictorySequence() {
+  // Proteção contra múltiplas execuções
+  if (isVictory || isExecutingVictory || isGameOver) {
+    console.log('Vitória já está sendo executada ou jogo já acabou, ignorando...');
+    return;
+  }
+  
+  isVictory = true;
+  isExecutingVictory = true;
+  
+  // Desabilita o botão imediatamente
+  disableButton();
+  
   const btnRect = btn1.getBoundingClientRect();
   const gameRect = gameContainer.getBoundingClientRect();
   const centerX = btnRect.left - gameRect.left + btn1.offsetWidth/2;
@@ -1567,6 +1603,13 @@ function showVictorySequence() {
     
     // Adiciona evento de clique para recarregar
     victoryOverlay.addEventListener('click', () => {
+      // Reseta todas as variáveis de estado
+      isGameOver = false;
+      isVictory = false;
+      isExecutingGameOver = false;
+      isExecutingVictory = false;
+      hoverCount = 0;
+      gameStarted = false;
       location.reload();
     });
     
@@ -1770,6 +1813,18 @@ function chapolinTap(){
 
 // EXPLOSÃO ÉPICA FINAL - DIGNA DE OSCAR! 💥🎬
 function explodeButton(){
+  // Proteção contra múltiplas execuções
+  if (isGameOver || isExecutingGameOver) {
+    console.log('Game over já está sendo executado, ignorando...');
+    return;
+  }
+  
+  isGameOver = true;
+  isExecutingGameOver = true;
+  
+  // Desabilita o botão imediatamente
+  disableButton();
+  
   const btnRect = btn1.getBoundingClientRect();
   const gameRect = gameContainer.getBoundingClientRect();
   const centerX = btnRect.left - gameRect.left + btn1.offsetWidth/2;
@@ -1997,7 +2052,14 @@ function explodeButton(){
       
       // Adiciona evento de clique para recarregar
       gameOverText.addEventListener('click', () => {
-    location.reload();
+        // Reseta todas as variáveis de estado
+        isGameOver = false;
+        isVictory = false;
+        isExecutingGameOver = false;
+        isExecutingVictory = false;
+        hoverCount = 0;
+        gameStarted = false;
+        location.reload();
       });
       
       // Remove partículas e reseta visual
@@ -2022,6 +2084,11 @@ gameContainer.addEventListener('mousemove', (e) => {
 
 // Hover no botão (versão troll épica com cheats)
 btn1.addEventListener('mouseenter', ()=>{
+  // Proteção contra múltiplas execuções quando o jogo já acabou
+  if (isGameOver || isVictory) {
+    return;
+  }
+  
   startGame(); // Inicia o jogo no primeiro hover
   hoverCount++;
   attemptsEl.textContent = hoverCount;
@@ -2151,6 +2218,11 @@ btn1.addEventListener('mouseenter', ()=>{
 
 // Clique no botão (versão troll épica com cheats)
 btn1.addEventListener('click', ()=>{
+  // Proteção contra múltiplas execuções quando o jogo já acabou
+  if (isGameOver || isVictory) {
+    return;
+  }
+  
   if(hoverCount < 30){
     // Efeito de clique troll (apenas se não estiver em easy mode)
     if (!activeCheats.easy) {
@@ -2200,7 +2272,21 @@ btn1.addEventListener('click', ()=>{
 });
 
 // Play again
-document.getElementById('playAgain').onclick = ()=>location.reload();
+document.getElementById('playAgain').onclick = ()=>{
+  // Reseta todas as variáveis de estado
+  isGameOver = false;
+  isVictory = false;
+  isExecutingGameOver = false;
+  isExecutingVictory = false;
+  hoverCount = 0;
+  gameStarted = false;
+  
+  // Reabilita o botão
+  enableButton();
+  
+  // Recarrega a página
+  location.reload();
+};
 
 // Inicia a música ao clicar em qualquer lugar da página (para desbloquear autoplay)
 document.addEventListener('click', startGame);
