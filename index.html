@@ -1,2326 +1,1111 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Jogo Fácil EXTREMO</title>
-<style>
-:root{--bg:#0f1724;--card:#0b1220;--accent:#10b981;}
-html,body{height:100%;margin:0;font-family:Inter,sans-serif;color:#e6eef8;background:#050d1a;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.wrapper{width:960px;max-width:95%;background:#0b1220;border-radius:12px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.6);position:relative;}
-header{margin-bottom:12px}
-h1{font-size:22px;margin:0}
-p.lead{margin:4px 0 0;color:#94a3b8;font-size:13px}
-.hud{display:flex;gap:15px;margin-top:10px;}
-.pill{background:#1e293b;padding:6px 12px;border-radius:20px;font-size:14px;font-weight:600;}
-.difficulty-meter{width:100%;height:8px;background:#1e293b;border-radius:4px;margin-top:10px;overflow:hidden;}
-.difficulty-progress{height:100%;background:linear-gradient(90deg, #10b981, #f59e0b, #ef4444);width:0%;transition:width 0.3s ease;}
-.game{position:relative;min-height:480px;overflow:hidden; width: 100%;border:2px solid #1e293b;border-radius:8px;}
-.big-btn{position:absolute;padding:18px 34px;border-radius:999px;background:green;color:#042018;font-weight:700;cursor:pointer;user-select:none;box-shadow:0 6px 18px rgba(16,185,129,0.25);transition:all 0.3s ease; display:flex;align-items:center;justify-content:center;border:3px solid transparent;font-size:16px;z-index:10;}
-.big-btn:hover{transform:scale(1.05);}
-.big-btn.danger{border-color:#ef4444;animation:pulse 0.5s infinite alternate;}
-.stage{display:none;}
-.stage.active{display:block;}
-#chapolin{position:absolute;width:100px;height:100px;display:none;z-index:999;transform-origin:center center;}
-#chapolinHammer{position:absolute;width:120px;height:120px;display:none;z-index:1000;transform-origin:center center;}
-.particle{position:absolute;width:20px;height:20px;background:var(--accent);border-radius:50%;pointer-events:none;}
-.volume-indicator{position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.7);padding:5px 10px;border-radius:15px;font-size:12px;display:flex;align-items:center;gap:5px;}
-.volume-bar{width:60px;height:4px;background:#374151;border-radius:2px;overflow:hidden;}
-.volume-level{height:100%;background:#10b981;width:0%;transition:width 0.3s ease;}
-.win-screen{text-align:center;padding:40px;}
-.win-screen h2{font-size:32px;margin-bottom:20px;background:linear-gradient(45deg, #10b981, #3b82f6);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-#playAgain{padding:15px 30px;font-size:18px;margin-top:20px;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulados de Filosofia - 2º Ano | Recuperação 2º Bimestre</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-@keyframes pulse {
-  from { box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
-  to { box-shadow: 0 0 20px rgba(239, 68, 68, 0.8); }
-}
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+        }
 
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
-}
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text);
+        }
 
-@keyframes megaShake {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  10% { transform: translate(-10px, -5px) rotate(-2deg); }
-  20% { transform: translate(10px, 5px) rotate(2deg); }
-  30% { transform: translate(-8px, 3px) rotate(-1deg); }
-  40% { transform: translate(8px, -3px) rotate(1deg); }
-  50% { transform: translate(-6px, -2px) rotate(-0.5deg); }
-  60% { transform: translate(6px, 2px) rotate(0.5deg); }
-  70% { transform: translate(-4px, 1px) rotate(-0.2deg); }
-  80% { transform: translate(4px, -1px) rotate(0.2deg); }
-  90% { transform: translate(-2px, 0px) rotate(-0.1deg); }
-}
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
 
-@keyframes chapolinSpin {
-  0% { transform: rotate(0deg) scale(1); }
-  25% { transform: rotate(90deg) scale(1.1); }
-  50% { transform: rotate(180deg) scale(1.2); }
-  75% { transform: rotate(270deg) scale(1.3); }
-  100% { transform: rotate(360deg) scale(1.4); }
-}
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.6s ease;
+        }
 
-@keyframes chapolinExplode {
-  0% { 
-    transform: rotate(0deg) scale(1); 
-    filter: brightness(1) hue-rotate(0deg);
-  }
-  25% { 
-    transform: rotate(90deg) scale(1.5); 
-    filter: brightness(1.5) hue-rotate(90deg);
-  }
-  50% { 
-    transform: rotate(180deg) scale(2); 
-    filter: brightness(2) hue-rotate(180deg);
-  }
-  75% { 
-    transform: rotate(270deg) scale(2.5); 
-    filter: brightness(2.5) hue-rotate(270deg);
-  }
-  100% { 
-    transform: rotate(360deg) scale(3); 
-    filter: brightness(3) hue-rotate(360deg);
-    opacity: 0;
-  }
-}
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
 
-@keyframes screenFlash {
-  0%, 100% { background-color: transparent; }
-  10% { background-color: #ff0000; }
-  20% { background-color: #ffff00; }
-  30% { background-color: #ff0000; }
-  40% { background-color: #ffffff; }
-  50% { background-color: #ff0000; }
-  60% { background-color: #ffff00; }
-  70% { background-color: #ff0000; }
-  80% { background-color: #ffffff; }
-  90% { background-color: #ff0000; }
-}
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
 
-@keyframes particleExplode {
-  0% { 
-    transform: translate(0, 0) scale(1) rotate(0deg);
-    opacity: 1;
-  }
-  50% { 
-    transform: translate(var(--dx), var(--dy)) scale(1.5) rotate(180deg);
-    opacity: 0.8;
-  }
-  100% { 
-    transform: translate(calc(var(--dx) * 2), calc(var(--dy) * 2)) scale(0.5) rotate(360deg);
-    opacity: 0;
-  }
-}
+        .stats-bar {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
 
-@keyframes shockwave {
-  0% { 
-    transform: scale(0);
-    opacity: 1;
-  }
-  100% { 
-    transform: scale(10);
-    opacity: 0;
-  }
-}
+        .stat-card {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px 25px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
 
-@keyframes textReveal {
-  0% { 
-    transform: scale(0) rotate(180deg);
-    opacity: 0;
-  }
-  50% { 
-    transform: scale(1.2) rotate(0deg);
-    opacity: 1;
-  }
-  100% { 
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
-}
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            animation: fadeIn 0.8s ease;
+        }
 
-@keyframes chapolinTextShake {
-  0%, 100% { 
-    transform: translate(0, 0) rotate(0deg) scale(1);
-  }
-  10% { 
-    transform: translate(-5px, -3px) rotate(-1deg) scale(1.05);
-  }
-  20% { 
-    transform: translate(5px, 3px) rotate(1deg) scale(1.05);
-  }
-  30% { 
-    transform: translate(-3px, 2px) rotate(-0.5deg) scale(1.03);
-  }
-  40% { 
-    transform: translate(3px, -2px) rotate(0.5deg) scale(1.03);
-  }
-  50% { 
-    transform: translate(-2px, 1px) rotate(-0.2deg) scale(1.02);
-  }
-  60% { 
-    transform: translate(2px, -1px) rotate(0.2deg) scale(1.02);
-  }
-  70% { 
-    transform: translate(-1px, 0px) rotate(-0.1deg) scale(1.01);
-  }
-  80% { 
-    transform: translate(1px, 0px) rotate(0.1deg) scale(1.01);
-  }
-  90% { 
-    transform: translate(0px, 0px) rotate(0deg) scale(1);
-  }
-}
+        .sidebar {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
 
-@keyframes hammerSwing {
-  0% { 
-    transform: rotate(-45deg) scale(1);
-  }
-  25% { 
-    transform: rotate(0deg) scale(1.1);
-  }
-  50% { 
-    transform: rotate(45deg) scale(1.2);
-  }
-  75% { 
-    transform: rotate(90deg) scale(1.3);
-  }
-  100% { 
-    transform: rotate(135deg) scale(1.4);
-  }
-}
+        .mobile-menu-btn {
+            display: none;
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
 
-@keyframes hammerVictory {
-  0% { 
-    transform: translate(0, 0) rotate(0deg) scale(1);
-    opacity: 0;
-  }
-  25% { 
-    transform: translate(0, -50px) rotate(90deg) scale(1.2);
-    opacity: 1;
-  }
-  50% { 
-    transform: translate(0, -100px) rotate(180deg) scale(1.4);
-    opacity: 1;
-  }
-  75% { 
-    transform: translate(0, -150px) rotate(270deg) scale(1.6);
-    opacity: 1;
-  }
-  100% { 
-    transform: translate(0, -200px) rotate(360deg) scale(2);
-    opacity: 0;
-  }
-}
+        .sidebar.hidden {
+            display: none;
+        }
 
-@keyframes victoryConfetti {
-  0% { 
-    transform: translateY(0) rotate(0deg);
-    opacity: 1;
-  }
-  100% { 
-    transform: translateY(-100vh) rotate(360deg);
-    opacity: 0;
-  }
-}
+        .sidebar h2 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
 
-@keyframes victoryText {
-  0% { 
-    transform: scale(0) rotate(180deg);
-    opacity: 0;
-  }
-  50% { 
-    transform: scale(1.3) rotate(0deg);
-    opacity: 1;
-  }
-  100% { 
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
-}
+        .topic-list {
+            list-style: none;
+            margin-bottom: 25px;
+        }
 
-.shake { animation: shake 0.1s ease-in-out infinite; }
-.megaShake { animation: megaShake 0.5s ease-in-out infinite; }
-.chapolinSpin { animation: chapolinSpin 0.3s ease-in-out infinite; }
-.chapolinExplode { animation: chapolinExplode 2s ease-out forwards; }
-.screenFlash { animation: screenFlash 0.1s ease-in-out infinite; }
-.particleExplode { animation: particleExplode 2s ease-out forwards; }
-.shockwave { animation: shockwave 1s ease-out forwards; }
-.textReveal { animation: textReveal 1s ease-out forwards; }
-.chapolinTextShake { animation: chapolinTextShake 0.3s ease-in-out infinite; }
-.hammerSwing { animation: hammerSwing 0.5s ease-in-out infinite; }
-.hammerVictory { animation: hammerVictory 2s ease-out forwards; }
-.victoryConfetti { animation: victoryConfetti 3s ease-out forwards; }
-.victoryText { animation: victoryText 1s ease-out forwards; }
+        .topic-item {
+            margin-bottom: 8px;
+        }
 
-/* Efeitos Troll */
-@keyframes glitch {
-  0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-  100% { transform: translate(0); }
-}
+        .topic-btn {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
 
-@keyframes lag {
-  0%, 100% { filter: brightness(1) contrast(1); }
-  25% { filter: brightness(1.2) contrast(1.1); }
-  50% { filter: brightness(0.8) contrast(0.9); }
-  75% { filter: brightness(1.1) contrast(1.05); }
-}
+        .topic-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
 
-@keyframes cursorBreak {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  25% { transform: translate(-3px, -2px) rotate(-5deg); }
-  50% { transform: translate(3px, 2px) rotate(5deg); }
-  75% { transform: translate(-2px, 3px) rotate(-3deg); }
-}
+        .topic-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
 
-@keyframes fakeButton {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(0.95); }
-}
+        .mode-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
 
-@keyframes screenFlicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
-}
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
 
-.glitch { animation: glitch 0.1s ease-in-out infinite; }
-.lag { animation: lag 0.2s ease-in-out infinite; }
-.cursorBreak { animation: cursorBreak 0.1s ease-in-out infinite; }
-.fakeButton { animation: fakeButton 0.5s ease-in-out infinite; }
-.screenFlicker { animation: screenFlicker 0.1s ease-in-out infinite; }
-</style>
+        .mode-btn.active {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        .mode-btn.quiz-mode.active {
+            background: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .content-area {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            min-height: 600px;
+        }
+
+        .study-content {
+            animation: fadeIn 0.4s ease;
+        }
+
+        .study-content h3 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .content-box {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .content-box h4 {
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .content-box p {
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        .key-points {
+            background: #fef3c7;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--warning);
+        }
+
+        .key-points h4 {
+            color: #92400e;
+            margin-bottom: 15px;
+        }
+
+        .key-points ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .key-points li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .key-points li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--warning);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .quiz-container {
+            animation: fadeIn 0.4s ease;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .quiz-progress {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 8px;
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .choices {
+            display: grid;
+            gap: 12px;
+        }
+
+        .choice-btn {
+            padding: 15px 20px;
+            border: 2px solid var(--border);
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .choice-btn:hover {
+            border-color: var(--primary);
+            background: #f0f9ff;
+            transform: translateX(5px);
+        }
+
+        .choice-btn.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .choice-btn.correct {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        .choice-btn.incorrect {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid var(--border);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg);
+        }
+
+        .results {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 25px;
+            border-left: 4px solid var(--secondary);
+            animation: slideIn 0.5s ease;
+        }
+
+        .results h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .score-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--secondary);
+            margin: 15px 0;
+        }
+
+        .explanation {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .explanation h5 {
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .simulado-selector {
+            margin-bottom: 20px;
+        }
+
+        .simulado-selector select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 968px) {
+            body {
+                padding: 10px;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .sidebar {
+                position: static;
+                padding: 20px;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            header p {
+                font-size: 1rem;
+            }
+
+            .stat-card {
+                padding: 12px 18px;
+                font-size: 0.9rem;
+            }
+
+            .content-area {
+                padding: 20px;
+            }
+
+            .quiz-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .progress-bar {
+                width: 100%;
+            }
+
+            .question-text {
+                font-size: 1.1rem;
+            }
+
+            .choice-btn {
+                padding: 18px 15px;
+                font-size: 0.95rem;
+                min-height: 50px;
+            }
+
+            .quiz-controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .nav-buttons .btn {
+                flex: 1;
+            }
+
+            .btn {
+                padding: 14px 20px;
+                font-size: 0.95rem;
+                min-height: 48px;
+            }
+
+            .score-display {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+                margin-bottom: 8px;
+            }
+
+            header p {
+                font-size: 0.9rem;
+            }
+
+            .stats-bar {
+                gap: 8px;
+                margin: 15px 0;
+            }
+
+            .stat-card {
+                padding: 10px 15px;
+                font-size: 0.85rem;
+                border-radius: 8px;
+            }
+
+            .sidebar {
+                padding: 15px;
+            }
+
+            .sidebar h2 {
+                font-size: 1.1rem;
+                margin-bottom: 15px;
+            }
+
+            .topic-btn {
+                padding: 14px 12px;
+                font-size: 0.9rem;
+                min-height: 48px;
+            }
+
+            .mode-btn {
+                padding: 14px;
+                font-size: 0.9rem;
+                min-height: 48px;
+            }
+
+            .content-area {
+                padding: 15px;
+            }
+
+            .study-content h3 {
+                font-size: 1.3rem;
+            }
+
+            .content-box, .key-points {
+                padding: 15px;
+            }
+
+            .content-box h4, .key-points h4 {
+                font-size: 1rem;
+            }
+
+            .content-box p, .key-points li {
+                font-size: 0.95rem;
+                line-height: 1.6;
+            }
+
+            .question-card {
+                padding: 18px;
+            }
+
+            .question-text {
+                font-size: 1rem;
+                margin-bottom: 15px;
+            }
+
+            .choice-btn {
+                padding: 16px 12px;
+                font-size: 0.9rem;
+                min-height: 52px;
+            }
+
+            .quiz-controls {
+                padding-top: 15px;
+            }
+
+            .btn {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+                width: 100%;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .results {
+                padding: 20px;
+            }
+
+            .results h3 {
+                font-size: 1.3rem;
+            }
+
+            .score-display {
+                font-size: 1.3rem;
+            }
+
+            .explanation {
+                padding: 12px;
+            }
+
+            .explanation h5 {
+                font-size: 0.95rem;
+            }
+
+            .explanation p {
+                font-size: 0.9rem;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
 </head>
 <body>
-<audio id="bgMusic" src="https://files.catbox.moe/jh5pww.mp3" loop></audio>
-<audio id="explosionSound" preload="auto"></audio>
-<audio id="boomSound" preload="auto"></audio>
-<audio id="chapolinLaugh" preload="auto"></audio>
-<audio id="errorSound" preload="auto"></audio>
+    <div class="container">
+        <header>
+            <h1>📚 Simulados de Filosofia</h1>
+            <p>2º Ano | Recuperação 2º Bimestre</p>
+            <div class="stats-bar">
+                <div class="stat-card">🎯 7 Tópicos</div>
+                <div class="stat-card">📝 50+ Questões</div>
+                <div class="stat-card">⚡ Estudo Rápido</div>
+            </div>
+        </header>
 
-<!-- Áudios do Chapolin -->
-<audio id="chapolinVictory" src="https://files.catbox.moe/nxqph8.mp3" preload="auto"></audio>
-<audio id="chapolinCheat" src="https://files.catbox.moe/39npl3.mp3" preload="auto"></audio>
-<audio id="chapolinDefeat1" src="https://files.catbox.moe/dd1pv7.mp3" preload="auto"></audio>
-<audio id="chapolinDefeat2" src="https://files.catbox.moe/t0y8fs.mp3" preload="auto"></audio>
-<audio id="chapolinDefeat3" src="https://files.catbox.moe/xvp157.mp3" preload="auto"></audio>
-<audio id="chapolinDefeat4" src="https://files.catbox.moe/3ij0xb.mp3" preload="auto"></audio>
+        <div class="main-content">
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">☰ Menu</button>
+            <aside class="sidebar" id="sidebar">
+                <h2>📖 Tópicos</h2>
+                <ul class="topic-list">
+                    <li class="topic-item"><button class="topic-btn active" data-topic="platao">1. Platão - Mito da Caverna</button></li>
+                    <li class="topic-item"><button class="topic-btn" data-topic="aristoteles">2. Aristóteles</button></li>
+                    <li class="topic-item"><button class="topic-btn" data-topic="patristica">3. Patrística</button></li>
+                    <li class="topic-item"><button class="topic-btn" data-topic="escolastica">4. Escolástica</button></li>
+                    <li class="topic-item"><button class="topic-btn" data-topic="racionalismo">5. Racionalismo</button></li>
+                    <li class="topic-item"><button class="topic-btn" data-topic="empirismo">6. Empirismo</button></li>
+                    <li class="topic-item"><button class="topic-btn" data-topic="kant">7. Immanuel Kant</button></li>
+                </ul>
 
-<!-- Áudios de fallback (sintéticos) -->
-<audio id="fallbackVictory" preload="auto"></audio>
-<audio id="fallbackDefeat" preload="auto"></audio>
+                <div class="mode-toggle">
+                    <button class="mode-btn active" data-mode="study">📖 Estudo</button>
+                    <button class="mode-btn quiz-mode" data-mode="quiz">🎯 Quiz</button>
+                </div>
 
-<div class="wrapper">
-  <header>
-    <h1>🎮 Jogo Fácil (Mas Nem Tanto!)</h1>
-    <p class="lead">Pegue o botão verde antes que o Chapolin ou o tempo acabem!</p>
-    
-    <div class="hud">
-      <div class="pill">🎯 Tentativas: <span id="attempts">0</span>/30</div>
-      <div class="pill">⚡ Dificuldade: <span id="difficulty">Fácil</span></div>
-      <div class="pill">🏆 Stage: <span id="stage">1</span></div>
-    <div class="pill" id="cheatIndicator" style="display: none;">💎 CHEAT ATIVO</div>
+                <div class="simulado-selector">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Simulado:</label>
+                    <select id="simuladoSelect">
+                        <option value="all">Todos os Tópicos</option>
+                        <option value="platao">Platão</option>
+                        <option value="aristoteles">Aristóteles</option>
+                        <option value="patristica">Patrística</option>
+                        <option value="escolastica">Escolástica</option>
+                        <option value="racionalismo">Racionalismo</option>
+                        <option value="empirismo">Empirismo</option>
+                        <option value="kant">Kant</option>
+                    </select>
+                </div>
+            </aside>
+
+            <main class="content-area">
+                <div id="studyMode" class="study-content">
+                    <h3 id="topicTitle">Platão – Mito da Caverna</h3>
+                    <div class="content-box">
+                        <h4>📝 Conteúdo</h4>
+                        <p id="topicContent"></p>
+                    </div>
+                    <div class="key-points">
+                        <h4>💡 Mensagem Central</h4>
+                        <p id="topicMessage"></p>
+                    </div>
+                    <div class="key-points">
+                        <h4>🎯 Pontos para a Prova</h4>
+                        <ul id="topicPoints"></ul>
+                    </div>
+                </div>
+
+                <div id="quizMode" class="quiz-container" style="display: none;">
+                    <div class="quiz-header">
+                        <div class="quiz-progress">
+                            <span><strong id="currentQuestion">1</strong> de <strong id="totalQuestions">10</strong></span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill" style="width: 10%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="btn btn-secondary" onclick="startQuiz()">🔄 Novo Simulado</button>
+                        </div>
+                    </div>
+
+                    <div id="questionContainer"></div>
+                    <div id="resultsContainer"></div>
+                </div>
+            </main>
+        </div>
     </div>
-    
-    <div class="difficulty-meter">
-      <div id="difficultyProgress" class="difficulty-progress"></div>
-    </div>
-  </header>
-  
-  <div class="volume-indicator">
-    <span>🔊</span>
-    <div class="volume-bar">
-      <div id="volumeLevel" class="volume-level"></div>
-    </div>
-    <span id="volumeText">0%</span>
-  </div>
-  
-  <main class="game">
-    <div id="stage1" class="stage active">
-      <div id="btn1" class="big-btn">🎯 VENCER 🎯</div>
-      <img id="chapolin" src="https://files.catbox.moe/tq0ox6.png">
-      <img id="chapolinHammer" src="https://files.catbox.moe/2z71jo.png" style="display: none;">
-    </div>
-    
-    <div id="winScreen" class="stage win-screen">
-      <h2>🎉 VOCÊ VENCEU! 🎉</h2>
-      <p>Você conseguiu pegar o botão verde com <span id="finalAttempts">0</span> tentativas!</p>
-      <button id="playAgain" class="big-btn">🔄 Jogar de novo</button>
-    </div>
-  </main>
-</div>
 
-<script>
-// ===========================================
-// SISTEMA ANTI-DEVTOOL - PROTEÇÃO MÁXIMA
-// ===========================================
+    <script>
+        const topics = {
+            platao: {
+                title: "Platão – Mito da Caverna",
+                content: `O mito explica como o ser humano confunde aparência com realidade. Os prisioneiros veem sombras na parede e acreditam que aquilo é a verdade. Quando um deles sai da caverna, ele descobre a realidade verdadeira (o mundo das ideias).`,
+                message: "➜ A maioria vive na ignorância; somente a filosofia liberta e revela a verdade.",
+                points: [
+                    "Prisioneiros acorrentados veem apenas sombras na parede",
+                    "As sombras representam aparências enganadoras",
+                    "O filósofo é quem sai da caverna e vê a realidade",
+                    "O Sol representa o mundo das ideias (verdade)",
+                    "A filosofia liberta da ignorância"
+                ]
+            },
+            aristoteles: {
+                title: "Aristóteles",
+                content: `Discípulo de Platão, mas discorda do "mundo das ideias". Para ele, o conhecimento vem do mundo real, através da experiência. Tudo é formado por matéria (do que é feito) e forma (o que a coisa é). Virtude é o equilíbrio entre dois extremos (ex.: coragem = meio termo entre covardia e loucura).`,
+                message: "➜ Observação + razão explicam o mundo.",
+                points: [
+                    "Conhecimento vem da experiência e observação",
+                    "Tudo tem matéria (substância) + forma (essência)",
+                    "Virtude = meio-termo entre dois extremos",
+                    "Exemplo: coragem entre covardia e temeridade",
+                    "Importância da lógica e da razão prática"
+                ]
+            },
+            patristica: {
+                title: "Patrística",
+                content: `Filosofia dos primeiros cristãos (séculos I–V). Principal nome: Santo Agostinho. Tentava unir fé cristã + filosofia. Mundo dividido em: Cidade de Deus (espiritual, perfeita) e Cidade dos Homens (material, imperfeita).`,
+                message: "➜ O verdadeiro conhecimento vem de Deus.",
+                points: [
+                    "Primeiros pensadores cristãos (séculos I-V)",
+                    "Principal nome: Santo Agostinho",
+                    "União de fé cristã + filosofia clássica",
+                    "Cidade de Deus (espiritual) vs Cidade dos Homens (material)",
+                    "Deus como fonte última do conhecimento"
+                ]
+            },
+            escolastica: {
+                title: "Escolástica",
+                content: `Filosofia da Idade Média (séculos IX–XIV). Principal nome: São Tomás de Aquino. Tentava harmonizar razão e fé usando lógica aristotélica. Criou argumentos racionais para provar a existência de Deus.`,
+                message: "➜ Fé e razão trabalham juntas.",
+                points: [
+                    "Filosofia medieval (séculos IX-XIV)",
+                    "Principal nome: São Tomás de Aquino",
+                    "Harmonização entre fé e razão",
+                    "Uso da lógica aristotélica",
+                    "Provas racionais da existência de Deus"
+                ]
+            },
+            racionalismo: {
+                title: "Racionalismo",
+                content: `Surgiu no século XVII. Razão é a principal fonte do conhecimento. Principais filósofos: René Descartes, Spinoza, Leibniz. Descartes: "Penso, logo existo". Conhecimento verdadeiro é claro, racional e lógico.`,
+                message: "➜ A mente é mais confiável que os sentidos.",
+                points: [
+                    "Século XVII - Idade Moderna",
+                    "Principais: Descartes, Spinoza, Leibniz",
+                    "Descartes: 'Cogito, ergo sum' (Penso, logo existo)",
+                    "Razão como fonte primária do conhecimento",
+                    "Ideias inatas e conhecimento a priori"
+                ]
+            },
+            empirismo: {
+                title: "Empirismo",
+                content: `Oposição ao racionalismo. Principal fonte do conhecimento é a experiência sensorial. Principais filósofos: John Locke, Hume, Berkeley. Locke: a mente nasce como uma tábula rasa (folha em branco). Hume diz que não há certeza absoluta, só hábitos.`,
+                message: "➜ Nada existe na mente que não tenha vindo dos sentidos.",
+                points: [
+                    "Oposição ao racionalismo",
+                    "Principais: Locke, Hume, Berkeley",
+                    "Locke: mente = tábula rasa (folha em branco)",
+                    "Conhecimento vem dos sentidos",
+                    "Hume: ceticismo sobre causalidade (são hábitos)"
+                ]
+            },
+            kant: {
+                title: "Immanuel Kant",
+                content: `Uniu racionalismo + empirismo. Para ele: A experiência fornece os dados; A razão organiza e interpreta; O conhecimento surge da combinação dos dois. "O homem não conhece a coisa em si, apenas o modo como ela aparece para nós." Moral de Kant: Agir por dever; Usar o imperativo categórico (faça somente aquilo que você gostaria que fosse lei universal).`,
+                message: "➜ Conhecemos o mundo pela interação entre razão e experiência.",
+                points: [
+                    "Síntese entre racionalismo e empirismo",
+                    "Experiência fornece dados; razão organiza",
+                    "Fenômeno (como aparece) vs Noumeno (coisa em si)",
+                    "Imperativo categórico: agir por dever",
+                    "Agir segundo máxima que possa ser lei universal"
+                ]
+            }
+        };
 
-// Variáveis de controle anti-devtool
-let devToolsOpen = false;
-let devToolsAttempts = 0;
-let isDebugging = false;
-let lastWindowSize = { width: window.innerWidth, height: window.innerHeight };
-
-// Função para detectar DevTools aberto
-function detectDevTools() {
-    const threshold = 160;
-    const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-    const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-    
-    if (widthThreshold || heightThreshold) {
-        if (!devToolsOpen) {
-            devToolsOpen = true;
-            devToolsAttempts++;
-            handleDevToolsDetection();
-        }
-    } else {
-        devToolsOpen = false;
-    }
-}
-
-// Função para lidar com detecção do DevTools
-function handleDevToolsDetection() {
-    // Aumenta a dificuldade drasticamente
-    hoverCount += 10;
-    attemptsEl.textContent = hoverCount;
-    
-    // Efeito visual de punição
-    document.body.style.background = '#ff0000';
-    document.body.style.animation = 'shake 0.1s ease-in-out infinite';
-    
-    // Mostra aviso
-    alert(`🚫 DEVTOOLS DETECTADO! 🚫\nTentativa ${devToolsAttempts}/3\nO jogo ficou mais difícil!`);
-    
-    // Reset visual após 2 segundos
-    setTimeout(() => {
-        document.body.style.background = '#050d1a';
-        document.body.style.animation = 'none';
-    }, 2000);
-    
-    // Game over após 3 tentativas
-    if (devToolsAttempts >= 3) {
-        alert('💀 GAME OVER! 💀\nMuitas tentativas de burlar o sistema!');
-        location.href = 'about:blank';
-    }
-}
-
-// Detecção de redimensionamento suspeito
-function detectSuspiciousResize() {
-    const currentWidth = window.innerWidth;
-    const currentHeight = window.innerHeight;
-    
-    // Detecta mudanças bruscas de tamanho (possível DevTools)
-    if (Math.abs(currentWidth - lastWindowSize.width) > 200 || 
-        Math.abs(currentHeight - lastWindowSize.height) > 200) {
-        handleDevToolsDetection();
-    }
-    
-    lastWindowSize = { width: currentWidth, height: currentHeight };
-}
-
-// Proteção contra inspeção de elementos
-function protectElements() {
-    // Remove event listeners se alguém tentar inspecionar
-    const originalAddEventListener = Element.prototype.addEventListener;
-    Element.prototype.addEventListener = function(type, listener, options) {
-        if (type === 'contextmenu' || type === 'keydown') {
-            return;
-        }
-        return originalAddEventListener.call(this, type, listener, options);
-    };
-}
-
-// Proteção contra console (versão mais suave)
-function protectConsole() {
-    // Apenas intercepta tentativas de debug, mas não quebra o console completamente
-    const originalLog = console.log;
-    console.log = function(...args) {
-        // Detecta tentativas de debug
-        if (args.some(arg => typeof arg === 'string' && 
-            (arg.includes('debug') || arg.includes('devtools') || arg.includes('inspect')))) {
-            handleDevToolsDetection();
-        }
-        return originalLog.apply(this, args);
-    };
-}
-
-// Proteção contra debugger (versão mais suave)
-function protectDebugger() {
-    // Detecta uso de debugger apenas ocasionalmente
-    setInterval(() => {
-        if (devToolsOpen) {
-            const start = performance.now();
-            debugger;
-            const end = performance.now();
+        const questions = [
+            // Platão
+            { id: 1, topic: "platao", q: "No Mito da Caverna de Platão, as sombras na parede representam:", choices: ["A verdadeira realidade (o mundo das ideias)", "A percepção sensorial distorcida da realidade", "Os deuses controlando os humanos", "As leis naturais"], correct: 1, explain: "As sombras representam as aparências ou percepções enganadoras; os prisioneiros as tomam por realidade." },
+            { id: 2, topic: "platao", q: "Qual é o papel do filósofo no mito da caverna?", choices: ["Permanecer na caverna", "Guiar os outros para a luz", "Construir armas", "Ignorar as sombras"], correct: 1, explain: "O filósofo é aquele que sai da caverna e retorna para ajudar a libertar os outros da ignorância." },
+            { id: 3, topic: "platao", q: "O que o Sol representa no Mito da Caverna?", choices: ["A morte", "O mundo das ideias (verdade)", "A escuridão", "Os prisioneiros"], correct: 1, explain: "O Sol representa o mundo das ideias, a verdadeira realidade que só pode ser conhecida pela filosofia." },
+            { id: 4, topic: "platao", q: "A mensagem central do Mito da Caverna é:", choices: ["Todos devem permanecer na caverna", "A maioria vive na ignorância; somente a filosofia liberta", "As sombras são a verdade", "Não há verdade"], correct: 1, explain: "Platão quer mostrar que a maioria das pessoas vive na ignorância, e apenas a filosofia pode libertá-las e revelar a verdade." },
             
-            if (end - start > 100) {
-                handleDevToolsDetection();
+            // Aristóteles
+            { id: 5, topic: "aristoteles", q: "Aristóteles discordava de Platão ao afirmar que:", choices: ["O mundo das ideias é mais real", "O conhecimento vem da experiência", "As sombras são reais", "Deus é a causa de tudo"], correct: 1, explain: "Aristóteles dizia que o conhecimento vem da observação do mundo sensível, não de um mundo das ideias separado." },
+            { id: 6, topic: "aristoteles", q: "Para Aristóteles, a virtude é:", choices: ["Um extremo de comportamento", "O meio-termo entre dois vícios", "Algo dado por Deus", "Irresponsabilidade"], correct: 1, explain: "Virtude é encontrar o equilíbrio entre excessos e faltas (doutrina do meio-termo)." },
+            { id: 7, topic: "aristoteles", q: "Segundo Aristóteles, tudo é formado por:", choices: ["Apenas matéria", "Matéria + forma", "Apenas ideias", "Nada"], correct: 1, explain: "Aristóteles dizia que tudo tem matéria (do que é feito) e forma (o que a coisa é, sua essência)." },
+            { id: 8, topic: "aristoteles", q: "A mensagem central de Aristóteles é:", choices: ["Só a fé importa", "Observação + razão explicam o mundo", "Não há conhecimento", "Tudo é ilusão"], correct: 1, explain: "Aristóteles valorizava a observação empírica combinada com o uso da razão para entender o mundo." },
+            
+            // Patrística
+            { id: 9, topic: "patristica", q: "A Patrística é caracterizada por:", choices: ["Negligenciar a fé", "Unir fé cristã e reflexão filosófica", "Ser estritamente empírica", "Ser pós-moderna"], correct: 1, explain: "Os primeiros pensadores cristãos uniram fé e filosofia clássica para formar doutrinas teológicas." },
+            { id: 10, topic: "patristica", q: "O principal nome da Patrística é:", choices: ["Platão", "Santo Agostinho", "Aristóteles", "Kant"], correct: 1, explain: "Santo Agostinho é o principal representante da Patrística, unindo filosofia neoplatônica com cristianismo." },
+            { id: 11, topic: "patristica", q: "Santo Agostinho dividiu o mundo em:", choices: ["Cidade de Deus e Cidade dos Homens", "Bem e mal absolutos", "Razão e emoção", "Passado e futuro"], correct: 0, explain: "Agostinho distinguiu a Cidade de Deus (espiritual, perfeita) da Cidade dos Homens (material, imperfeita)." },
+            { id: 12, topic: "patristica", q: "A mensagem central da Patrística é:", choices: ["Não há Deus", "O verdadeiro conhecimento vem de Deus", "Só a razão importa", "Tudo é relativo"], correct: 1, explain: "Para os patrísticos, especialmente Agostinho, o verdadeiro conhecimento e a verdade vêm de Deus." },
+            
+            // Escolástica
+            { id: 13, topic: "escolastica", q: "São Tomás de Aquino, na Escolástica, tentou principalmente:", choices: ["Rejeitar a razão", "Harmonizar fé e razão", "Criar uma religião nova", "Provar que o mundo é uma ilusão"], correct: 1, explain: "Tomás de Aquino utilizou a filosofia de Aristóteles para explicar e defender crenças cristãs, harmonizando fé e razão." },
+            { id: 14, topic: "escolastica", q: "São Tomás de Aquino usou principalmente a lógica de:", choices: ["Platão", "Aristóteles", "Descartes", "Kant"], correct: 1, explain: "Tomás de Aquino adaptou a lógica aristotélica para a teologia cristã." },
+            { id: 15, topic: "escolastica", q: "A Escolástica ocorreu principalmente:", choices: ["Na Antiguidade", "Na Idade Média (séculos IX-XIV)", "No Renascimento", "Na Modernidade"], correct: 1, explain: "A Escolástica foi o movimento filosófico dominante na Idade Média, especialmente entre os séculos IX e XIV." },
+            { id: 16, topic: "escolastica", q: "A mensagem central da Escolástica é:", choices: ["Fé e razão se opõem", "Fé e razão trabalham juntas", "Só a fé importa", "Só a razão importa"], correct: 1, explain: "A Escolástica, especialmente Tomás de Aquino, defendia que fé e razão podem e devem trabalhar juntas." },
+            
+            // Racionalismo
+            { id: 17, topic: "racionalismo", q: "Qual frase é atribuída a Descartes (racionalismo)?", choices: ["Tábula rasa", "Penso, logo existo", "Tudo é relativo", "A experiência é tudo"], correct: 1, explain: "Descartes: 'Cogito, ergo sum' (Penso, logo existo) — fundamento racional do conhecimento." },
+            { id: 18, topic: "racionalismo", q: "O racionalismo enfatiza:", choices: ["Os sentidos como fonte principal", "A razão como fonte principal", "A autoridade religiosa", "A sorte"], correct: 1, explain: "Racionalistas priorizam a razão e o raciocínio lógico sobre os sentidos." },
+            { id: 19, topic: "racionalismo", q: "O racionalismo surgiu no:", choices: ["Século XV", "Século XVII", "Século XIX", "Século XX"], correct: 1, explain: "O racionalismo moderno surgiu no século XVII, com Descartes como principal representante." },
+            { id: 20, topic: "racionalismo", q: "A mensagem central do racionalismo é:", choices: ["Os sentidos são confiáveis", "A mente é mais confiável que os sentidos", "Não há conhecimento", "Tudo é ilusão"], correct: 1, explain: "Os racionalistas acreditam que a razão é mais confiável que os sentidos para alcançar o conhecimento verdadeiro." },
+            
+            // Empirismo
+            { id: 21, topic: "empirismo", q: "Locke defendia que a mente humana é inicialmente:", choices: ["Dotada de ideias inatas", "Uma tábula rasa (folha em branco)", "Igual aos animais", "Uma cópia do divino"], correct: 1, explain: "Locke dizia que as ideias vêm da experiência; a mente nasce sem conteúdo inato (tábula rasa)." },
+            { id: 22, topic: "empirismo", q: "David Hume é conhecido por afirmar que:", choices: ["Temos certeza absoluta da causalidade", "A causalidade é uma crença baseada em hábito", "A razão domina a experiência", "A matemática explica tudo"], correct: 1, explain: "Hume foi cético sobre certezas metafísicas; causalidade é um hábito de associação, não uma certeza." },
+            { id: 23, topic: "empirismo", q: "O empirismo defende que o conhecimento vem:", choices: ["Da razão pura", "Dos sentidos e experiência", "De Deus", "Do acaso"], correct: 1, explain: "Empiristas valorizam percepções e experiências sensoriais como fonte de conhecimento." },
+            { id: 24, topic: "empirismo", q: "A mensagem central do empirismo é:", choices: ["A razão é tudo", "Nada existe na mente que não tenha vindo dos sentidos", "Deus dá o conhecimento", "Não há conhecimento"], correct: 1, explain: "O empirismo defende que todo conhecimento vem da experiência sensorial, não de ideias inatas." },
+            
+            // Kant
+            { id: 25, topic: "kant", q: "Kant tentou unir duas tradições filosóficas. Quais?", choices: ["Patrística e Escolástica", "Racionalismo e Empirismo", "Existencialismo e Marxismo", "Ceticismo e Anarquismo"], correct: 1, explain: "Kant apresentou uma síntese: experiência fornece dados; razão impõe estruturas (categorias)." },
+            { id: 26, topic: "kant", q: "O que significa 'coisa em si' (noumeno) em Kant?", choices: ["O objeto como aparece para nós", "O objeto independentemente da nossa percepção", "Uma ilusão", "Um mito"], correct: 1, explain: "Kant distingue a 'coisa em si' (realidade em si, noumeno) do fenômeno (como aparece a nós)." },
+            { id: 27, topic: "kant", q: "O imperativo categórico de Kant diz para:", choices: ["Agir por interesse", "Agir por dever, segundo máxima que possa ser lei universal", "Seguir apenas emoções", "Ignorar a moral"], correct: 1, explain: "O imperativo categórico: agir segundo uma máxima que você gostaria que fosse uma lei universal." },
+            { id: 28, topic: "kant", q: "Para Kant, o conhecimento surge de:", choices: ["Apenas experiência", "Apenas razão", "Combinação de experiência + razão", "Deus"], correct: 2, explain: "Kant defende que a experiência fornece os dados, mas a razão organiza e interpreta, criando o conhecimento." },
+            { id: 29, topic: "kant", q: "A mensagem central de Kant é:", choices: ["Só a experiência importa", "Conhecemos o mundo pela interação entre razão e experiência", "Só a razão importa", "Não há conhecimento"], correct: 1, explain: "Kant sintetizou racionalismo e empirismo: conhecemos pela interação entre dados da experiência e estruturas da razão." },
+            
+            // Questões gerais
+            { id: 30, topic: "geral", q: "Qual corrente filosófica dá maior importância à experiência sensorial?", choices: ["Racionalismo", "Empirismo", "Escolástica", "Platonicismo"], correct: 1, explain: "Empirismo valoriza percepções e experiências sensoriais como fonte de conhecimento." },
+            { id: 31, topic: "geral", q: "Qual corrente defende que a razão é suficiente para chegar ao conhecimento verdadeiro?", choices: ["Empirismo", "Racionalismo", "Patrística", "Escolástica"], correct: 1, explain: "Racionalismo confia na razão como base para verdades certas, independentemente dos sentidos." },
+            { id: 32, topic: "geral", q: "Quem disse 'Penso, logo existo'?", choices: ["Locke", "Descartes", "Kant", "Hume"], correct: 1, explain: "Descartes, o pai do racionalismo moderno, formulou 'Cogito, ergo sum'." },
+            { id: 33, topic: "geral", q: "Quem defendeu a 'tábula rasa'?", choices: ["Descartes", "Locke", "Kant", "Platão"], correct: 1, explain: "John Locke, empirista, defendeu que a mente nasce como uma tábula rasa (folha em branco)." }
+        ];
+
+        let currentTopic = "platao";
+        let currentMode = "study";
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let answers = {};
+        let showResults = false;
+
+        // Inicialização
+        document.addEventListener("DOMContentLoaded", function() {
+            loadTopic("platao");
+            setupEventListeners();
+            
+            // Esconder sidebar em mobile inicialmente
+            if (window.innerWidth <= 968) {
+                document.getElementById("sidebar").classList.add("hidden");
+            }
+
+            // Ajustar sidebar ao redimensionar
+            window.addEventListener("resize", function() {
+                if (window.innerWidth > 968) {
+                    document.getElementById("sidebar").classList.remove("hidden");
+                } else {
+                    document.getElementById("sidebar").classList.add("hidden");
+                }
+            });
+        });
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("hidden");
+        }
+
+        // Fechar sidebar ao clicar em um tópico em mobile
+        function closeSidebarOnMobile() {
+            if (window.innerWidth <= 968) {
+                document.getElementById("sidebar").classList.add("hidden");
             }
         }
-    }, 3000); // Verifica a cada 3 segundos em vez de 1
-}
 
-// Proteção contra atalhos de teclado
-function protectKeyboard() {
-    document.addEventListener('keydown', (e) => {
-        // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S
-        if (e.key === 'F12' || 
-            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
-            (e.ctrlKey && (e.key === 'u' || e.key === 's'))) {
-            e.preventDefault();
-            handleDevToolsDetection();
-            return false;
-        }
-    });
-}
-
-// Proteção contra clique direito
-function protectContextMenu() {
-    document.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        handleDevToolsDetection();
-        return false;
-    });
-}
-
-// Proteção contra seleção de texto
-function protectSelection() {
-    document.addEventListener('selectstart', (e) => {
-        e.preventDefault();
-        return false;
-    });
-}
-
-// Ofuscação de variáveis importantes
-function obfuscateVariables() {
-    // Renomeia variáveis críticas
-    window['_0x1a2b'] = hoverCount;
-    window['_0x3c4d'] = gameStarted;
-    window['_0x5e6f'] = devToolsOpen;
-}
-
-// Inicialização das proteções
-function initAntiDevTools() {
-    protectConsole();
-    protectElements();
-    protectKeyboard();
-    protectContextMenu();
-    protectSelection();
-    obfuscateVariables();
-    
-    // Monitoramento contínuo
-    setInterval(detectDevTools, 500);
-    setInterval(detectSuspiciousResize, 1000);
-    setInterval(protectDebugger, 1000);
-    
-    // Monitora mudanças no DOM
-    const observer = new MutationObserver(() => {
-        if (devToolsOpen) {
-            handleDevToolsDetection();
-        }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-}
-
-// Proteção adicional contra manipulação de código
-function protectCodeIntegrity() {
-    // Protege funções críticas
-    const originalEval = window.eval;
-    window.eval = function(code) {
-        handleDevToolsDetection();
-        return originalEval.call(this, code);
-    };
-    
-    // Protege Function constructor
-    const originalFunction = window.Function;
-    window.Function = function(...args) {
-        handleDevToolsDetection();
-        return originalFunction.apply(this, args);
-    };
-    
-    // Protege setTimeout/setInterval
-    const originalSetTimeout = window.setTimeout;
-    window.setTimeout = function(fn, delay) {
-        if (typeof fn === 'string') {
-            handleDevToolsDetection();
-        }
-        return originalSetTimeout.call(this, fn, delay);
-    };
-}
-
-// Proteção contra modificação de propriedades (versão mais suave)
-function protectProperties() {
-    // Apenas monitora tentativas de modificação via window
-    const originalDefineProperty = Object.defineProperty;
-    Object.defineProperty = function(obj, prop, descriptor) {
-        if (obj === window && (prop === 'hoverCount' || prop === 'gameStarted')) {
-            handleDevToolsDetection();
-        }
-        return originalDefineProperty.call(this, obj, prop, descriptor);
-    };
-}
-
-// Proteção contra iframe injection
-function protectIframe() {
-    if (window !== window.top) {
-        handleDevToolsDetection();
-    }
-}
-
-// Proteção contra source maps
-function protectSourceMaps() {
-    // Remove source maps se existirem
-    const scripts = document.querySelectorAll('script');
-    scripts.forEach(script => {
-        if (script.src && script.src.includes('sourcemap')) {
-            script.remove();
-        }
-    });
-}
-
-// Proteção contra extensões do navegador
-function protectExtensions() {
-    // Detecta extensões suspeitas
-    const suspiciousProps = ['chrome', 'browser', 'extension'];
-    suspiciousProps.forEach(prop => {
-        if (window[prop]) {
-            handleDevToolsDetection();
-        }
-    });
-}
-
-// Proteção contra modificação de CSS (versão mais suave)
-function protectCSS() {
-    // Apenas adiciona proteção básica de seleção
-    const style = document.createElement('style');
-    style.textContent = `
-        body { 
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-    `;
-    document.head.appendChild(style);
-}
-
-// Inicialização das proteções (versão simplificada)
-function initAntiDevTools() {
-    protectKeyboard();
-    protectContextMenu();
-    protectSelection();
-    protectCSS();
-    
-    // Monitoramento contínuo (menos agressivo)
-    setInterval(detectDevTools, 1000);
-    setInterval(detectSuspiciousResize, 2000);
-    setInterval(protectDebugger, 5000);
-}
-
-// Sistema de detecção de tempo (anti-burla)
-function initTimeProtection() {
-    let startTime = Date.now();
-    let lastCheck = startTime;
-    
-    setInterval(() => {
-        const currentTime = Date.now();
-        const expectedTime = lastCheck + 1000; // Espera 1 segundo entre checks
-        const timeDiff = Math.abs(currentTime - expectedTime);
-        
-        // Se a diferença for muito grande, pode ser manipulação de tempo
-        if (timeDiff > 2000) {
-            handleDevToolsDetection();
-        }
-        
-        lastCheck = currentTime;
-    }, 1000);
-}
-
-// Proteção contra manipulação de performance
-function protectPerformance() {
-    // Apenas monitora, não substitui completamente
-    let lastNow = performance.now();
-    
-    setInterval(() => {
-        const current = performance.now();
-        const diff = current - lastNow;
-        
-        // Detecta manipulação do performance.now apenas se muito suspeito
-        if (diff < -1000 || diff > 50000) {
-            handleDevToolsDetection();
-        }
-        
-        lastNow = current;
-    }, 2000);
-}
-
-// Proteção contra modificação de Date (versão mais suave)
-function protectDate() {
-    // Apenas monitora mudanças suspeitas, não substitui Date
-    let lastDate = new Date();
-    
-    setInterval(() => {
-        const current = new Date();
-        const diff = current - lastDate;
-        
-        // Detecta manipulação de data apenas se muito suspeito
-        if (Math.abs(diff) > 10000) {
-            handleDevToolsDetection();
-        }
-        
-        lastDate = current;
-    }, 2000);
-}
-
-// Proteção contra modificação de Math.random (versão mais suave)
-function protectRandom() {
-    // Apenas monitora uso excessivo, não substitui Math.random
-    let callCount = 0;
-    const originalRandom = Math.random;
-    
-    setInterval(() => {
-        callCount = 0; // Reset contador a cada intervalo
-    }, 5000);
-    
-    // Intercepta apenas chamadas suspeitas
-    const originalRandomCall = Math.random;
-    Math.random = function() {
-        callCount++;
-        
-        // Detecta uso excessivo de random apenas se muito suspeito
-        if (callCount > 5000) {
-            handleDevToolsDetection();
-        }
-        
-        return originalRandomCall();
-    };
-}
-
-// Proteção contra modificação de localStorage/sessionStorage (versão mais suave)
-function protectStorage() {
-    // Apenas monitora tentativas de debug via storage
-    const originalSetItem = Storage.prototype.setItem;
-    
-    Storage.prototype.setItem = function(key, value) {
-        if (typeof key === 'string' && (key.includes('devtools') || key.includes('debug'))) {
-            handleDevToolsDetection();
-        }
-        return originalSetItem.call(this, key, value);
-    };
-}
-
-// Inicia as proteções imediatamente (versão simplificada)
-initAntiDevTools();
-
-// ===========================================
-// CÓDIGO DO JOGO (PROTEGIDO)
-// ===========================================
-
-const gameContainer = document.querySelector('.game');
-const btn1 = document.getElementById('btn1');
-const chapolin = document.getElementById('chapolin');
-const chapolinHammer = document.getElementById('chapolinHammer');
-const attemptsEl = document.getElementById('attempts');
-const difficultyEl = document.getElementById('difficulty');
-const stageEl = document.getElementById('stage');
-const difficultyProgress = document.getElementById('difficultyProgress');
-const volumeLevel = document.getElementById('volumeLevel');
-const volumeText = document.getElementById('volumeText');
-const bgMusic = document.getElementById('bgMusic');
-const explosionSound = document.getElementById('explosionSound');
-const boomSound = document.getElementById('boomSound');
-const finalAttempts = document.getElementById('finalAttempts');
-
-// Áudios do Chapolin
-const chapolinVictory = document.getElementById('chapolinVictory');
-const chapolinCheat = document.getElementById('chapolinCheat');
-const chapolinDefeat1 = document.getElementById('chapolinDefeat1');
-const chapolinDefeat2 = document.getElementById('chapolinDefeat2');
-const chapolinDefeat3 = document.getElementById('chapolinDefeat3');
-const chapolinDefeat4 = document.getElementById('chapolinDefeat4');
-
-// Áudios de fallback
-const fallbackVictory = document.getElementById('fallbackVictory');
-const fallbackDefeat = document.getElementById('fallbackDefeat');
-
-// Sistema de verificação de áudios
-let audioLoadStatus = {
-  chapolinVictory: false,
-  chapolinCheat: false,
-  chapolinDefeat1: false,
-  chapolinDefeat2: false,
-  chapolinDefeat3: false,
-  chapolinDefeat4: false
-};
-
-// Função para verificar se um áudio carregou
-function checkAudioLoad(audioElement, audioName) {
-  return new Promise((resolve) => {
-    if (audioElement.readyState >= 2) {
-      // Áudio já carregou
-      audioLoadStatus[audioName] = true;
-      resolve(true);
-    } else {
-      // Aguarda o carregamento
-      const onCanPlay = () => {
-        audioLoadStatus[audioName] = true;
-        audioElement.removeEventListener('canplay', onCanPlay);
-        audioElement.removeEventListener('error', onError);
-        resolve(true);
-      };
-      
-      const onError = () => {
-        console.log(`Erro ao carregar áudio: ${audioName}`);
-        audioLoadStatus[audioName] = false;
-        audioElement.removeEventListener('canplay', onCanPlay);
-        audioElement.removeEventListener('error', onError);
-        resolve(false);
-      };
-      
-      audioElement.addEventListener('canplay', onCanPlay);
-      audioElement.addEventListener('error', onError);
-      
-      // Timeout após 5 segundos
-      setTimeout(() => {
-        if (!audioLoadStatus[audioName]) {
-          console.log(`Timeout ao carregar áudio: ${audioName}`);
-          audioElement.removeEventListener('canplay', onCanPlay);
-          audioElement.removeEventListener('error', onError);
-          resolve(false);
-        }
-      }, 5000);
-    }
-  });
-}
-
-// Função para carregar todos os áudios
-async function loadAllAudios() {
-  console.log('Iniciando carregamento de áudios...');
-  
-  const audioPromises = [
-    checkAudioLoad(chapolinVictory, 'chapolinVictory'),
-    checkAudioLoad(chapolinCheat, 'chapolinCheat'),
-    checkAudioLoad(chapolinDefeat1, 'chapolinDefeat1'),
-    checkAudioLoad(chapolinDefeat2, 'chapolinDefeat2'),
-    checkAudioLoad(chapolinDefeat3, 'chapolinDefeat3'),
-    checkAudioLoad(chapolinDefeat4, 'chapolinDefeat4')
-  ];
-  
-  const results = await Promise.all(audioPromises);
-  
-  console.log('Status dos áudios:', audioLoadStatus);
-  console.log('Áudios carregados com sucesso:', results.filter(r => r).length, 'de', results.length);
-  
-  return results;
-}
-
-// Função para forçar o carregamento de um áudio específico
-function forceLoadAudio(audioElement, audioName) {
-  return new Promise((resolve) => {
-    // Tenta carregar o áudio
-    audioElement.load();
-    
-    const onCanPlay = () => {
-      audioLoadStatus[audioName] = true;
-      audioElement.removeEventListener('canplay', onCanPlay);
-      audioElement.removeEventListener('error', onError);
-      console.log(`Áudio ${audioName} carregado com sucesso!`);
-      resolve(true);
-    };
-    
-    const onError = () => {
-      console.log(`Falha ao carregar áudio: ${audioName}`);
-      audioLoadStatus[audioName] = false;
-      audioElement.removeEventListener('canplay', onCanPlay);
-      audioElement.removeEventListener('error', onError);
-      resolve(false);
-    };
-    
-    audioElement.addEventListener('canplay', onCanPlay);
-    audioElement.addEventListener('error', onError);
-    
-    // Timeout após 10 segundos
-    setTimeout(() => {
-      if (!audioLoadStatus[audioName]) {
-        console.log(`Timeout ao carregar áudio: ${audioName}`);
-        audioElement.removeEventListener('canplay', onCanPlay);
-        audioElement.removeEventListener('error', onError);
-        resolve(false);
-      }
-    }, 10000);
-  });
-}
-
-// Função para recarregar áudios que falharam
-async function retryFailedAudios() {
-  console.log('Tentando recarregar áudios que falharam...');
-  
-  const retryPromises = [];
-  
-  if (!audioLoadStatus.chapolinVictory) {
-    retryPromises.push(forceLoadAudio(chapolinVictory, 'chapolinVictory'));
-  }
-  if (!audioLoadStatus.chapolinCheat) {
-    retryPromises.push(forceLoadAudio(chapolinCheat, 'chapolinCheat'));
-  }
-  if (!audioLoadStatus.chapolinDefeat1) {
-    retryPromises.push(forceLoadAudio(chapolinDefeat1, 'chapolinDefeat1'));
-  }
-  if (!audioLoadStatus.chapolinDefeat2) {
-    retryPromises.push(forceLoadAudio(chapolinDefeat2, 'chapolinDefeat2'));
-  }
-  if (!audioLoadStatus.chapolinDefeat3) {
-    retryPromises.push(forceLoadAudio(chapolinDefeat3, 'chapolinDefeat3'));
-  }
-  if (!audioLoadStatus.chapolinDefeat4) {
-    retryPromises.push(forceLoadAudio(chapolinDefeat4, 'chapolinDefeat4'));
-  }
-  
-  if (retryPromises.length > 0) {
-    const results = await Promise.all(retryPromises);
-    const successCount = results.filter(r => r).length;
-    console.log(`Recarregamento: ${successCount} de ${retryPromises.length} áudios carregados`);
-  } else {
-    console.log('Todos os áudios já estão carregados!');
-  }
-}
-
-// Função para mostrar status dos áudios
-function showAudioStatus() {
-  console.log('=== STATUS DOS ÁUDIOS ===');
-  console.log('Victory:', audioLoadStatus.chapolinVictory ? '✅' : '❌');
-  console.log('Cheat:', audioLoadStatus.chapolinCheat ? '✅' : '❌');
-  console.log('Defeat1:', audioLoadStatus.chapolinDefeat1 ? '✅' : '❌');
-  console.log('Defeat2:', audioLoadStatus.chapolinDefeat2 ? '✅' : '❌');
-  console.log('Defeat3:', audioLoadStatus.chapolinDefeat3 ? '✅' : '❌');
-  console.log('Defeat4:', audioLoadStatus.chapolinDefeat4 ? '✅' : '❌');
-  
-  const totalLoaded = Object.values(audioLoadStatus).filter(status => status).length;
-  console.log(`Total carregados: ${totalLoaded}/6`);
-}
-
-// Função para testar todos os áudios
-function testAllAudios() {
-  console.log('Testando todos os áudios...');
-  
-  if (audioLoadStatus.chapolinVictory) {
-    console.log('Testando áudio de vitória...');
-    playChapolinAudio(chapolinVictory);
-  }
-  
-  setTimeout(() => {
-    if (audioLoadStatus.chapolinCheat) {
-      console.log('Testando áudio de cheat...');
-      playChapolinAudio(chapolinCheat);
-    }
-  }, 2000);
-  
-  setTimeout(() => {
-    console.log('Testando áudios de derrota...');
-    playDefeatAudio();
-  }, 4000);
-}
-
-// Adiciona funções de debug ao window para facilitar testes
-window.debugAudio = {
-  showStatus: showAudioStatus,
-  testAll: testAllAudios,
-  retry: retryFailedAudios,
-  forceLoad: forceLoadAudio
-};
-
-// Carrega todos os áudios quando a página carrega
-window.addEventListener('load', () => {
-  loadAllAudios().then(() => {
-    console.log('Carregamento de áudios concluído!');
-    showAudioStatus();
-    
-    // Tenta recarregar áudios que falharam após 2 segundos
-    setTimeout(() => {
-      retryFailedAudios().then(() => {
-        showAudioStatus();
-      });
-    }, 2000);
-  });
-});
-
-let hoverCount = 0;
-let gameStarted = false;
-let lastMouseX = 0;
-let lastMouseY = 0;
-
-// Sistema de proteção contra múltiplas execuções
-let isGameOver = false;
-let isVictory = false;
-let isExecutingGameOver = false;
-let isExecutingVictory = false;
-
-// Função para desabilitar o botão após o jogo acabar
-function disableButton() {
-  btn1.style.pointerEvents = 'none';
-  btn1.style.opacity = '0.5';
-  btn1.style.cursor = 'not-allowed';
-  btn1.style.transform = 'scale(0.8)';
-  btn1.textContent = '🎮 JOGO ACABOU 🎮';
-}
-
-// Função para reabilitar o botão (para novo jogo)
-function enableButton() {
-  btn1.style.pointerEvents = 'auto';
-  btn1.style.opacity = '1';
-  btn1.style.cursor = 'pointer';
-  btn1.style.transform = 'scale(1)';
-  btn1.textContent = '🎯 VENCER 🎯';
-}
-
-// Variáveis para efeitos troll
-let fakeButtons = [];
-let trollMessages = [
-  "Quase lá! 😈",
-  "Você está indo bem! (mentira)",
-  "Só mais uma tentativa! (ou não)",
-  "Dica: Use o F12! (pegadinha)",
-  "Parabéns! Você ganhou! (não)",
-  "Nível 2 desbloqueado! (falso)",
-  "Prêmio: $1000! (mentira)",
-  "Loading... (infinito)",
-  "Quase conseguiu! (não)",
-  "Muito bom! (não é)"
-];
-let currentTrollMessage = 0;
-
-// Sistema de Cheats (GTA Style)
-let cheatBuffer = '';
-let activeCheats = {
-  easy: false,
-  hard: false,
-  admin: false,
-  godmode: false
-};
-let cheatMessages = {
-  easy: "CHEAT ATIVADO: EASY MODE! 🎮",
-  hard: "CHEAT ATIVADO: HARD MODE! 😈",
-  admin: "CHEAT ATIVADO: ADMIN MODE! 👑",
-  godmode: "CHEAT ATIVADO: GOD MODE! 🛡️"
-};
-
-// Inicializa o áudio
-bgMusic.volume = 0.1;
-
-// Sistema de controle de volume inteligente
-let originalVolume = 0.1;
-let isPlayingChapolinAudio = false;
-
-function lowerBackgroundMusic() {
-  if (!isPlayingChapolinAudio) {
-    originalVolume = bgMusic.volume;
-    bgMusic.volume = 0.05; // Abaixa para 5%
-    isPlayingChapolinAudio = true;
-  }
-}
-
-function restoreBackgroundMusic() {
-  if (isPlayingChapolinAudio) {
-    bgMusic.volume = originalVolume;
-    isPlayingChapolinAudio = false;
-  }
-}
-
-function playChapolinAudio(audioElement, callback = null) {
-  // Remove event listeners anteriores para evitar múltiplas chamadas
-  audioElement.removeEventListener('ended', restoreBackgroundMusic);
-  
-  lowerBackgroundMusic();
-  
-  audioElement.volume = 0.8;
-  audioElement.currentTime = 0;
-  
-  // Verifica se o áudio está pronto para tocar
-  if (audioElement.readyState < 2) {
-    console.log('Áudio não está pronto, aguardando carregamento...');
-    
-    const onCanPlay = () => {
-      audioElement.removeEventListener('canplay', onCanPlay);
-      audioElement.removeEventListener('error', onError);
-      playAudio();
-    };
-    
-    const onError = () => {
-      console.log('Erro ao carregar áudio, usando fallback sintético');
-      audioElement.removeEventListener('canplay', onCanPlay);
-      audioElement.removeEventListener('error', onError);
-      playSyntheticAudio();
-    };
-    
-    audioElement.addEventListener('canplay', onCanPlay);
-    audioElement.addEventListener('error', onError);
-    
-    // Timeout de 3 segundos
-    setTimeout(() => {
-      if (audioElement.readyState < 2) {
-        audioElement.removeEventListener('canplay', onCanPlay);
-        audioElement.removeEventListener('error', onError);
-        console.log('Timeout no carregamento, usando fallback sintético');
-        playSyntheticAudio();
-      }
-    }, 3000);
-    
-    return;
-  }
-  
-  playAudio();
-  
-  function playAudio() {
-    const playPromise = audioElement.play();
-    
-    if (playPromise !== undefined) {
-      playPromise.then(() => {
-        console.log('Áudio do Chapolin tocando');
-      }).catch(error => {
-        console.log('Erro ao tocar áudio do Chapolin:', error);
-        playSyntheticAudio();
-      });
-    }
-    
-    // Restaura volume quando o áudio terminar
-    audioElement.addEventListener('ended', () => {
-      restoreBackgroundMusic();
-      if (callback) callback();
-    });
-  }
-  
-  function playSyntheticAudio() {
-    // Toca áudio sintético como fallback
-    if (explosionAudio) {
-      explosionAudio.createTone(200, 0.5, 0.3);
-      explosionAudio.createTone(300, 0.4, 0.2);
-      explosionAudio.createTone(400, 0.3, 0.1);
-    }
-    
-    // Restaura volume após 1 segundo
-    setTimeout(() => {
-      restoreBackgroundMusic();
-      if (callback) callback();
-    }, 1000);
-  }
-}
-
-// Funções específicas para cada tipo de áudio
-function playVictoryAudio() {
-  playChapolinAudio(chapolinVictory);
-}
-
-function playCheatAudio() {
-  playChapolinAudio(chapolinCheat);
-}
-
-function playDefeatAudio() {
-  // Verifica quais áudios de derrota estão disponíveis
-  const availableDefeatAudios = [];
-  
-  if (audioLoadStatus.chapolinDefeat1) availableDefeatAudios.push(chapolinDefeat1);
-  if (audioLoadStatus.chapolinDefeat2) availableDefeatAudios.push(chapolinDefeat2);
-  if (audioLoadStatus.chapolinDefeat3) availableDefeatAudios.push(chapolinDefeat3);
-  if (audioLoadStatus.chapolinDefeat4) availableDefeatAudios.push(chapolinDefeat4);
-  
-  if (availableDefeatAudios.length > 0) {
-    // Escolhe um áudio aleatório dos disponíveis
-    const randomAudio = availableDefeatAudios[Math.floor(Math.random() * availableDefeatAudios.length)];
-    console.log('Tocando áudio de derrota disponível');
-    playChapolinAudio(randomAudio);
-  } else {
-    // Se nenhum áudio de derrota carregou, tenta tocar qualquer um (pode funcionar)
-    const defeatAudios = [chapolinDefeat1, chapolinDefeat2, chapolinDefeat3, chapolinDefeat4];
-    const randomAudio = defeatAudios[Math.floor(Math.random() * defeatAudios.length)];
-    console.log('Tentando tocar áudio de derrota (pode não ter carregado)');
-    playChapolinAudio(randomAudio);
-  }
-}
-
-// Sistema de áudio épico para explosão
-function createExplosionAudio() {
-    let audioContext = null;
-    
-    // Função para inicializar AudioContext
-    function initAudioContext() {
-        if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioContext.state === 'suspended') {
-            audioContext.resume();
-        }
-    }
-    
-    // Função para criar tom com frequência específica
-    function createTone(frequency, duration, volume = 0.1) {
-        try {
-            initAudioContext();
-            if (!audioContext) return;
-            
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-            oscillator.type = 'sawtooth';
-            
-            // Envelope de volume crescente
-            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-            gainNode.gain.linearRampToValueAtTime(volume, audioContext.currentTime + duration * 0.1);
-            gainNode.gain.linearRampToValueAtTime(volume * 0.8, audioContext.currentTime + duration * 0.8);
-            gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + duration);
-            
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + duration);
-        } catch (e) {
-            console.log('Erro no áudio:', e);
-        }
-    }
-    
-    // Função para criar ruído branco (explosão)
-    function createWhiteNoise(duration, volume = 0.1) {
-        try {
-            initAudioContext();
-            if (!audioContext) return;
-            
-            const bufferSize = audioContext.sampleRate * duration;
-            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-            const output = buffer.getChannelData(0);
-            
-            for (let i = 0; i < bufferSize; i++) {
-                output[i] = (Math.random() * 2 - 1) * volume;
-            }
-            
-            const whiteNoise = audioContext.createBufferSource();
-            const gainNode = audioContext.createGain();
-            
-            whiteNoise.buffer = buffer;
-            whiteNoise.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            // Envelope crescente
-            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-            gainNode.gain.linearRampToValueAtTime(volume, audioContext.currentTime + duration * 0.2);
-            gainNode.gain.linearRampToValueAtTime(volume * 0.3, audioContext.currentTime + duration * 0.8);
-            gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + duration);
-            
-            whiteNoise.start(audioContext.currentTime);
-            whiteNoise.stop(audioContext.currentTime + duration);
-        } catch (e) {
-            console.log('Erro no ruído:', e);
-        }
-    }
-    
-    // Função para criar BOOM final
-    function createBoom() {
-        try {
-            initAudioContext();
-            if (!audioContext) return;
-            
-            // Múltiplas frequências para efeito de BOOM
-            createTone(60, 0.5, 0.3);  // Grave
-            createTone(120, 0.4, 0.2); // Médio
-            createTone(240, 0.3, 0.1); // Agudo
-            createWhiteNoise(0.8, 0.4); // Ruído de explosão
-        } catch (e) {
-            console.log('Erro no BOOM:', e);
-        }
-    }
-    
-    return { createTone, createWhiteNoise, createBoom };
-}
-
-// Inicializa o sistema de áudio
-const explosionAudio = createExplosionAudio();
-
-// Funções para efeitos troll
-function showTrollMessage() {
-  const message = trollMessages[currentTrollMessage % trollMessages.length];
-  currentTrollMessage++;
-  
-  // Cria popup troll
-  const trollPopup = document.createElement('div');
-  trollPopup.style.cssText = `
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: #ff0000;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-weight: bold;
-    z-index: 9999;
-    animation: textReveal 0.5s ease-out forwards;
-    box-shadow: 0 0 20px rgba(255,0,0,0.5);
-  `;
-  trollPopup.textContent = message;
-  document.body.appendChild(trollPopup);
-  
-  // Remove após 3 segundos
-  setTimeout(() => {
-    trollPopup.remove();
-  }, 3000);
-}
-
-function createFakeButtons() {
-  // Remove botões falsos anteriores
-  fakeButtons.forEach(btn => btn.remove());
-  fakeButtons = [];
-  
-  // Cria 3-5 botões falsos
-  const fakeCount = 3 + Math.floor(Math.random() * 3);
-  for (let i = 0; i < fakeCount; i++) {
-    const fakeBtn = document.createElement('div');
-    fakeBtn.className = 'big-btn fakeButton';
-    fakeBtn.textContent = '🎯 FALSO 🎯';
-    fakeBtn.style.cssText = `
-      position: absolute;
-      left: ${Math.random() * (gameContainer.clientWidth - 200)}px;
-      top: ${Math.random() * (gameContainer.clientHeight - 100)}px;
-      background: #ff0000;
-      color: white;
-      z-index: 5;
-      pointer-events: auto;
-    `;
-    
-    // Adiciona evento de clique troll
-    fakeBtn.addEventListener('click', () => {
-      showTrollMessage();
-      fakeBtn.style.background = '#ff6666';
-      fakeBtn.textContent = 'HAHA! 😈';
-      setTimeout(() => fakeBtn.remove(), 1000);
-    });
-    
-    gameContainer.appendChild(fakeBtn);
-    fakeButtons.push(fakeBtn);
-  }
-  
-  // Remove botões falsos após 5 segundos
-  setTimeout(() => {
-    fakeButtons.forEach(btn => btn.remove());
-    fakeButtons = [];
-  }, 5000);
-}
-
-function addGlitchEffect() {
-  document.body.classList.add('glitch');
-  setTimeout(() => {
-    document.body.classList.remove('glitch');
-  }, 1000);
-}
-
-function addLagEffect() {
-  document.body.classList.add('lag');
-  setTimeout(() => {
-    document.body.classList.remove('lag');
-  }, 2000);
-}
-
-function addScreenFlicker() {
-  document.body.classList.add('screenFlicker');
-  setTimeout(() => {
-    document.body.classList.remove('screenFlicker');
-  }, 500);
-}
-
-function playChapolinLaugh() {
-  // Simula risada do Chapolin com áudio sintético
-  if (explosionAudio) {
-    explosionAudio.createTone(200, 0.3, 0.2);
-    explosionAudio.createTone(300, 0.2, 0.15);
-    explosionAudio.createTone(400, 0.3, 0.2);
-  }
-}
-
-function playErrorSound() {
-  // Som de erro do Windows
-  if (explosionAudio) {
-    explosionAudio.createTone(150, 0.1, 0.1);
-    explosionAudio.createTone(100, 0.1, 0.1);
-    explosionAudio.createTone(50, 0.1, 0.1);
-  }
-}
-
-// SISTEMA DE CHEATS GTA STYLE! 🎮
-function initCheatSystem() {
-  document.addEventListener('keydown', (e) => {
-    // Adiciona a tecla ao buffer
-    cheatBuffer += e.key.toLowerCase();
-    
-    // Mantém apenas as últimas 10 teclas
-    if (cheatBuffer.length > 10) {
-      cheatBuffer = cheatBuffer.slice(-10);
-    }
-    
-    // Verifica cheats
-    checkCheats();
-  });
-}
-
-function checkCheats() {
-  const cheats = ['easy', 'hard', 'admin', 'godmode'];
-  
-  cheats.forEach(cheat => {
-    if (cheatBuffer.endsWith(cheat)) {
-      activateCheat(cheat);
-    }
-  });
-}
-
-function activateCheat(cheat) {
-  // Desativa outros cheats
-  Object.keys(activeCheats).forEach(key => {
-    activeCheats[key] = false;
-  });
-  
-  // Ativa o cheat
-  activeCheats[cheat] = true;
-  
-  // Mostra mensagem
-  showCheatMessage(cheat);
-  
-  // Som de cheat
-  playCheatSound();
-  
-  // Mostra indicador visual
-  const cheatIndicator = document.getElementById('cheatIndicator');
-  cheatIndicator.style.display = 'block';
-  cheatIndicator.style.background = '#ff0000';
-  cheatIndicator.style.color = '#ffffff';
-  cheatIndicator.textContent = `💎 ${cheat.toUpperCase()} ATIVO`;
-  
-  // Limpa buffer
-  cheatBuffer = '';
-  
-  // Aplica efeitos do cheat
-  applyCheatEffects(cheat);
-}
-
-function showCheatMessage(cheat) {
-  const message = document.createElement('div');
-  message.style.cssText = `
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: linear-gradient(45deg, #ff0000, #ffff00);
-    color: #000;
-    padding: 20px 40px;
-    border-radius: 15px;
-    font-size: 2rem;
-    font-weight: bold;
-    z-index: 10000;
-    animation: textReveal 0.5s ease-out forwards;
-    box-shadow: 0 0 30px rgba(255,255,0,0.8);
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-  `;
-  message.textContent = cheatMessages[cheat];
-  document.body.appendChild(message);
-  
-  setTimeout(() => {
-    message.remove();
-  }, 3000);
-}
-
-function playCheatSound() {
-  // Toca áudio do Chapolin para cheat
-  playCheatAudio();
-  
-  // Também toca som sintético
-  if (explosionAudio) {
-    explosionAudio.createTone(200, 0.2, 0.2);
-    explosionAudio.createTone(300, 0.2, 0.2);
-    explosionAudio.createTone(400, 0.2, 0.2);
-  }
-}
-
-function applyCheatEffects(cheat) {
-  switch(cheat) {
-    case 'easy':
-      // Botão fica maior e mais lento
-      btn1.style.transform = 'scale(1.5)';
-      btn1.style.transition = 'all 1s ease';
-      break;
-    case 'hard':
-      // Botão fica menor e mais rápido
-      btn1.style.transform = 'scale(0.7)';
-      btn1.style.transition = 'all 0.1s ease';
-      break;
-    case 'admin':
-      // Botão fica no centro e não foge
-      centerButton();
-      btn1.style.transition = 'none';
-      break;
-    case 'godmode':
-      // Efeito visual épico
-      document.body.style.background = 'linear-gradient(45deg, #ff0000, #ffff00, #00ff00)';
-      break;
-  }
-}
-
-// VITÓRIA ÉPICA COM MARTELO DO CHAPOLIN! 🎬
-function showVictorySequence() {
-  // Proteção contra múltiplas execuções
-  if (isVictory || isExecutingVictory || isGameOver) {
-    console.log('Vitória já está sendo executada ou jogo já acabou, ignorando...');
-    return;
-  }
-  
-  isVictory = true;
-  isExecutingVictory = true;
-  
-  // Desabilita o botão imediatamente
-  disableButton();
-  
-  const btnRect = btn1.getBoundingClientRect();
-  const gameRect = gameContainer.getBoundingClientRect();
-  const centerX = btnRect.left - gameRect.left + btn1.offsetWidth/2;
-  const centerY = btnRect.top - gameRect.top + btn1.offsetHeight/2;
-  
-  // === FASE 1: MARTELO APARECE ===
-  chapolinHammer.style.left = (centerX - 60) + "px";
-  chapolinHammer.style.top = (centerY - 60) + "px";
-  chapolinHammer.style.display = "block";
-  chapolinHammer.style.zIndex = "9998";
-  chapolinHammer.classList.add('hammerSwing');
-  
-  // Som de vitória épico do Chapolin
-  playVictoryAudio();
-  
-  // Também toca som sintético
-  if (explosionAudio) {
-    explosionAudio.createTone(300, 0.5, 0.3);
-    explosionAudio.createTone(400, 0.4, 0.2);
-    explosionAudio.createTone(500, 0.3, 0.1);
-  }
-  
-  // === FASE 2: CONFETTI ÉPICO ===
-  setTimeout(() => {
-    // Cria confetti colorido
-    for (let i = 0; i < 50; i++) {
-      const confetti = document.createElement('div');
-      confetti.style.cssText = `
-        position: absolute;
-        left: ${centerX + (Math.random() - 0.5) * 200}px;
-        top: ${centerY + (Math.random() - 0.5) * 200}px;
-        width: 10px;
-        height: 10px;
-        background: ${['#ff0000', '#ffff00', '#00ff00', '#00ffff', '#ff00ff', '#ffffff'][Math.floor(Math.random() * 6)]};
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 9998;
-      `;
-      confetti.classList.add('victoryConfetti');
-      gameContainer.appendChild(confetti);
-      
-      // Remove confetti após animação
-      setTimeout(() => confetti.remove(), 3000);
-    }
-  }, 500);
-  
-  // === FASE 3: MARTELO VOANDO ===
-  setTimeout(() => {
-    chapolinHammer.classList.remove('hammerSwing');
-    chapolinHammer.classList.add('hammerVictory');
-  }, 1000);
-  
-  // === FASE 4: TEXTO DE VITÓRIA ÉPICO ===
-  setTimeout(() => {
-    const victoryOverlay = document.createElement('div');
-    victoryOverlay.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: linear-gradient(45deg, rgba(255,0,0,0.8), rgba(255,255,0,0.8), rgba(0,255,0,0.8), rgba(0,255,255,0.8), rgba(255,0,255,0.8));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      font-family: 'Arial Black', sans-serif;
-      backdrop-filter: blur(5px);
-    `;
-    
-    victoryOverlay.innerHTML = `
-      <div style="text-align: center; animation: victoryText 1s ease-out forwards;">
-        <div style="
-          font-size: 8rem;
-          font-weight: bold;
-          color: #ffffff;
-          text-shadow: 0 0 30px #000, 0 0 60px #000, 0 0 90px #000;
-          margin-bottom: 30px;
-          animation: chapolinTextShake 0.3s ease-in-out infinite;
-        ">
-          🎉 VITÓRIA ÉPICA! 🎉
-        </div>
-        <div style="
-          font-size: 4rem;
-          font-weight: bold;
-          color: #ffff00;
-          text-shadow: 0 0 20px #000, 0 0 40px #000;
-          margin-bottom: 40px;
-          animation: victoryText 1.5s ease-out forwards;
-        ">
-          CHAPOLIN TE DEU O MARTELO!
-        </div>
-        <div style="
-          font-size: 3rem;
-          font-weight: bold;
-          color: #ff8800;
-          text-shadow: 0 0 15px #000, 0 0 30px #000;
-          margin-bottom: 50px;
-          animation: victoryText 2s ease-out forwards;
-        ">
-          🏆 VOCÊ É O CAMPEÃO! 🏆
-        </div>
-        <div style="
-          font-size: 2rem;
-          color: #ffffff;
-          text-shadow: 0 0 10px #000;
-          margin-bottom: 60px;
-          animation: victoryText 2.5s ease-out forwards;
-        ">
-          ${hoverCount} tentativas - IMPRESSIONANTE!
-        </div>
-        <div style="
-          font-size: 1.5rem;
-          color: #cccccc;
-          animation: victoryText 3s ease-out forwards;
-        ">
-          Clique para jogar novamente...
-        </div>
-      </div>
-    `;
-    
-    document.body.appendChild(victoryOverlay);
-    
-    // Adiciona evento de clique para recarregar
-    victoryOverlay.addEventListener('click', () => {
-      // Reseta todas as variáveis de estado
-      isGameOver = false;
-      isVictory = false;
-      isExecutingGameOver = false;
-      isExecutingVictory = false;
-      hoverCount = 0;
-      gameStarted = false;
-      location.reload();
-    });
-    
-    // Remove martelo após 3 segundos
-    setTimeout(() => {
-      chapolinHammer.style.display = 'none';
-      chapolinHammer.classList.remove('hammerVictory');
-    }, 3000);
-    
-  }, 2000);
-}
-
-// Função para garantir que a música continue tocando
-function ensureMusicPlaying() {
-    if (gameStarted && bgMusic.paused) {
-        bgMusic.play().catch(e => {
-            console.log('Erro ao retomar música:', e);
-        });
-    }
-}
-
-// Verifica periodicamente se a música está tocando
-setInterval(ensureMusicPlaying, 1000);
-
-// Função para iniciar o jogo (e a música)
-function startGame() {
-    if (!gameStarted) {
-        gameStarted = true;
-        // Tenta tocar a música
-        bgMusic.play().catch(e => {
-            console.log('Autoplay bloqueado, clique para iniciar');
-        });
-        
-        // Garante que a música está tocando
-        if (bgMusic.paused) {
-            bgMusic.play().catch(e => {
-                console.log('Erro ao tocar música:', e);
+        function setupEventListeners() {
+            // Botões de tópicos
+            document.querySelectorAll(".topic-btn").forEach(btn => {
+                btn.addEventListener("click", function() {
+                    const topic = this.dataset.topic;
+                    document.querySelectorAll(".topic-btn").forEach(b => b.classList.remove("active"));
+                    this.classList.add("active");
+                    currentTopic = topic;
+                    loadTopic(topic);
+                    closeSidebarOnMobile();
+                });
+            });
+
+            // Botões de modo
+            document.querySelectorAll(".mode-btn").forEach(btn => {
+                btn.addEventListener("click", function() {
+                    const mode = this.dataset.mode;
+                    document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
+                    this.classList.add("active");
+                    switchMode(mode);
+                    closeSidebarOnMobile();
+                });
+            });
+
+            // Seletor de simulado
+            document.getElementById("simuladoSelect").addEventListener("change", function() {
+                if (currentMode === "quiz") {
+                    startQuiz();
+                }
             });
         }
-    }
-}
 
-// Atualiza volume baseado na dificuldade
-function updateVolume() {
-    let volume = 0.1;
-    
-    if (hoverCount >= 5) volume = 0.4;
-    if (hoverCount >= 10) volume = 0.6;
-    if (hoverCount >= 15) volume = 1.0;
-    if (hoverCount >= 20) volume = 1.2;
-    if (hoverCount >= 25) volume = 1.5;
-    if (hoverCount >= 28) volume = 2.0; // Volume estourado!
-    
-    // Aplica o volume com um efeito suave
-    bgMusic.volume = Math.min(volume, 1.0); // Limita a 1.0 para navegadores seguros
-    volumeLevel.style.width = (volume * 100) + '%';
-    volumeText.textContent = Math.min(Math.round(volume * 100), 100) + '%';
-    
-    // Efeito visual quando o volume está alto
-    if (volume >= 0.8) {
-        volumeLevel.style.background = '#ef4444';
-        document.body.style.animation = volume >= 1.0 ? 'shake 0.1s ease-in-out infinite' : 'none';
-    } else {
-        volumeLevel.style.background = '#10b981';
-        document.body.style.animation = 'none';
-    }
-}
-
-// Atualiza a dificuldade visual
-function updateDifficulty() {
-    const progress = (hoverCount / 30) * 100;
-    difficultyProgress.style.width = progress + '%';
-    
-    if (hoverCount < 5) {
-        difficultyEl.textContent = "Fácil";
-        difficultyEl.style.color = "#10b981";
-    } else if (hoverCount < 10) {
-        difficultyEl.textContent = "Médio";
-        difficultyEl.style.color = "#f59e0b";
-    } else if (hoverCount < 20) {
-        difficultyEl.textContent = "Difícil";
-        difficultyEl.style.color = "#fb923c";
-        btn1.classList.add('danger');
-    } else {
-        difficultyEl.textContent = "EXTREMO!";
-        difficultyEl.style.color = "#ef4444";
-    }
-}
-
-// Define posição inicial no centro do container do jogo
-function centerButton() {
-    btn1.style.left = (gameContainer.clientWidth/2 - btn1.offsetWidth/2) + 'px';
-    btn1.style.top = (gameContainer.clientHeight/2 - btn1.offsetHeight/2) + 'px';
-}
-
-// Aguarda o carregamento para posicionar corretamente
-window.addEventListener('load', centerButton);
-window.addEventListener('resize', centerButton);
-
-// Limita posição dentro do container do jogo com margem de segurança
-function getRandomPosition(){
-    const margin = 30; // Margem de segurança para não ficar muito perto das bordas
-    const maxX = gameContainer.clientWidth - btn1.offsetWidth - margin*2;
-    const maxY = gameContainer.clientHeight - btn1.offsetHeight - margin*2;
-    let x = Math.random() * maxX + margin;
-    let y = Math.random() * maxY + margin;
-    x = Math.max(margin, Math.min(x, maxX + margin));
-    y = Math.max(margin, Math.min(y, maxY + margin));
-    return {x,y};
-}
-
-// Posiciona o botão longe do cursor
-function getPositionAwayFromCursor(){
-    const margin = 50;
-    const maxX = gameContainer.clientWidth - btn1.offsetWidth - margin*2;
-    const maxY = gameContainer.clientHeight - btn1.offsetHeight - margin*2;
-    
-    // Calcula a direção oposta ao cursor
-    const btnRect = btn1.getBoundingClientRect();
-    const gameRect = gameContainer.getBoundingClientRect();
-    const btnCenterX = btnRect.left + btnRect.width/2;
-    const btnCenterY = btnRect.top + btnRect.height/2;
-    
-    const deltaX = lastMouseX - btnCenterX;
-    const deltaY = lastMouseY - btnCenterY;
-    
-    // Normaliza a direção
-    const distance = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
-    const dirX = deltaX / distance;
-    const dirY = deltaY / distance;
-    
-    // Move na direção oposta
-    let newX = btnRect.left - gameRect.left - dirX * 150;
-    let newY = btnRect.top - gameRect.top - dirY * 150;
-    
-    // Garante que está dentro dos limites
-    newX = Math.max(margin, Math.min(newX, maxX + margin));
-    newY = Math.max(margin, Math.min(newY, maxY + margin));
-    
-    return {x: newX, y: newY};
-}
-
-function updateButtonColor(){
-  if(hoverCount < 10) {
-      btn1.style.background='green';
-      btn1.style.color='#042018';
-  } else if(hoverCount < 15) {
-      btn1.style.background='yellow';
-      btn1.style.color='#422006';
-  } else if(hoverCount < 20) {
-      btn1.style.background='orange';
-      btn1.style.color='#451a03';
-  } else {
-      btn1.style.background='red';
-      btn1.style.color='white';
-  }
-}
-
-// Reduz o tamanho do botão conforme a dificuldade aumenta
-function updateButtonSize() {
-    const baseSize = 18; // Tamanho base da fonte
-    const paddingReduction = Math.min(hoverCount * 0.7, 10); // Redução progressiva
-    const fontSize = Math.max(baseSize - hoverCount * 0.3, 12); // Fonte menor
-    
-    btn1.style.padding = `${18 - paddingReduction}px ${34 - paddingReduction * 1.5}px`;
-    btn1.style.fontSize = `${fontSize}px`;
-}
-
-// Chapolin dá tapa no botão (versão épica)
-function chapolinTap(){
-  const btnRect = btn1.getBoundingClientRect();
-  const gameRect = gameContainer.getBoundingClientRect();
-  
-  chapolin.style.left = (btnRect.left - gameRect.left - 30) + "px";
-  chapolin.style.top = (btnRect.top - gameRect.top - 30) + "px";
-  chapolin.style.display = "block";
-  chapolin.style.transition = "all 0.3s ease";
-  chapolin.style.transform = "rotate(360deg) scale(1.2)";
-  chapolin.style.filter = "brightness(1.5) drop-shadow(0 0 10px #ff0000)";
-  chapolin.classList.add('chapolinSpin');
-
-  // Efeito de tela piscando
-  document.body.classList.add('megaShake');
-  
-  // Som de tapa épico
-  bgMusic.playbackRate = 1.8;
-  setTimeout(() => bgMusic.playbackRate = 1.0, 300);
-
-  const pos = getRandomPosition();
-  btn1.style.left = pos.x + "px";
-  btn1.style.top = pos.y + "px";
-
-  setTimeout(()=>{
-    chapolin.style.display='none';
-    chapolin.style.transform='rotate(0deg) scale(1)';
-    chapolin.style.filter = 'none';
-    chapolin.classList.remove('chapolinSpin');
-    document.body.classList.remove('megaShake');
-  },800);
-}
-
-// EXPLOSÃO ÉPICA FINAL - DIGNA DE OSCAR! 💥🎬
-function explodeButton(){
-  // Proteção contra múltiplas execuções
-  if (isGameOver || isExecutingGameOver) {
-    console.log('Game over já está sendo executado, ignorando...');
-    return;
-  }
-  
-  isGameOver = true;
-  isExecutingGameOver = true;
-  
-  // Desabilita o botão imediatamente
-  disableButton();
-  
-  const btnRect = btn1.getBoundingClientRect();
-  const gameRect = gameContainer.getBoundingClientRect();
-  const centerX = btnRect.left - gameRect.left + btn1.offsetWidth/2;
-  const centerY = btnRect.top - gameRect.top + btn1.offsetHeight/2;
-  
-  // === FASE 1: PREPARAÇÃO ÉPICA ===
-  document.body.classList.add('megaShake');
-  document.body.classList.add('screenFlash');
-  
-  // Chapolin aparece e começa a girar loucamente
-  chapolin.style.left = (centerX - 50) + "px";
-  chapolin.style.top = (centerY - 50) + "px";
-  chapolin.style.display = "block";
-  chapolin.style.zIndex = "9999";
-  chapolin.classList.add('chapolinExplode');
-  
-  // Som épico de explosão - SISTEMA CRESCENTE
-  bgMusic.playbackRate = 2.0;
-  bgMusic.volume = 1.0;
-  
-  // Toca áudio de derrota do Chapolin
-  playDefeatAudio();
-  
-  // SISTEMA DE ÁUDIO ÉPICO CRESCENTE
-  // Efeito de explosão crescente usando a música de fundo
-  let explosionStep = 0;
-  const explosionInterval = setInterval(() => {
-    explosionStep++;
-    
-    // Aumenta progressivamente a velocidade e volume
-    bgMusic.playbackRate = 2.0 + (explosionStep * 0.1);
-    bgMusic.volume = Math.min(1.0, 0.5 + (explosionStep * 0.05));
-    
-    // Tenta usar áudio sintético se disponível
-    if (explosionAudio) {
-      explosionAudio.createTone(80 + (explosionStep * 20), 0.2, 0.1 + (explosionStep * 0.02));
-    }
-    
-    // Para após 7 passos (crescimento completo)
-    if (explosionStep >= 7) {
-      clearInterval(explosionInterval);
-    }
-  }, 100);
-  
-  // === FASE 2: ONDA DE CHOQUE ===
-  setTimeout(() => {
-    // Cria onda de choque
-    const shockwave = document.createElement('div');
-    shockwave.style.position = 'absolute';
-    shockwave.style.left = centerX + 'px';
-    shockwave.style.top = centerY + 'px';
-    shockwave.style.width = '20px';
-    shockwave.style.height = '20px';
-    shockwave.style.background = 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,0,0,0.6) 50%, transparent 100%)';
-    shockwave.style.borderRadius = '50%';
-    shockwave.style.transform = 'translate(-50%, -50%)';
-    shockwave.style.zIndex = '9997';
-    shockwave.classList.add('shockwave');
-    gameContainer.appendChild(shockwave);
-    
-    // Remove onda de choque após animação
-    setTimeout(() => shockwave.remove(), 1000);
-  }, 500);
-  
-  // === FASE 3: EXPLOSÃO DE PARTÍCULAS ÉPICA ===
-  setTimeout(() => {
-    const particles = [];
-    const particleCount = 50; // Mais partículas para efeito épico
-    
-    for(let i = 0; i < particleCount; i++){
-    const p = document.createElement('div');
-    p.classList.add('particle');
-      p.style.position = 'absolute';
-      p.style.left = centerX + 'px';
-      p.style.top = centerY + 'px';
-      p.style.width = '15px';
-      p.style.height = '15px';
-      p.style.borderRadius = '50%';
-      p.style.pointerEvents = 'none';
-      p.style.zIndex = '9996';
-      
-      // Cores variadas para efeito épico
-      const colors = ['#ff0000', '#ffff00', '#ff8800', '#ff0088', '#8800ff', '#00ffff', '#ffffff'];
-      p.style.background = colors[Math.floor(Math.random() * colors.length)];
-      p.style.boxShadow = '0 0 20px ' + colors[Math.floor(Math.random() * colors.length)];
-      
-    gameContainer.appendChild(p);
-    particles.push(p);
-      
-      // Cálculo de direção épica
-      const angle = (i / particleCount) * Math.PI * 2;
-      const distance = 200 + Math.random() * 300;
-      const dx = Math.cos(angle) * distance;
-      const dy = Math.sin(angle) * distance;
-      const rot = Math.random() * 720;
-      
-      // Aplica variáveis CSS para animação
-      p.style.setProperty('--dx', dx + 'px');
-      p.style.setProperty('--dy', dy + 'px');
-      
-      // Animação épica da partícula
-      p.classList.add('particleExplode');
-    }
-    
-    // === FASE 4: EFEITOS DE TELA ÉPICOS + BOOM FINAL ===
-    // Flash de tela branca + BOOM ÉPICO
-    setTimeout(() => {
-      // BOOM FINAL ÉPICO!
-      if (explosionAudio) {
-        explosionAudio.createBoom();
-      }
-      
-      // Efeito de áudio máximo
-      bgMusic.playbackRate = 3.0;
-      bgMusic.volume = 1.0;
-      
-      // Flash de tela branca
-      const flash = document.createElement('div');
-      flash.style.position = 'fixed';
-      flash.style.top = '0';
-      flash.style.left = '0';
-      flash.style.width = '100vw';
-      flash.style.height = '100vh';
-      flash.style.background = 'white';
-      flash.style.zIndex = '9995';
-      flash.style.pointerEvents = 'none';
-      document.body.appendChild(flash);
-      
-      // Efeito de "tela quebrada" após o flash
-      setTimeout(() => {
-        flash.style.background = 'linear-gradient(45deg, #ff0000, #ffff00, #ff0000)';
-        flash.style.animation = 'screenFlash 0.1s ease-in-out infinite';
-      }, 50);
-      
-      setTimeout(() => {
-        flash.remove();
-        // Reset do áudio
-        bgMusic.playbackRate = 1.0;
-        bgMusic.volume = 0.1;
-        // Garante que a música continue tocando
-        if (bgMusic.paused) {
-          bgMusic.play().catch(e => console.log('Erro ao retomar música após explosão:', e));
+        function loadTopic(topic) {
+            const topicData = topics[topic];
+            document.getElementById("topicTitle").textContent = topicData.title;
+            document.getElementById("topicContent").textContent = topicData.content;
+            document.getElementById("topicMessage").textContent = topicData.message;
+            
+            const pointsList = document.getElementById("topicPoints");
+            pointsList.innerHTML = "";
+            topicData.points.forEach(point => {
+                const li = document.createElement("li");
+                li.textContent = point;
+                pointsList.appendChild(li);
+            });
         }
-      }, 200);
-    }, 1000);
-    
-    // === FASE 5: TEXTO ÉPICO DE GAME OVER - SEMPRE NO MEIO ===
-    setTimeout(() => {
-      // Remove qualquer texto anterior
-      const existingText = document.getElementById('gameOverOverlay');
-      if (existingText) {
-        existingText.remove();
-      }
-      
-      const gameOverText = document.createElement('div');
-      gameOverText.id = 'gameOverOverlay';
-      gameOverText.innerHTML = `
-        <div style="
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100vw;
-          height: 100vh;
-          background: rgba(0, 0, 0, 0.8);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 9999;
-          font-family: 'Arial Black', sans-serif;
-          backdrop-filter: blur(3px);
-        ">
-          <div style="
-            text-align: center;
-            animation: textReveal 1s ease-out forwards;
-          ">
-            <div style="
-              font-size: 6rem;
-              font-weight: bold;
-              color: #ff0000;
-              text-shadow: 0 0 30px #ff0000, 0 0 60px #ff0000, 0 0 90px #ff0000;
-              margin-bottom: 20px;
-              animation: chapolinTextShake 0.3s ease-in-out infinite;
-            ">
-              💥 CHAPOLIN 💥
-            </div>
-            <div style="
-              font-size: 4rem;
-              font-weight: bold;
-              color: #ffff00;
-              text-shadow: 0 0 20px #ffff00, 0 0 40px #ffff00;
-              margin-bottom: 30px;
-              animation: textReveal 1.5s ease-out forwards;
-            ">
-              DESTRUIU TUDO!
-            </div>
-            <div style="
-              font-size: 3rem;
-              font-weight: bold;
-              color: #ff8800;
-              text-shadow: 0 0 15px #ff8800, 0 0 30px #ff8800;
-              margin-bottom: 40px;
-              animation: textReveal 2s ease-out forwards;
-            ">
-              🎆 EXPLOSÃO ÉPICA! 🎆
-            </div>
-            <div style="
-              font-size: 2rem;
-              color: #ffffff;
-              text-shadow: 0 0 10px #ffffff;
-              margin-bottom: 50px;
-              animation: textReveal 2.5s ease-out forwards;
-            ">
-              GAME OVER TOTAL!
-            </div>
-            <div style="
-              font-size: 1.5rem;
-              color: #cccccc;
-              animation: textReveal 3s ease-out forwards;
-            ">
-              Clique para recarregar e tentar novamente...
-            </div>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(gameOverText);
-      
-      // Adiciona evento de clique para recarregar
-      gameOverText.addEventListener('click', () => {
-        // Reseta todas as variáveis de estado
-        isGameOver = false;
-        isVictory = false;
-        isExecutingGameOver = false;
-        isExecutingVictory = false;
-        hoverCount = 0;
-        gameStarted = false;
-        location.reload();
-      });
-      
-      // Remove partículas e reseta visual
-      setTimeout(() => {
-        particles.forEach(p => p.remove());
-        document.body.classList.remove('megaShake', 'screenFlash');
-        chapolin.style.display = 'none';
-        chapolin.classList.remove('chapolinExplode');
-        btn1.style.display = 'none';
-      }, 2000);
-      
-    }, 1500);
-    
-  }, 800);
-}
 
-// Rastreia a posição do mouse
-gameContainer.addEventListener('mousemove', (e) => {
-    lastMouseX = e.clientX;
-    lastMouseY = e.clientY;
-});
-
-// Hover no botão (versão troll épica com cheats)
-btn1.addEventListener('mouseenter', ()=>{
-  // Proteção contra múltiplas execuções quando o jogo já acabou
-  if (isGameOver || isVictory) {
-    return;
-  }
-  
-  startGame(); // Inicia o jogo no primeiro hover
-  hoverCount++;
-  attemptsEl.textContent = hoverCount;
-  
-  updateButtonColor();
-  updateButtonSize();
-  updateDifficulty();
-  updateVolume();
-
-  // EFEITOS TROLL BASEADOS NA DIFICULDADE (respeitando cheats)
-  if (hoverCount >= 3 && !activeCheats.easy) {
-    // Risada do Chapolin quando o botão foge
-    playChapolinLaugh();
-  }
-  
-  if (hoverCount >= 5 && !activeCheats.easy) {
-    // Efeito de lag na tela
-    addLagEffect();
-  }
-  
-  if (hoverCount >= 8 && !activeCheats.easy) {
-    // Cria botões falsos
-    createFakeButtons();
-  }
-  
-  if (hoverCount >= 12 && !activeCheats.easy) {
-    // Efeito de glitch
-    addGlitchEffect();
-  }
-  
-  if (hoverCount >= 15 && !activeCheats.easy) {
-    // Flicker na tela
-    addScreenFlicker();
-  }
-  
-  if (hoverCount >= 20 && !activeCheats.easy) {
-    // Mensagem troll
-    showTrollMessage();
-  }
-  
-  // EFEITO ESPECIAL NO 29 (quase lá!)
-  if (hoverCount === 29 && !activeCheats.easy) {
-    // Cria múltiplos botões falsos
-    createFakeButtons();
-    createFakeButtons(); // Duplo!
-    
-    // Efeito de tela piscando
-    addScreenFlicker();
-    
-    // Mensagem especial
-    const specialMessage = document.createElement('div');
-    specialMessage.style.cssText = `
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #ffff00;
-      color: #000;
-      padding: 20px 40px;
-      border-radius: 20px;
-      font-size: 2rem;
-      font-weight: bold;
-      z-index: 10000;
-      animation: textReveal 0.5s ease-out forwards;
-      box-shadow: 0 0 30px rgba(255,255,0,0.8);
-    `;
-    specialMessage.textContent = "29/30! QUASE LÁ! 😈";
-    document.body.appendChild(specialMessage);
-    
-    setTimeout(() => {
-      specialMessage.remove();
-    }, 2000);
-  }
-
-  if(hoverCount >=5 && hoverCount <30 && !activeCheats.easy){
-    chapolinTap();
-  }
-
-  if(hoverCount >=30){
-    explodeButton();
-  } else {
-    // SISTEMA DE FUGA BASEADO NOS CHEATS
-    if (activeCheats.admin) {
-      // Admin mode: botão não foge
-      return;
-    }
-    
-    if (activeCheats.godmode) {
-      // God mode: botão foge muito devagar
-      setTimeout(() => {
-        const pos = getRandomPosition();
-        btn1.style.left = pos.x + "px";
-        btn1.style.top = pos.y + "px";
-      }, 2000);
-      return;
-    }
-    
-    // Cálculo de velocidade baseado nos cheats
-    let escapeSpeed = Math.min(50 + (hoverCount * 5), 200);
-    let transitionSpeed = Math.max(0.1, 0.5 - hoverCount * 0.015);
-    
-    if (activeCheats.easy) {
-      escapeSpeed *= 3; // 3x mais lento
-      transitionSpeed *= 2; // 2x mais lento
-    }
-    
-    if (activeCheats.hard) {
-      escapeSpeed *= 0.5; // 2x mais rápido
-      transitionSpeed *= 0.5; // 2x mais rápido
-    }
-    
-    setTimeout(() => {
-      // 30% de chance de movimento aleatório, 70% de fuga inteligente
-      let pos;
-      if (Math.random() < 0.3) {
-        pos = getRandomPosition(); // Movimento aleatório
-      } else {
-        pos = getPositionAwayFromCursor(); // Foge do cursor
-      }
-      
-      btn1.style.transition = `all ${transitionSpeed}s ease`;
-      btn1.style.left = pos.x + "px";
-      btn1.style.top = pos.y + "px";
-    }, escapeSpeed);
-  }
-});
-
-// Clique no botão (versão troll épica com cheats)
-btn1.addEventListener('click', ()=>{
-  // Proteção contra múltiplas execuções quando o jogo já acabou
-  if (isGameOver || isVictory) {
-    return;
-  }
-  
-  if(hoverCount < 30){
-    // Efeito de clique troll (apenas se não estiver em easy mode)
-    if (!activeCheats.easy) {
-      playErrorSound();
-      addGlitchEffect();
-    }
-    
-    // SISTEMA DE VITÓRIA BASEADO NOS CHEATS
-    if (activeCheats.admin) {
-      // Admin mode: vitória instantânea
-      showVictorySequence();
-      return;
-    }
-    
-    if (activeCheats.godmode) {
-      // God mode: vitória após 5 tentativas
-      if (hoverCount >= 5) {
-        showVictorySequence();
-        return;
-      }
-    }
-    
-    if (activeCheats.easy) {
-      // Easy mode: vitória após 10 tentativas
-      if (hoverCount >= 10) {
-        showVictorySequence();
-        return;
-      }
-    }
-    
-    // Modo normal: vitória após 25 tentativas
-    if (hoverCount < 25) {
-      if (!activeCheats.easy) {
-        showTrollMessage();
-        // Botão foge mesmo após clique
-        setTimeout(() => {
-          const pos = getPositionAwayFromCursor();
-          btn1.style.left = pos.x + "px";
-          btn1.style.top = pos.y + "px";
-        }, 100);
-      }
-    } else {
-      // VITÓRIA REAL ÉPICA COM MARTELO!
-      showVictorySequence();
-    }
-  }
-});
-
-// Play again
-document.getElementById('playAgain').onclick = ()=>{
-  // Reseta todas as variáveis de estado
-  isGameOver = false;
-  isVictory = false;
-  isExecutingGameOver = false;
-  isExecutingVictory = false;
-  hoverCount = 0;
-  gameStarted = false;
-  
-  // Reabilita o botão
-  enableButton();
-  
-  // Recarrega a página
-  location.reload();
-};
-
-// Inicia a música ao clicar em qualquer lugar da página (para desbloquear autoplay)
-document.addEventListener('click', startGame);
-
-// Inicializa o sistema de cheats
-initCheatSystem();
-
-// Tenta iniciar a música automaticamente após um pequeno delay
-setTimeout(() => {
-    if (!gameStarted) {
-        startGame();
-    }
-}, 500);
-
-// Adiciona evento para quando a música para
-bgMusic.addEventListener('ended', () => {
-    if (gameStarted) {
-        bgMusic.currentTime = 0;
-        bgMusic.play().catch(e => console.log('Erro ao reiniciar música:', e));
-    }
-});
-
-// Adiciona evento para quando a música é pausada
-bgMusic.addEventListener('pause', () => {
-    if (gameStarted) {
-        setTimeout(() => {
-            if (bgMusic.paused) {
-                bgMusic.play().catch(e => console.log('Erro ao retomar música pausada:', e));
+        function switchMode(mode) {
+            currentMode = mode;
+            if (mode === "study") {
+                document.getElementById("studyMode").style.display = "block";
+                document.getElementById("quizMode").style.display = "none";
+                loadTopic(currentTopic);
+            } else {
+                document.getElementById("studyMode").style.display = "none";
+                document.getElementById("quizMode").style.display = "block";
+                startQuiz();
             }
-        }, 100);
-    }
-});
-</script>
+        }
+
+        function startQuiz() {
+            const filter = document.getElementById("simuladoSelect").value;
+            currentQuestions = filter === "all" 
+                ? [...questions].sort(() => Math.random() - 0.5)
+                : questions.filter(q => q.topic === filter).sort(() => Math.random() - 0.5);
+            
+            currentQuestionIndex = 0;
+            answers = {};
+            showResults = false;
+            document.getElementById("resultsContainer").innerHTML = "";
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            if (currentQuestionIndex >= currentQuestions.length) {
+                showFinalResults();
+                return;
+            }
+
+            const question = currentQuestions[currentQuestionIndex];
+            const progress = ((currentQuestionIndex + 1) / currentQuestions.length) * 100;
+
+            document.getElementById("currentQuestion").textContent = currentQuestionIndex + 1;
+            document.getElementById("totalQuestions").textContent = currentQuestions.length;
+            document.getElementById("progressFill").style.width = progress + "%";
+
+            const container = document.getElementById("questionContainer");
+            container.innerHTML = `
+                <div class="question-card">
+                    <div class="question-text">${question.q}</div>
+                    <div class="choices">
+                        ${question.choices.map((choice, index) => `
+                            <button class="choice-btn ${answers[question.id] === index ? 'selected' : ''}" 
+                                    onclick="selectAnswer(${question.id}, ${index})">
+                                ${String.fromCharCode(65 + index)}. ${choice}
+                            </button>
+                        `).join("")}
+                    </div>
+                    <div class="quiz-controls">
+                        <div class="nav-buttons">
+                            <button class="btn btn-outline" onclick="previousQuestion()" ${currentQuestionIndex === 0 ? 'disabled' : ''}>← Anterior</button>
+                            <button class="btn btn-outline" onclick="nextQuestion()">Próxima →</button>
+                        </div>
+                        <button class="btn btn-primary" onclick="finishQuiz()">✅ Finalizar Simulado</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectAnswer(questionId, choiceIndex) {
+            answers[questionId] = choiceIndex;
+            displayQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+            }
+        }
+
+        function finishQuiz() {
+            showResults = true;
+            showFinalResults();
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            currentQuestions.forEach(q => {
+                if (answers[q.id] === q.correct) score++;
+            });
+
+            const percentage = ((score / currentQuestions.length) * 100).toFixed(1);
+            const emoji = percentage >= 80 ? "🎉" : percentage >= 60 ? "👍" : "📚";
+
+            const container = document.getElementById("questionContainer");
+            container.innerHTML = `
+                <div class="results">
+                    <h3>${emoji} Resultado do Simulado</h3>
+                    <div class="score-display">${score} de ${currentQuestions.length} acertos (${percentage}%)</div>
+                    <p style="margin: 15px 0;">${percentage >= 80 ? "Excelente! Você está preparado! 🚀" : percentage >= 60 ? "Bom trabalho! Continue estudando! 💪" : "Continue estudando! Você vai melhorar! 📖"}</p>
+                    
+                    <h4 style="margin-top: 25px; color: var(--primary);">📋 Revisão das Questões:</h4>
+                    ${currentQuestions.map((q, idx) => {
+                        const userAnswer = answers[q.id];
+                        const isCorrect = userAnswer === q.correct;
+                        return `
+                            <div class="explanation" style="margin-top: 15px;">
+                                <h5>Questão ${idx + 1}: ${q.q}</h5>
+                                <p><strong>Sua resposta:</strong> ${userAnswer !== undefined ? String.fromCharCode(65 + userAnswer) + ". " + q.choices[userAnswer] : "Não respondida"} ${isCorrect ? "✅" : "❌"}</p>
+                                <p><strong>Resposta correta:</strong> ${String.fromCharCode(65 + q.correct)}. ${q.choices[q.correct]}</p>
+                                <p style="margin-top: 8px; color: var(--text-light);"><em>${q.explain}</em></p>
+                            </div>
+                        `;
+                    }).join("")}
+                    
+                    <div style="margin-top: 25px; text-align: center;">
+                        <button class="btn btn-primary" onclick="startQuiz()" style="margin-right: 10px;">🔄 Fazer Outro Simulado</button>
+                        <button class="btn btn-secondary" onclick="switchMode('study')">📖 Voltar ao Estudo</button>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
 </body>
 </html>
