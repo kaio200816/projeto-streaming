@@ -114,7 +114,7 @@ function generateStrategicGames() {
 
     for (let i = 1; i <= 3; i++) {
         const game = createSingleGame(weightedNumbers, i);
-        displayGame(game, i);
+        displayGame(game, i, weightedNumbers);
     }
 }
 
@@ -219,8 +219,12 @@ async function copyToClipboard(text, btn) {
     }
 }
 
-function displayGame(numbers, index) {
+function displayGame(numbers, index, weightedNumbers) {
     const resultsContainer = document.getElementById('results-container');
+
+    // Encontrar o maior e menor score para normalizar a porcentagem (apenas para exibição visual)
+    const maxScore = Math.max(...weightedNumbers.map(n => n.score));
+    const minScore = Math.min(...weightedNumbers.map(n => n.score));
 
     const card = document.createElement('div');
     card.className = 'game-card glass';
@@ -248,10 +252,25 @@ function displayGame(numbers, index) {
     grid.className = 'numbers-grid';
 
     numbers.forEach(num => {
+        const itemContainer = document.createElement('div');
+        itemContainer.className = 'number-item-container';
+
         const ball = document.createElement('div');
         ball.className = 'number-ball';
         ball.innerText = num.toString().padStart(2, '0');
-        grid.appendChild(ball);
+
+        // Calcular porcentagem de força baseada no peso
+        const weightObj = weightedNumbers.find(w => w.number === num);
+        // Normalização simples para ficar entre 60% e 99% (mais intuitivo para o usuário)
+        const percent = weightObj ? Math.round(((weightObj.score - minScore) / (maxScore - minScore)) * 39 + 60) : 50;
+
+        const chance = document.createElement('div');
+        chance.className = 'number-chance';
+        chance.innerText = `${percent}%`;
+
+        itemContainer.appendChild(ball);
+        itemContainer.appendChild(chance);
+        grid.appendChild(itemContainer);
     });
 
     // Simulador de Performance
